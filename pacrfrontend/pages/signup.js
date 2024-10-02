@@ -1,8 +1,12 @@
-'use client'
-import "../app/globals.css";
-import { useState } from 'react'
-import { useRouter } from 'next/router'
-import axios from 'axios'
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import PhoneInput from 'react-phone-input-2';
+import DatePicker from 'react-datepicker';
+import 'react-phone-input-2/lib/style.css';
+import 'react-datepicker/dist/react-datepicker.css'; // Import datepicker styles
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -12,33 +16,41 @@ const Signup = () => {
     password: '',
     confirm_password: '',
     phone_number: '',
-    date_of_birth: '',
+    date_of_birth: null, // Change to null for date handling
     user_type: '',
     location: '',
-  })
-  const router = useRouter()
+  });
+  const router = useRouter();
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handlePhoneChange = (value) => {
+    setFormData({ ...formData, phone_number: value });
+  };
+
+  const handleDateChange = (date) => {
+    setFormData({ ...formData, date_of_birth: date });
+  };
 
   const handleSubmit = () => {
-    const data = new FormData()
+    const data = new FormData();
     for (const key in formData) {
-      if (key !== 'confirm_password') {  // Exclude the confirm_password field
-        data.append(key, formData[key])
+      if (key !== 'confirm_password') { // Exclude the confirm_password field
+        data.append(key, formData[key]);
       }
     }
     axios.post('http://127.0.0.1:8000/api/signup/', data)
-      .then((res) =>{
-        localStorage.setItem('token', res.data.access)
-        localStorage.setItem('isloggedin', true)
-        localStorage.setItem('user', JSON.stringify(res.data.user))
-        router.push('/signup/profilepicture')
+      .then((res) => {
+        localStorage.setItem('token', res.data.access);
+        localStorage.setItem('isloggedin', true);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        router.push('/signup/profilepicture');
       }) // Redirect to profile picture upload on success
-      .catch(error => alert(error.message))
-  }
+      .catch(error => alert(error.message));
+  };
 
   return (
     <div style={styles.container}>
@@ -108,26 +120,45 @@ const Signup = () => {
             change={handleChange}
           />
           <h2 style={styles.subHeading}>Enter Your Phone Number (Optional)</h2>
-          <InputField
-            placeholder="Phone Number"
-            name="phone_number"
-            type="text"
-            value={formData.phone_number}
-            change={handleChange}
-          />
+          <div style={styles.inputField}>
+            <PhoneInput
+              country={'us'} // Default country
+              value={formData.phone_number}
+              onChange={handlePhoneChange}
+              inputStyle={{
+                width: '100%',
+                height: '42px',
+                paddingLeft: '50px',
+                borderRadius: '200px',
+                border: '1px solid #ccc',
+              }}
+              buttonStyle={{
+                borderTopLeftRadius: '200px', // Round the top left corner
+                borderBottomLeftRadius: '200px', // Round the bottom left corner
+                borderTopRightRadius: '0px', // Square the top right corner
+                borderBottomRightRadius: '0px', // Square the bottom right corner
+                border: '1px solid #ccc', // Match the border style with input
+                backgroundColor: 'white', // Set a background color if needed
+              }}
+              placeholder="Enter your phone number"
+            />
+          </div>
           <h2 style={styles.subHeading}>Date of Birth</h2>
-          <InputField
-            placeholder="DD/MM/YYYY"
-            name="date_of_birth"
-            type="text"
-            value={formData.date_of_birth}
-            change={handleChange}
-          />
+          <div style={styles.inputField}>
+            <DatePicker
+              selected={formData.date_of_birth}
+              onChange={handleDateChange}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="Select your date of birth"
+              style={styles.input} // Add any additional styles here
+              isClearable
+            />
+          </div>
           <button onClick={handleSubmit} style={styles.button}>Next</button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 const InputField = ({ placeholder, name, type, value, change }) => (
@@ -141,7 +172,7 @@ const InputField = ({ placeholder, name, type, value, change }) => (
       style={styles.input}
     />
   </div>
-)
+);
 
 const styles = {
   container: {
@@ -194,6 +225,6 @@ const styles = {
     height: '48px',
     marginTop: '10px',
   },
-}
+};
 
-export default Signup
+export default Signup;
