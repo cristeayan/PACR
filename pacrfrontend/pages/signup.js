@@ -1,12 +1,10 @@
-'use client';
+'use client'
 
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import PhoneInput from 'react-phone-input-2';
-import DatePicker from 'react-datepicker';
 import 'react-phone-input-2/lib/style.css';
-import 'react-datepicker/dist/react-datepicker.css'; // Import datepicker styles
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +14,7 @@ const Signup = () => {
     password: '',
     confirm_password: '',
     phone_number: '',
-    date_of_birth: null, // Change to null for date handling
+    date_of_birth: '',
     user_type: '',
     location: '',
   });
@@ -31,14 +29,10 @@ const Signup = () => {
     setFormData({ ...formData, phone_number: value });
   };
 
-  const handleDateChange = (date) => {
-    setFormData({ ...formData, date_of_birth: date });
-  };
-
   const handleSubmit = () => {
     const data = new FormData();
     for (const key in formData) {
-      if (key !== 'confirm_password') { // Exclude the confirm_password field
+      if (key !== 'confirm_password') {  // Exclude the confirm_password field
         data.append(key, formData[key]);
       }
     }
@@ -144,16 +138,13 @@ const Signup = () => {
             />
           </div>
           <h2 style={styles.subHeading}>Date of Birth</h2>
-          <div style={styles.inputField}>
-            <DatePicker
-              selected={formData.date_of_birth}
-              onChange={handleDateChange}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Select your date of birth"
-              style={styles.input} // Add any additional styles here
-              isClearable
-            />
-          </div>
+          <InputField
+            placeholder="DD/MM/YYYY"
+            name="date_of_birth"
+            type="date" // Changed to type "date"
+            value={formData.date_of_birth}
+            change={handleChange}
+          />
           <button onClick={handleSubmit} style={styles.button}>Next</button>
         </div>
       </div>
