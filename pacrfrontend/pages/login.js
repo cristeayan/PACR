@@ -111,12 +111,15 @@ const Login = () => {
 }
 
 const styles = {
+  
   mainContainer: {
     display: 'flex',
     height: '100vh',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    columnGap: '124px'
+    
+
+
   },
   loginContainer: {
     display: 'flex',
@@ -205,7 +208,7 @@ const styles = {
     cursor: 'pointer'
   },
   registerText: {
-    marginTop: '20px'
+    marginTop: '20px',
   },
   link: {
     color: '#0070f3',
