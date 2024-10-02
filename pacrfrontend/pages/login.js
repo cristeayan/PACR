@@ -1,5 +1,6 @@
 'use client'
 
+import "../app/globals.css";
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -100,11 +101,13 @@ const Login = () => {
 }
 
 const styles = {
+  
   mainContainer: {
     display: 'flex',
     height: '100vh',
     justifyContent: 'space-evenly',
-    alignItems: 'center'
+    alignItems: 'center',
+    fontFamily:'Open Sauce One,sans serif'
 
   },
   loginContainer: {
@@ -149,7 +152,7 @@ const styles = {
     backgroundColor: '#005bb5'
   },
   registerText: {
-    marginTop: '20px'
+    marginTop: '20px',
   },
   link: {
     color: '#0070f3',

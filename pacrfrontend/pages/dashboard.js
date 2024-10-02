@@ -4,6 +4,8 @@ import Sidebar from '../components/Sidebar';
 import Feed from '../components/Feed';
 import Recommendations from '../components/Recommendations';
 import { UserProvider } from '@/context/UserContext';
+import "../app/globals.css";
+
 
 const Dashboard = () => {
 
