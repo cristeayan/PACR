@@ -48,8 +48,9 @@ const Signup = () => {
   };
 
   return (
+    <div style={styles.pageContainer}>
     <div style={styles.container}>
-      <div><h1> Tell us a bit about yourself</h1></div>
+      <div style={styles.headingBlock}><h1 style={styles.mainHeading}>Tell us a bit about yourself</h1></div>
       <div style={styles.formContainer}>
         <div style={styles.formColumn}>
           <h2 style={styles.subHeading}>Basic Details</h2>
@@ -67,7 +68,8 @@ const Signup = () => {
             value={formData.last_name}
             change={handleChange}
           />
-          <h2 style={styles.subHeading}>Enter your Email Address</h2>
+          <div style={styles.emailHeading}>
+          <h2 style={styles.subHeading}>Enter your Email Address</h2></div>
           <InputField
             placeholder="Enter Your Email Address"
             name="email"
@@ -106,7 +108,7 @@ const Signup = () => {
             <option value="corporate">Corporate</option>
             <option value="not_a_researcher">Not a Researcher</option>
           </select>
-          <h2 style={styles.subHeading}>Location</h2>
+          <h2 style={styles.subHeading}>Tell us where you work?</h2>
           <InputField
             placeholder="Location"
             name="location"
@@ -122,18 +124,25 @@ const Signup = () => {
               onChange={handlePhoneChange}
               inputStyle={{
                 width: '100%',
-                height: '42px',
-                paddingLeft: '50px',
+                height: '48px',
+                padding: '10px 80px',
                 borderRadius: '200px',
-                border: '1px solid #ccc',
+                border: '0.5px solid #313131',
+                backgroundColor: '#f2f2f2',
+                fontSize: '12px',
+                fontWeight: '400',
+                lineHeight: '13.2px',
+                letterSpacing: '2%',
+                color: '#adadad'
               }}
               buttonStyle={{
                 borderTopLeftRadius: '200px', // Round the top left corner
                 borderBottomLeftRadius: '200px', // Round the bottom left corner
                 borderTopRightRadius: '0px', // Square the top right corner
                 borderBottomRightRadius: '0px', // Square the bottom right corner
-                border: '1px solid #ccc', // Match the border style with input
-                backgroundColor: 'white', // Set a background color if needed
+                border: '0.5px solid #313131', // Match the border style with input
+                backgroundColor: '#f2f2f2', // Set a background color if needed
+                padding: '0px 8px 0 24px',
               }}
               placeholder="Enter your phone number"
             />
@@ -149,6 +158,7 @@ const Signup = () => {
           <button onClick={handleSubmit} style={styles.button}>Next</button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
@@ -167,43 +177,81 @@ const InputField = ({ placeholder, name, type, value, change }) => (
 );
 
 const styles = {
+  pageContainer: {
+    height: '100vh',
+    display: 'flex',
+    alignItems: 'center'
+  },
   container: {
     display: 'flex',
     width: '100%',
-    height: '100vh',
+    maxWidth: '82rem',
+    margin: '0 auto',
+    padding: '72px 20px',
+    columnGap: '50px'
+  },
+  mainHeading: {
+    background: 'linear-gradient(125.75deg, #3DC8FF 11.75%, #90DBF9 63.07%, #FFFFFF 114%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    fontSize: '52px',
+    fontWeight: '500',
+    lineHeight: '57.2px',
+    letterSpacing: '-0.03em',
+    textAlign: 'left'
+  },
+  headingBlock: {
+    width: '30%'
   },
   formContainer: {
     display: 'flex',
-    width: '80%',
-    padding: '50px',
-    marginTop: '20px',
+    width: '70%',
+    columnGap: '78px'
   },
   formColumn: {
-    padding: '0 20px',
     width: '100%',
   },
   subHeading: {
-    fontSize: '18px',
-    padding: '10px',
+    fontSize: '16px',
+    lineHeight: '17.6px',
+    letterSpacing: '2%',
+    fontWeight: '400',
+    color: '#313131',
+    padding: '0 0 16px 0',
   },
   inputField: {
-    marginBottom: '15px',
+    marginBottom: '16px',
     width: '100%',
   },
   input: {
     width: '100%',
-    height: '42px',
-    paddingLeft: '20px',
+    height: '48px',
+    padding: '10px 24px',
     borderRadius: '200px',
-    border: '1px solid #ccc',
+    border: '0.5px solid #313131',
+    fontSize: '12px',
+    fontWeight: '400',
+    lineHeight: '13.2px',
+    letterSpacing: '2%',
+    color: '#adadad',
+    backgroundColor: '#f2f2f2'
+  },
+  emailHeading: {
+    marginTop: '40px'
   },
   select: {
-    height: '48px',
     width: '100%',
-    padding: '10px',
+    height: '48px',
+    padding: '10px 24px',
     borderRadius: '200px',
-    border: '1px solid #ccc',
-    marginBottom: '15px',
+    border: '0.5px solid #313131',
+    fontSize: '12px',
+    fontWeight: '400',
+    lineHeight: '13.2px',
+    letterSpacing: '2%',
+    color: '#adadad',
+    backgroundColor: '#f2f2f2',
+    marginBottom: '20px'
   },
   button: {
     width: '100%',
