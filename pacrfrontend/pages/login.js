@@ -70,21 +70,21 @@ const Login = () => {
           <InputField
             change={inputChange}
             name='email'
-            label='Email'
+            label='Email or Phone Number'
             type='email'
           />
           <InputField
             change={inputChange}
             name='password'
-            label='Password'
+            label='Enter Password'
             type='password'
           />
-          <span>
-            <span>
-              <input type='checkbox' />
-              Remember Me
+          <span style={styles.rememberMe}>
+            <span style={styles.rememberCheck}>
+              <input type='checkbox' style={styles.rememberCheckBox} />
+              <span style={styles.rememberText}>Remember Me</span>
             </span>
-            <span>
+            <span style={styles.forgotPassword}>
               <u><b>Forgot Password?</b></u>
             </span>
           </span>
@@ -93,7 +93,7 @@ const Login = () => {
           </button>
           <div style={styles.orContinueWith}>
             <hr style={styles.line} />
-            <span>or continue with</span>
+            <span style={styles.orContinueText}>or continue with</span>
             <hr style={styles.line} />
           </div>
           <div style={styles.socialLogos}>
@@ -117,9 +117,10 @@ const styles = {
     height: '100vh',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    
-
-
+    fontFamily:'Open Sauce One,sans serif',
+    justifyContent: 'center',
+    alignItems: 'center',
+    columnGap: '124px'
   },
   loginContainer: {
     display: 'flex',
@@ -171,48 +172,99 @@ const styles = {
     fontSize: '14px',
     lineHeight: '16px'
   },
+  rememberMe: {
+    display: 'flex',
+    marginTop: '4px',
+    justifyContent: 'space-between',
+    width: '100%'
+  },
+  rememberCheck: {
+    display: 'flex',
+    gap: '16px',
+    alignItems: 'center'
+  },
+  rememberText: {
+    fontSize: '12px',
+    fontWeight: '500',
+    lineHeight: '13.2px',
+    letterSpacing: '2%',
+    color: '#313131'
+  },
+  rememberCheckBox: {
+    width: '20px',
+    height: '20px',
+    borderRadius: '4px',
+    border: '0.5px solid #313131',
+    backgroundColor: '#f2f2f2'
+  },
+  forgotPassword: {
+    fontSize: '12px',
+    lineHeight: '13.2px',
+    letterSpacing: '2%',
+    color: '#313131',
+    fontWeight: '500',
+    cursor: 'pointer'
+  },
   button: {
-    margin: '20px',
-    padding: '10px',
-    backgroundColor: '#0070f3',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
+    margin: '32px 0 40px',
+    padding: '16px 32px',
+    backgroundColor: '#ffffff',
+    color: '#313131',
+    fontSize: '16px',
+    fontWeight: '500',
+    lineHeight: '17.6px',
+    letterSpacing: '-2%',
+    border: '1px solid #313131',
+    borderRadius: '80px',
     cursor: 'pointer',
     transition: 'background-color 0.3s',
-    width: '250px'
+    width: '100%'
   },
   buttonHover: {
-    backgroundColor: '#005bb5'
+    backgroundColor: '#40C9FF'
   },
   orContinueWith: {
     display: 'flex',
     alignItems: 'center',
     width: '100%',
-    margin: '20px 0'
+    gap: '24px'
+  },
+  orContinueText: {
+    fontSize: '16px',
+    lineHeight: '17.6px',
+    letterSpacing: '2%',
+    textAlign: 'center',
+    fontWeight: '400',
+    color: '#313131'
   },
   line: {
     flex: 1,
     height: '1px',
-    backgroundColor: '#ccc'
+    backgroundColor: '#313131'
   },
   socialLogos: {
     display: 'flex',
     justifyContent: 'center',
-    margin: '20px 0'
+    margin: '40px 0 64px',
+    columnGap: '48px'
   },
   logo: {
-    width: '40px',
-    height: '40px',
-    margin: '0 10px',
+    width: '54px',
+    height: '54px',
     cursor: 'pointer'
   },
   registerText: {
-    marginTop: '20px',
+    fontSize: '16px',
+    fontWeight: '400',
+    color: '#313131',
+    lineHeight: '17.6px',
+    letterSpacing: '2%',
+    textAlign: 'center'
   },
   link: {
-    color: '#0070f3',
-    textDecoration: 'none'
+    color: '#00b8ff',
+    textDecoration: 'underline',
+    fontWeight: '500'
   }
 }
 
