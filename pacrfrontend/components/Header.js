@@ -4,7 +4,7 @@ import { useUser } from '../context/UserContext';
 
 const Header = () => {
   const router = useRouter()
-  const { user } = useUser();
+  // const { user } = useUser();
 
   const headerStyle = {
     display: 'flex',
@@ -219,7 +219,7 @@ const Header = () => {
       <div style={userInfoStyle}>
         <div style={dropdownContainerStyle}>
           <div style={userButtonStyle} onClick={handleUsernameClick}>
-            <p>{user ? user.first_name +" "+ user.last_name: 'Guest'}</p>
+            {/* <p>{user ? user.first_name +" "+ user.last_name: 'Guest'}</p> */}
           </div>
           <div style={{ ...dropdownStyle, ...(showDropdown ? dropdownVisibleStyle : {}) }}>
             <div style={dropdownItemStyle}>Profile Settings</div>

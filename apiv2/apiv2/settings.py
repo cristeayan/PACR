@@ -41,8 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'socialmedia',
-    "corsheaders"
-    
+    "corsheaders",    
 ]
 
 AUTH_USER_MODEL="socialmedia.User"
