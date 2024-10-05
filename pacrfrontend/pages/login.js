@@ -115,6 +115,9 @@ const styles = {
   mainContainer: {
     display: 'flex',
     height: '100vh',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    fontFamily:'Open Sauce One,sans serif',
     justifyContent: 'center',
     alignItems: 'center',
     columnGap: '124px'

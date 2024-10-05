@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import "../app/page.js";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -97,7 +98,7 @@ const Signup = () => {
 
         <div style={styles.formColumn}>
           <h2 style={styles.subHeading}>Tell Us What You Do?</h2>
-          <select
+          <div style={styles.selectDrop}><select
             name="user_type"
             value={formData.user_type}
             onChange={handleChange}
@@ -108,6 +109,8 @@ const Signup = () => {
             <option value="corporate">Corporate</option>
             <option value="not_a_researcher">Not a Researcher</option>
           </select>
+          <img src="select-dropdown.svg" alt = "Arrow Image" style={styles.arrowDropdown}></img>
+          </div>
           <h2 style={styles.subHeading}>Tell us where you work?</h2>
           <InputField
             placeholder="Location"
@@ -142,7 +145,7 @@ const Signup = () => {
                 borderBottomRightRadius: '0px', // Square the bottom right corner
                 border: '0.5px solid #313131', // Match the border style with input
                 backgroundColor: '#f2f2f2', // Set a background color if needed
-                padding: '0px 8px 0 24px',
+                padding: '0px 8px 0 16px',
               }}
               placeholder="Enter your phone number"
             />
@@ -155,7 +158,7 @@ const Signup = () => {
             value={formData.date_of_birth}
             change={handleChange}
           />
-          <button onClick={handleSubmit} style={styles.button}>Next</button>
+          <button onClick={handleSubmit} style={styles.button}>Create an Account</button>
         </div>
       </div>
     </div>
@@ -251,19 +254,33 @@ const styles = {
     letterSpacing: '2%',
     color: '#adadad',
     backgroundColor: '#f2f2f2',
-    marginBottom: '20px'
+    marginBottom: '20px',
+    appearance: 'none',
+  },
+  selectDrop: {
+    position: 'relative',
+  },
+  arrowDropdown: {
+    position: 'absolute',
+    top: '16px',
+    right: '22px'
   },
   button: {
     width: '100%',
-    padding: '10px',
-    backgroundColor: '#00aaff',
+    padding: '16px 24px',
+    backgroundColor: '#70d4fc',
     color: 'white',
     border: 'none',
     borderRadius: '200px',
     cursor: 'pointer',
     fontSize: '16px',
-    height: '48px',
-    marginTop: '10px',
+    height: '50px',
+    marginTop: '30px',
+    fontSize: '16px',
+    lineHeight: '17.6px',
+    letterSpacing: '-2%',
+    fontWeight: '500',
+    transition: '0.3s ease'
   },
 };
 
