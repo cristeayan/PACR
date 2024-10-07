@@ -1,5 +1,6 @@
 'use client'
 
+import "../../app/globals.css";
 import { useState, useEffect} from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -52,7 +53,7 @@ const ProfilePictureUpload = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.heading}>Upload Profile Picture</h1>
+      <h1 style={styles.heading}>Show the world what beauty and brains look like</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="file"
@@ -70,7 +71,10 @@ const ProfilePictureUpload = () => {
         ) : (
           <div style={styles.profilePicturePlaceholder}>Upload a profile picture</div>
         )}
-        <button type="submit" style={styles.button}>Submit</button>
+        <div style={styles.buttonGroup}>
+          <button type="submit" style={styles.cancelButton}>Cancel</button>
+          <button type="submit" style={styles.button}>Save</button>
+        </div>
       </form>
     </div>
   );
@@ -83,10 +87,20 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
+    padding: '72px 20px',
+    rowGap: '70px',
   },
   heading: {
-    fontSize: '24px',
-    marginBottom: '20px',
+    marginBottom: '8px',
+    background: 'linear-gradient(125.75deg, #3DC8FF 11.75%, #90DBF9 63.07%, #FFFFFF 114%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    fontSize: '52px',
+    fontWeight: '500',
+    lineHeight: '57.2px',
+    letterSpacing: '-0.03em',
+    textAlign: 'center',
+    maxWidth: '43.75rem',
   },
   fileInput: {
     marginBottom: '15px',
@@ -124,12 +138,34 @@ const styles = {
     cursor: 'pointer',
   },
   button: {
-    padding: '10px 20px',
-    backgroundColor: '#00aaff',
+    padding: '16px 60px',
+    backgroundColor: '#70d4fc',
     color: 'white',
     border: 'none',
     borderRadius: '200px',
     cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: '500',
+    lineHeight: '17.6px',
+    letterSpacing: '-2%',
+  },
+  cancelButton: {
+    padding: '16px 60px',
+    backgroundColor: '#ffffff',
+    color: '#313131',
+    border: '1px solid #313131',
+    borderRadius: '200px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: '500',
+    lineHeight: '17.6px',
+    letterSpacing: '-2%',
+  },
+  buttonGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '16px',
   },
 };
 

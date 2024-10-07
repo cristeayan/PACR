@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router'
 import { useUser } from '../context/UserContext';
+import "../app/globals.css";
 
 const Header = () => {
   const router = useRouter()
@@ -10,12 +11,18 @@ const Header = () => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '10px 20px',
-    backgroundColor: '#EAEDFF',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    padding: '12px 32px',
+    backgroundColor: '#6060601F',
+    boxShadow: '5px 7px 16px 0px #00000063',
     position: 'sticky',
-    top: 0,
-    height: '100px',
+    top: '20px',
+    alignSelf: 'center',
+    gap: '14px',
+    borderRadius: '16px',
+    width: '100%',
+    maxWidth: '1320px',
+    backdropFilter: 'blur(30px)',
+
   };
 
   const brandSectionStyle = {
@@ -37,25 +44,35 @@ const Header = () => {
   };
 
   const searchBarStyle = {
-    marginLeft: 'auto',
     flex: 1,
-    maxWidth: '500px',
-    margin: '10px',
+    maxWidth: '356px',
+    position: 'relative'
   };
 
   const searchInputStyle = {
     width: '100%',
-    padding: '8px',
-    border: '1px solid #ccc',
+    padding: '10px 10px 10px 50px',
+    border: '1px solid #ffffff',
     borderRadius: '10px',
-    fontSize: '1rem',
-    height:'45px',
+    fontSize: '14px',
+    fontWeight: '400',
+    lineHeight: '16px',
+    letterSpacing: '2%',
+    color: '#313131',
+    backgroundColor: '#f2f2f2',
+    borderRadius: '200px',
+    height: '48px',
+  };
 
+  const searchIconStyle = {
+    position: 'absolute',
+    top: '12px',
+    left: '12px'
   };
 
   const navIconsStyle = {
     display: 'flex',
-    gap: '20px',
+    gap: '28px',
   };
 
   const navButtonStyle = {
@@ -70,24 +87,23 @@ const Header = () => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '60px',
-    height: '60px',
-    backgroundColor: 'white',
-    border:'2px solid',
-    color: '#fff',
-    borderRadius: '50%',
-    marginBottom: '5px', // Space between the circle and the text
+    width: 'auto',
+    height: 'auto',
+    marginBottom: '6px', // Space between the circle and the text
   };
 
   const iconStyle = {
-    width: '40px',
-    height: '40px',
+    width: '32px',
+    height: '32px',
   };
 
   const navTextStyle = {
-    fontSize: '0.75rem',
+    fontSize: '16px',
     textAlign: 'center',
-    color: '#000',
+    color: '#ffffff',
+    fontWeight: '400',
+    lineHeight: '17.6px',
+    letterSpacing: '2%'
   };
 
   const userInfoStyle = {
@@ -97,14 +113,17 @@ const Header = () => {
   };
 
   const userButtonStyle = {
-    fontWeight: 'bold',
-    backgroundColor:'white',
-    color: '#333',
-    margin: '10px',
-    border: '1px solid',
-    borderRadius: '5px',
-    padding: '0 10px',
+    // fontWeight: 'bold',
+    // backgroundColor:'white',
+    // color: '#333',
+    // margin: '10px',
+    // border: '1px solid',
+    // borderRadius: '5px',
+    // padding: '0 10px',
     cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
   };
 
   const uploadButtonStyle = {
@@ -136,16 +155,18 @@ const Header = () => {
     position: 'absolute',
     top: '100%',
     left: 0,
-    backgroundColor: 'white',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
+    backgroundColor: 'rgb(229 229 229 / 97%)',
+    border: '1px solid #ffffff',
+    borderRadius: '16px',
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-    zIndex: 1,
-    minWidth: '150px',
+    zIndex: 2,
+    minWidth: '240px',
     opacity: 0,
     transform: 'translateY(-10px)',
     transition: 'opacity 0.3s ease, transform 0.3s ease',
     pointerEvents: 'none',
+    boxShadow: '5px 7px 16px 0px #00000063',
+    backdropFilter: 'blur(30px)',
   };
 
   const dropdownVisibleStyle = {
@@ -157,6 +178,20 @@ const Header = () => {
   const dropdownItemStyle = {
     padding: '10px',
     cursor: 'pointer',
+    color: '#ffffff',
+  };
+
+  const navLogoWrapStyle = {
+    display: 'flex',
+    gap: '30px',
+    width: '100%',
+    alignItems: 'center',
+  };
+
+  const navMenuWrapStyle = {
+    display: 'flex',
+    gap: '30px',
+    alignItems: 'center',
   };
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -167,51 +202,56 @@ const Header = () => {
 
   return (
     <header style={headerStyle}>
+      <div style={navLogoWrapStyle}>
       <div style={brandSectionStyle}>
-        <h1 style={brandNameStyle}>PACR</h1>
-        <p style={brandTaglineStyle}>Empowering Research, Together</p>
+        <img src='Header PACR Logo.svg'></img>
+        {/* <h1 style={brandNameStyle}>PACR</h1>
+        <p style={brandTaglineStyle}>Empowering Research, Together</p> */}
       </div>
       <div style={searchBarStyle}>
+        <img src='Header Search Bar Icon.svg' style={searchIconStyle}></img>
         <input
           type="text"
-          placeholder="Search for articles, journals, communities, researchers, etc."
+          placeholder="Search"
           style={searchInputStyle}
         />
       </div>
+      </div>
+      <div style={navMenuWrapStyle}>
       <div style={navIconsStyle}>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="https://img.icons8.com/pulsar-line/48/home.png" alt="home"/>
+            <img style={iconStyle} src="Header Home Icon.svg" alt="home"/>
           </div>
           <span style={navTextStyle}>Home</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="https://img.icons8.com/pulsar-line/48/literature.png" alt="literature"/>
+            <img style={iconStyle} src="Header Research Icon.svg" alt="literature"/>
           </div>
           <span style={navTextStyle}>Research</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="https://img.icons8.com/dotty/80/people-working-together.png" alt="people-working-together"/>
+            <img style={iconStyle} src="Header Communites Icon.svg" alt="people-working-together"/>
           </div>
           <span style={navTextStyle}>Communities</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="https://img.icons8.com/pastel-glyph/64/bookmark-ribbon.png" alt="bookmark-ribbon"/>
+            <img style={iconStyle} src="Header Stats Icon.svg" alt="bookmark-ribbon"/>
           </div>
           <span style={navTextStyle}>Library</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="https://img.icons8.com/external-anggara-basic-outline-anggara-putra/24/external-notification-bell-user-interface-anggara-basic-outline-anggara-putra.png" alt="notification-bell"/>
+            <img style={iconStyle} src="Header Notification Icon.svg" alt="notification-bell"/>
           </div>
           <span style={navTextStyle}>Alerts</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="https://img.icons8.com/ios/50/chat-message--v1.png" alt="chat-message"/>
+            <img style={iconStyle} src="Header Messages Icon.svg" alt="chat-message"/>
           </div>
           <span style={navTextStyle}>Messages</span>
         </div>
@@ -219,8 +259,10 @@ const Header = () => {
       <div style={userInfoStyle}>
         <div style={dropdownContainerStyle}>
           <div style={userButtonStyle} onClick={handleUsernameClick}>
-            <p>{user ? user.first_name +" "+ user.last_name: 'Guest'}</p>
-          </div>
+            {/* <p>{user ? user.first_name +" "+ user.last_name: 'Guest'}</p> */}
+            <img src='Dummy Profile.png'></img>
+            <img src='Profile Down Arrow.svg'></img>
+          </div >
           <div style={{ ...dropdownStyle, ...(showDropdown ? dropdownVisibleStyle : {}) }}>
             <div style={dropdownItemStyle}>Profile Settings</div>
             <div style={dropdownItemStyle}>Manage Company Profiles</div>
@@ -229,8 +271,9 @@ const Header = () => {
             <div style={dropdownItemStyle} onClick={()=>{router.push('/login')}}>Log Out</div>
           </div>
         </div>
-        <button style={uploadButtonStyle}>Upload</button>
-        <button style={premiumButtonStyle}>Premium</button>
+        {/* <button style={uploadButtonStyle}>Upload</button>
+        <button style={premiumButtonStyle}>Premium</button> */}
+      </div>
       </div>
     </header>
   );
