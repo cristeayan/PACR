@@ -14,7 +14,7 @@ const Header = () => {
     padding: '12px 32px',
     backgroundColor: '#6060601F',
     boxShadow: '5px 7px 16px 0px #00000063',
-    position: 'sticky',
+    position: 'fixed',
     top: '20px',
     alignSelf: 'center',
     gap: '14px',
@@ -113,13 +113,6 @@ const Header = () => {
   };
 
   const userButtonStyle = {
-    // fontWeight: 'bold',
-    // backgroundColor:'white',
-    // color: '#333',
-    // margin: '10px',
-    // border: '1px solid',
-    // borderRadius: '5px',
-    // padding: '0 10px',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
