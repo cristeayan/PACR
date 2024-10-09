@@ -15,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
             "user_type",
             "location",
             "profile_picture",
+            "cover_picture",
         ]
 
     def create(self, validated_data):
