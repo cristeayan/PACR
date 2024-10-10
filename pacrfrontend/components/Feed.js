@@ -73,44 +73,39 @@ const styles = {
 
 const Feed = () => {
   return (
-    <div style={styles.feed}>
-    {/* Render the Post component */}
-    <Post />
-    <Post /> {/* You can render multiple posts like this */}
-  </div>
-    // <section style={styles.feed}>
-    //   <div style={styles.storySection}>
-    //     <div style={styles.storyCard}>Story 1</div>
-    //     <div style={styles.storyCard}>Story 2</div>
-    //     <div style={styles.storyCard}>Story 3</div>
-    //   </div>
-    //   <div style={styles.createPost}>
-    //     <textarea style={styles.postInput} placeholder="What's on your mind?"></textarea>
-    //     <div style={styles.postOptions}>
-    //       <button>Post</button>
-    //       {/* <button>Video</button>
-    //       <button>Article</button> */}
-    //     </div>
-    //   </div>
-    //   <div style={styles.post}>
-    //     <div style={styles.postHeader}>
-    //       <img style={styles.profileImage} src="/profile-pic.jpg" alt="Author" />
-    //       <div style={styles.postAuthor}>Author Name</div>
-    //     </div>
-    //     <div style={styles.postContent}>
-    //       This is a sample post content.
-    //     </div>
-    //   </div>
-    //   <div style={styles.post}>
-    //     <div style={styles.postHeader}>
-    //       <img style={styles.profileImage} src="/profile-pic.jpg" alt="Author" />
-    //       <div style={styles.postAuthor}>Author Name</div>
-    //     </div>
-    //     <div style={styles.postContent}>
-    //       This is another sample post content.
-    //     </div>
-    //   </div>
-    // </section>
+    <section style={styles.feed}>
+      <div style={styles.storySection}>
+        <div style={styles.storyCard}>Story 1</div>
+        <div style={styles.storyCard}>Story 2</div>
+        <div style={styles.storyCard}>Story 3</div>
+      </div>
+      <div style={styles.createPost}>
+        <textarea style={styles.postInput} placeholder="What's on your mind?"></textarea>
+        <div style={styles.postOptions}>
+          <button>Post</button>
+          {/* <button>Video</button>
+          <button>Article</button> */}
+        </div>
+      </div>
+      <div style={styles.post}>
+        <div style={styles.postHeader}>
+          <img style={styles.profileImage} src="/profile-pic.jpg" alt="Author" />
+          <div style={styles.postAuthor}>Author Name</div>
+        </div>
+        <div style={styles.postContent}>
+          This is a sample post content.
+        </div>
+      </div>
+      <div style={styles.post}>
+        <div style={styles.postHeader}>
+          <img style={styles.profileImage} src="/profile-pic.jpg" alt="Author" />
+          <div style={styles.postAuthor}>Author Name</div>
+        </div>
+        <div style={styles.postContent}>
+          This is another sample post content.
+        </div>
+      </div>
+    </section>
   );
 }
 
