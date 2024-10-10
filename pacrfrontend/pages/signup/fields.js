@@ -1,9 +1,11 @@
+import "../../app/globals.css";
 import { useState } from 'react';
+
 
 export default function Home() {
   const [selectedFields, setSelectedFields] = useState([]);
 
-  const fields = ["Medicine", "History", "Law", "Economics", "Engineering", "Physics"];
+  const fields = ["Medicine", "History", "Law", "Economics", "Engineering", "Physics", "Chemistry", "Biology", "Pshycology", "Space Sciences", "Education", "Architecture", "Environmental Engineering", "Sociology"];
 
   const handleFieldClick = (field) => {
     if (selectedFields.includes(field)) {
@@ -19,41 +21,83 @@ export default function Home() {
   const styles = {
     container: {
       textAlign: 'center',
-      marginTop: '50px',
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      rowGap: '150px',
+      padding: '60px 20px 68px',
+      justifyContent: 'center'
     },
     fieldContainer: {
       display: 'flex',
       flexWrap: 'wrap',
       justifyContent: 'center',
-      gap: '10px',
-      margin: '20px 0',
+      columnGap: '8px',
+      rowGap: '16px',
+      maxWidth: '72.625rem',
+      width: '100%'
+    },
+    mainHeading: {
+      fontSize: '52px',
+      fontWeight: '400',
+      lineHeight: '57.2px',
+      textAlign: 'center',
+      color: '#313131',
+      letterSpacing: '-2px'
     },
     fieldButton: {
-      padding: '10px 20px',
-      border: '2px solid #ccc',
+      padding: '16px 60px',
+      border: '1px solid #313131',
       backgroundColor: 'white',
-      borderRadius: '20px',
+      borderRadius: '200px',
       cursor: 'pointer',
+      fontSize: '16px',
+      lineHeight: '17.6px',
+      fontWeight: '500',
       transition: 'background-color 0.3s, border-color 0.3s',
     },
     selectedFieldButton: {
-      backgroundColor: '#0070f3',
+      backgroundColor: '#717171',
       color: 'white',
-      borderColor: '#0070f3',
+      borderColor: '#717171',
     },
     skipButton: {
-      marginTop: '20px',
+      padding: '16px 60px',
+      order: '1px solid #313131',
+      backgroundColor: 'white',
+      borderRadius: '200px',
+      cursor: 'pointer',
+      fontSize: '16px',
+      lineHeight: '17.6px',
+      fontWeight: '500',
+      transition: 'background-color 0.3s, border-color 0.3s',
     },
     skipButtonInner: {
-      padding: '10px 20px',
-      backgroundColor: '#ccc',
-      border: 'none',
-      borderRadius: '20px',
-      cursor: 'pointer',
+        padding: '16px 60px',
+        border: '1px solid #313131',
+        backgroundColor: 'white',
+        borderRadius: '200px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        lineHeight: '17.6px',
+        fontWeight: '500',
+        transition: 'background-color 0.3s, border-color 0.3s',
     },
     skipButtonInnerActive: {
-      backgroundColor: '#0070f3',
+      backgroundColor: '#70d4fc',
+      border: '1px solid #70d4fc',
       color: 'white',
+    },
+    relativeBlock: {
+      position: 'relative',
+      width: '100%',
+      maxWidth: '76rem'
+    },
+    pacrLogo: {
+      position: 'absolute',
+      left: '0',
+      top: '14px'
     },
   };
 
@@ -63,7 +107,9 @@ export default function Home() {
 
   return (
     <div style={styles.container}>
-      <h1>{headingText}</h1>
+     <div style={styles.relativeBlock}>
+      <img src="/PACR Logo.svg" style={styles.pacrLogo} alt="PACR Logo"></img>
+      <h1 style={styles.mainHeading}>{headingText}</h1></div>
       <div style={styles.fieldContainer}>
         {fields.map((field, index) => (
           <button
