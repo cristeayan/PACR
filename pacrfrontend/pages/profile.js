@@ -66,8 +66,8 @@ const Profile = () => {
               <img src="/Placeholder Profile Pic.png" alt="Profile" style={profileImageStyle} />
             </div>
             <div style={userInfoStyle}>
-              <h1>Dr. Matthew Antony Manoj</h1>
-              <p>Postdoctoral Research Fellow at Beth Israel Deaconess Medical Center | MBBS</p>
+              <h1 style={userNameHeading}>Dr. Matthew Antony Manoj</h1>
+              <p style={userProfileTagline}>Postdoctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University | MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education</p>
               <p>Boston, MA | Total Reads: 27,432 | Citations: 32</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ const profilePageStyle = {
 
 const profileMainWrapper = {
   width: '100%',
-  maxWidth: '1340px',
+  maxWidth: '1320px',
   display: 'block',
   margin: '0 auto',
 };
@@ -132,25 +132,43 @@ const backgroundImageStyle = {
 
 const profileInfoWrapperStyle = {
   display: 'flex',
-  alignItems: 'center',
-  padding: '20px',
-  borderBottom: '1px solid #ccc',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  gap: '10px',
+  padding: '0 0 24px',
+  marginTop: '-8.25rem',
 };
 
 const userImageWrapperStyle = {
-  marginRight: '20px',
+  padding: '10px',
+  borderRadius: '16px',
+  backgroundColor: '#fff',
 };
 
 const profileImageStyle = {
-  width: '150px',
-  height: '150px',
-  borderRadius: '50%',
+  width: '220px',
+  height: '230px',
+  borderRadius: '12px',
   objectFit: 'cover',
 };
 
+const userNameHeading = {
+  fontSize: '48px',
+  lineHeight: '48px',
+  letterSpacing: '-4%',
+  fontWeight: '500',
+  marginBottom: '12px',
+};
+
+const userProfileTagline = {
+  fontSize: '16px',
+  lineHeight: '22.4px',
+  fontWeight: '400',
+  color: '#000000',
+};
+
 const userInfoStyle = {
-  fontSize: '18px',
-  lineHeight: '1.5',
+  maxWidth: '48rem',
 };
 
 const statsWrapperStyle = {
