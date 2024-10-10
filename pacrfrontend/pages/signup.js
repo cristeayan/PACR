@@ -54,7 +54,7 @@ const Signup = () => {
       <div style={styles.headingBlock}><h1 style={styles.mainHeading}>Tell us a bit about yourself</h1></div>
       <div style={styles.formContainer}>
         <div style={styles.formColumn}>
-          <h2 style={styles.subHeading}>Basic Details</h2>
+          <h2 style={styles.subHeading}>Personal Details</h2>
           <InputField
             placeholder="First Name"
             name="first_name"
@@ -236,7 +236,7 @@ const styles = {
     fontWeight: '400',
     lineHeight: '13.2px',
     letterSpacing: '2%',
-    color: '#adadad',
+    color: '#313131',
     backgroundColor: '#f2f2f2'
   },
   emailHeading: {
@@ -252,7 +252,7 @@ const styles = {
     fontWeight: '400',
     lineHeight: '13.2px',
     letterSpacing: '2%',
-    color: '#adadad',
+    color: '#313131',
     backgroundColor: '#f2f2f2',
     marginBottom: '20px',
     appearance: 'none',

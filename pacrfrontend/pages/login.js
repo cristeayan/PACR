@@ -6,7 +6,7 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-const InputField = ({ change, name, label, type, style }) => (
+const InputField = ({ change, name, label, type, style, error }) => (
   <div style={styles.inputField}>
     <input
       name={name}
@@ -15,11 +15,14 @@ const InputField = ({ change, name, label, type, style }) => (
       onChange={change}
       style={{ ...styles.input, ...style }}
     />
+    {error && <p style={{ color: 'red', fontSize: '0.8em', margin: '8px 0 0 8px' }}>{error}</p>}
   </div>
 )
 
 const Login = () => {
   const [inputs, setInputs] = useState({ email: '', password: '' })
+  const [errors, setErrors] = useState({ email: '', password: '' }) // State for field-specific error messages
+  const [formError, setFormError] = useState('') // State for the form-wide error message
   const router = useRouter()
 
   useEffect(() => {
@@ -28,33 +31,45 @@ const Login = () => {
 
   function inputChange(e) {
     setInputs({ ...inputs, [e.target.name]: e.target.value })
+    setErrors({ ...errors, [e.target.name]: '' }) // Clear field error message on input change
+    setFormError('') // Clear the form-wide error message on input change
   }
 
   function getData() {
+    let formValid = true
+    const newErrors = {}
+
     if (inputs.email === '') {
-      window.alert('Enter username')
-    } else if (inputs.password === '') {
-      window.alert('Enter password')
-    } else {
-      axios
-        .post('http://127.0.0.1:8000/api/signin/', inputs)
-        .then((res) => {
-          localStorage.setItem('token', res.data.access)
-          localStorage.setItem('isloggedin', true)
-          localStorage.setItem('user', JSON.stringify(res.data.user))
-          router.push('/dashboard')
-        })
-        .catch((error) => {
-          if (error.response) {
-            window.alert('Data: ' + error.response.data)
-            window.alert('Status: ' + error.response.status)
-          } else if (error.request) {
-            window.alert(error.request)
-          } else {
-            window.alert('Error: ' + error.message)
-          }
-        })
+      newErrors.email = 'Enter username'
+      formValid = false
     }
+    if (inputs.password === '') {
+      newErrors.password = 'Enter password'
+      formValid = false
+    }
+
+    if (!formValid) {
+      setErrors(newErrors)
+      return
+    }
+
+    axios
+      .post('http://127.0.0.1:8000/api/signin/', inputs)
+      .then((res) => {
+        localStorage.setItem('token', res.data.access)
+        localStorage.setItem('isloggedin', true)
+        localStorage.setItem('user', JSON.stringify(res.data.user))
+        router.push('/dashboard')
+      })
+      .catch((error) => {
+        if (error.response) {
+          setFormError('Login failed. Please check your credentials and try again.') // Display form-wide error
+        } else if (error.request) {
+          setFormError('No response from the server. Please try again later.')
+        } else {
+          setFormError('An unexpected error occurred. Please try again.')
+        }
+      })
   }
 
   return (
@@ -63,7 +78,7 @@ const Login = () => {
         <img src="research.png" width='600px' height='600px' alt='Research'></img>
         <div style={styles.loginContainer}>
           <div style={styles.headingwrap}>
-          <h1 style={styles.heading}>Welcome Back!</h1>
+            <h1 style={styles.heading}>Welcome Back!</h1>
             <h3 style={styles.subheading}>A Community for Researchers</h3>
             <h3 style={styles.subheading}>by Researchers</h3>
           </div>
@@ -72,12 +87,14 @@ const Login = () => {
             name='email'
             label='Email or Phone Number'
             type='email'
+            error={errors.email} // Pass error message
           />
           <InputField
             change={inputChange}
             name='password'
             label='Enter Password'
             type='password'
+            error={errors.password} // Pass error message
           />
           <span style={styles.rememberMe}>
             <span style={styles.rememberCheck}>
@@ -91,6 +108,13 @@ const Login = () => {
           <button onClick={getData} style={styles.button}>
             Login
           </button>
+
+          {formError && ( // Conditionally render the error box if form-wide error exists
+            <div style={styles.errorBox}>
+              {formError}
+            </div>
+          )}
+
           <div style={styles.orContinueWith}>
             <hr style={styles.line} />
             <span style={styles.orContinueText}>or continue with</span>
@@ -265,9 +289,17 @@ const styles = {
     color: '#00b8ff',
     textDecoration: 'underline',
     fontWeight: '500'
+  },
+  errorBox: {
+    color: 'red',
+    fontSize: '0.9em',
+    border: '1px solid red',
+    borderRadius: '8px',
+    padding: '10px',
+    marginBottom: '16px',
+    textAlign: 'center',
+    backgroundColor: '#ffe6e6'
   }
 }
-
-
 
 export default Login
