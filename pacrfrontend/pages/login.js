@@ -1,81 +1,86 @@
 'use client'
 
 import "../app/globals.css";
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
-const InputField = ({ change, name, label, type, style, error }) => (
-  <div style={styles.inputField}>
-    <input
-      name={name}
-      type={type}
-      placeholder={label}
-      onChange={change}
-      style={{ ...styles.input, ...style }}
-    />
-    {error && <p style={{ color: 'red', fontSize: '0.8em', margin: '8px 0 0 8px' }}>{error}</p>}
-  </div>
-)
+const InputField = ({ change, name, label, type, error }) => {
+  // Dynamic border color based on error state
+  const inputBorderColor = error ? '#eb8181' : '#313131'; // Red for error, original color otherwise
+  
+  return (
+    <div style={styles.inputField}>
+      <input
+        name={name}
+        type={type}
+        placeholder={label}
+        onChange={change}
+        style={{ ...styles.input, borderColor: inputBorderColor }}
+      />
+      {error && <div style={styles.errorTooltip}>{error}</div>}
+    </div>
+  );
+};
 
 const Login = () => {
-  const [inputs, setInputs] = useState({ email: '', password: '' })
-  const [errors, setErrors] = useState({ email: '', password: '' }) // State for field-specific error messages
-  const [formError, setFormError] = useState('') // State for the form-wide error message
-  const router = useRouter()
+  const [inputs, setInputs] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [formError, setFormError] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
-    localStorage.clear()
-  }, [])
+    localStorage.clear();
+  }, []);
 
   function inputChange(e) {
-    setInputs({ ...inputs, [e.target.name]: e.target.value })
-    setErrors({ ...errors, [e.target.name]: '' }) // Clear field error message on input change
-    setFormError('') // Clear the form-wide error message on input change
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
+    setFormError('');
   }
 
   function getData() {
-    let formValid = true
-    const newErrors = {}
+    let formValid = true;
+    const newErrors = {};
 
     if (inputs.email === '') {
-      newErrors.email = 'Enter username'
-      formValid = false
+      newErrors.email = 'Enter username';
+      formValid = false;
     }
     if (inputs.password === '') {
-      newErrors.password = 'Enter password'
-      formValid = false
+      newErrors.password = 'Enter password';
+      formValid = false;
     }
 
     if (!formValid) {
-      setErrors(newErrors)
-      return
+      setErrors(newErrors);
+      return;
     }
 
     axios
       .post('http://127.0.0.1:8000/api/signin/', inputs)
       .then((res) => {
-        localStorage.setItem('token', res.data.access)
-        localStorage.setItem('isloggedin', true)
-        localStorage.setItem('user', JSON.stringify(res.data.user))
-        router.push('/dashboard')
+        localStorage.setItem('token', res.data.access);
+        localStorage.setItem('isloggedin', true);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        router.push('/dashboard');
       })
       .catch((error) => {
         if (error.response) {
-          setFormError('Login failed. Please check your credentials and try again.') // Display form-wide error
+          setFormError('Login failed. Please check your credentials and try again.');
         } else if (error.request) {
-          setFormError('No response from the server. Please try again later.')
+          setFormError('No response from the server. Please try again later.');
         } else {
-          setFormError('An unexpected error occurred. Please try again.')
+          setFormError('An unexpected error occurred. Please try again.');
         }
-      })
+      });
   }
 
   return (
     <>
       <div style={styles.mainContainer}>
-        <img src="research.png" width='600px' height='600px' alt='Research'></img>
+        <img src="research.png" width='600px' height='600px' alt='Research' />
         <div style={styles.loginContainer}>
           <div style={styles.headingwrap}>
             <h1 style={styles.heading}>Welcome Back!</h1>
@@ -87,14 +92,14 @@ const Login = () => {
             name='email'
             label='Email or Phone Number'
             type='email'
-            error={errors.email} // Pass error message
+            error={errors.email}
           />
           <InputField
             change={inputChange}
             name='password'
             label='Enter Password'
             type='password'
-            error={errors.password} // Pass error message
+            error={errors.password}
           />
           <span style={styles.rememberMe}>
             <span style={styles.rememberCheck}>
@@ -109,7 +114,7 @@ const Login = () => {
             Login
           </button>
 
-          {formError && ( // Conditionally render the error box if form-wide error exists
+          {formError && (
             <div style={styles.errorBox}>
               {formError}
             </div>
@@ -131,9 +136,8 @@ const Login = () => {
         </div>
       </div>
     </>
-  )
+  );
 }
-
 const styles = {
   
   mainContainer: {
@@ -185,6 +189,7 @@ const styles = {
   inputField: {
     marginBottom: '16px',
     width: '100%',
+    position: 'relative',
   },
   input: {
     background: '#F2F2F2',
@@ -299,7 +304,19 @@ const styles = {
     marginBottom: '16px',
     textAlign: 'center',
     backgroundColor: '#ffe6e6'
-  }
+  },
+  errorTooltip: {
+    position: 'absolute',
+    top: '0.75rem',
+    right: '-7.25rem',
+    backgroundColor: '#f8d7da',
+    color: '#721c24',
+    padding: '6px 8px',
+    borderRadius: '6px',
+    fontSize: '12px',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+    whiteSpace: 'nowrap'
+  },
 }
 
 export default Login
