@@ -62,6 +62,16 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ),
 }
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Set access token lifetime (e.g., 60 minutes)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Set refresh token lifetime (e.g., 7 days)
+    'ROTATE_REFRESH_TOKENS': True,                   # Optionally, rotate refresh tokens after each use
+    'BLACKLIST_AFTER_ROTATION': True,                # Blacklist old refresh tokens after rotation
+}
+
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {

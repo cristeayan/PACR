@@ -32,19 +32,27 @@ class LikeSerializer(serializers.ModelSerializer):
         fields = ["post", "user"]
         read_only_fields = ["user"]
 
+# Reply Serializer
+# class ReplySerializer(serializers.ModelSerializer):
+#     author = serializers.ReadOnlyField(source="author.email")
+
+#     class Meta:
+#         model = Comment
+#         fields = ["id", "author", "content", "created_at"]
+
 # Comment Serializer
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source="author.email")
-    replies = serializers.SerializerMethodField()
+    # replies = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ["id", "post", "author", "content", "created_at", "parent", "replies"]
+        fields = ["id", "post", "author", "content", "created_at", "parent",] #"replies"]
 
-    def get_replies(self, obj):
-        # Get nested comments (replies)
-        replies = Comment.objects.filter(parent=obj)
-        return CommentSerializer(replies, many=True).data
+    # def get_replies(self, obj):
+    #     # Get nested comments (replies)
+    #     replies = Comment.objects.filter(parent=obj)
+    #     return CommentSerializer(replies, many=True).data
 
 
 # Discipline Serializer
