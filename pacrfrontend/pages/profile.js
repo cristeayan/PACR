@@ -68,14 +68,43 @@ const Profile = () => {
             <div style={userInfoStyle}>
               <h1 style={userNameHeading}>Dr. Matthew Antony Manoj</h1>
               <p style={userProfileTagline}>Postdoctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University | MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education</p>
-              <p>Boston, MA | Total Reads: 27,432 | Citations: 32</p>
+            </div>
+          </div>
+
+          {/* User Location Information */}
+          <div style={locationWrapperStyle}>
+            <p>Boston, Massachusetts, United States</p>
+            <div style={dotWrapperStyle}></div>
+            <div style={userContactWrapStyle}>
+              <img src= 'Profile Phone Icon.svg' alt = 'Phone Icon'></img>
+              <img src= 'Profile Message Icon.svg' alt = 'Message Icon'></img>
+              <img src= 'Profile Globe Icon.svg' alt = 'Globe Icon'></img>
             </div>
           </div>
 
           {/* Stats Section */}
-          <div style={statsWrapperStyle}>
-            <p>Total Reads: 27,432 | H-index: 4.0 | PACR Score: 78.2 | Citations: 32</p>
+          <div style={mainStatsWrapperStyle}>
+            <div style={mainInnerWrapperStyle}>
+              <div style={statsWrapperStyle}>
+                <p style={statsTextStyle}>Total Reads: <span style={statsBoldStyle}>27,432</span></p>
+                <div style={dotWrapperStyle}></div>
+                <p style={statsTextStyle}>H-index: <span style={statsBoldStyle}>4.0</span></p>
+                <div style={dotWrapperStyle}></div>
+                <p style={statsTextStyle}>PACR Score: <span style={statsBoldStyle}>78.2</span></p>
+                <div style={dotWrapperStyle}></div>
+                <p style={statsTextStyle}>Citations: <span style={statsBoldStyle}>32</span></p>
+              </div>
+              <div style={statsWrapperStyle}>
+                <p style={followersTextStyle}><span style={statsBoldStyle}>2,478</span> Followers</p>
+                <div style={blueDotWrapperStyle}></div>
+                <p style={followersTextStyle}><span style={statsBoldStyle}>1,298</span> Friends</p>
+              </div>
+            </div>
+            <a href= '#' style={analyticsButtonStyle}><img src='Analytics Icon.svg' alt='Analytics Icon'></img> Analytics</a>
           </div>
+
+          {/* Horizontal Divider */}
+          <div style={dividerWrapperStyle}></div>
 
           {/* Tabs Section */}
           <div style={tabsWrapperStyle}>
@@ -171,29 +200,119 @@ const userInfoStyle = {
   maxWidth: '48rem',
 };
 
+const locationWrapperStyle = {
+  display: 'flex',
+  justifyContent: 'left',
+  gap: '16px',
+  alignItems: 'center',
+};
+
+const userContactWrapStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+};
+
+const dotWrapperStyle = {
+  width: '4px',
+  height: '4px',
+  backgroundColor: '#313131',
+  borderRadius: '50%',
+};
+
+const blueDotWrapperStyle = {
+  width: '4px',
+  height: '4px',
+  backgroundColor: '#36c8f4',
+  borderRadius: '50%',
+};
+
+const mainStatsWrapperStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginTop: '24px',
+};
+
 const statsWrapperStyle = {
-  padding: '10px',
-  borderBottom: '1px solid #ccc',
-  textAlign: 'center',
+  display: 'flex',
+  justifyContent: 'left',
+  gap: '16px',
+  alignItems: 'center',
+};
+
+const statsTextStyle = {
+  fontSize: '12px',
+  lineHeight: '14.84px',
+  fontWeight: '400',
+  textTransform: 'uppercase',
+  color: '#313131',
+};
+
+const statsBoldStyle = {
+  fontWeight: '600',
+};
+
+const followersTextStyle = {
+  fontSize: '12px',
+  lineHeight: '14.84px',
+  fontWeight: '400',
+  textTransform: 'uppercase',
+  color: '#36c8f4',
+};
+
+const mainInnerWrapperStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'left',
+  gap: '12px',
+};
+
+const analyticsButtonStyle = {
+  backgroundColor: '#70d4fc',
+  borderRadius: '200px',
+  padding: '16px 40px',
+  fontSize: '16px',
+  lineHeight: '18px',
+  letterSpacing: '2%',
+  fontWeight: '500',
+  textDecoration: 'none',
+  color: '#ffffff',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+};
+
+const dividerWrapperStyle = {
+  width: '100%',
+  height: '0.5px',
+  backgroundColor: '#36C8F4',
+  margin: '46px 0 36px',
 };
 
 const tabsWrapperStyle = {
   display: 'flex',
-  justifyContent: 'space-around',
+  justifyContent: 'center',
+  columnGap: '146px',
   padding: '10px 0',
-  borderBottom: '1px solid #ccc',
 };
 
 const tabStyle = {
   cursor: 'pointer',
-  padding: '10px 20px',
-  fontWeight: 'bold',
-  color: '#333',
+  padding: '0 20px 10px',
+  fontWeight: '400',
+  color: '#313131',
+  fontSize: '16px',
+  lineHeight: '22.4px',
 };
 
 const activeTabStyle = {
   ...tabStyle,
-  borderBottom: '2px solid blue',
+  borderBottom: '2px solid #70D4FC',
+  color: '#36c8f4',
+  fontWeight: '600',
+  borderBottomLeftRadius: '10px',
+  borderBottomRightRadius: '10px',
 };
 
 const contentWrapperStyle = {
