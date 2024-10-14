@@ -187,7 +187,7 @@ const styles = {
     fontWeight: 'bold'
   },
   inputField: {
-    marginBottom: '16px',
+    marginBottom: '24px',
     width: '100%',
     position: 'relative',
   },
@@ -307,15 +307,10 @@ const styles = {
   },
   errorTooltip: {
     position: 'absolute',
-    top: '0.75rem',
-    right: '-7.25rem',
-    backgroundColor: '#f8d7da',
-    color: '#721c24',
-    padding: '6px 8px',
-    borderRadius: '6px',
+    bottom: '-18px',
+    left: '8px',
+    color: 'red',
     fontSize: '12px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-    whiteSpace: 'nowrap'
   },
 }
 
