@@ -5,7 +5,7 @@ import "../app/globals.css";
 
 const Header = () => {
   const router = useRouter()
-  // const { user } = useUser();
+  const { user } = useUser();
 
   const headerStyle = {
     display: 'flex',
@@ -190,6 +190,7 @@ const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleUsernameClick = () => {
+    console.log(user)
     setShowDropdown(!showDropdown);
   };
 
@@ -214,7 +215,9 @@ const Header = () => {
       <div style={navIconsStyle}>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="Header Home Icon.svg" alt="home"/>
+            <img style={iconStyle} src="Header Home Icon.svg" alt="home" onClick={()=>{
+              router.push('/dashboard')
+            }}/>
           </div>
           <span style={navTextStyle}>Home</span>
         </div>
@@ -253,11 +256,19 @@ const Header = () => {
         <div style={dropdownContainerStyle}>
           <div style={userButtonStyle} onClick={handleUsernameClick}>
             {/* <p>{user ? user.first_name +" "+ user.last_name: 'Guest'}</p> */}
-            <img src='Dummy Profile.png'></img>
+            <img 
+              src={user ? user.profile_picture : 'Dummy Profile.png'} 
+              alt="Profile" 
+              style={{ 
+                height: '60px', 
+                width: '60px', 
+                borderRadius: '50%' 
+              }} 
+            />
             <img src='Profile Down Arrow.svg'></img>
           </div >
           <div style={{ ...dropdownStyle, ...(showDropdown ? dropdownVisibleStyle : {}) }}>
-            <div style={dropdownItemStyle}>Profile Settings</div>
+            <div style={dropdownItemStyle} on onClick={()=>{router.push('/profile')}}>Profile Settings</div>
             <div style={dropdownItemStyle}>Manage Company Profiles</div>
             <div style={dropdownItemStyle}>Ads History/Manager</div>
             <div style={dropdownItemStyle}>Help Center</div>

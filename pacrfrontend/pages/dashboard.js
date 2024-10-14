@@ -16,7 +16,7 @@ const Dashboard = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* <UserProvider> */}
+      <UserProvider>
         <Header />
         <main style={{ flex: '1', display: 'flex', flexDirection: 'row' }}>
           <Sidebar />
@@ -28,7 +28,7 @@ const Dashboard = () => {
           
           <Recommendations />
         </main>
-      {/* </UserProvider> */}
+      </UserProvider>
     </div>
   );
 }
