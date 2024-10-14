@@ -52,12 +52,12 @@ const styles = {
 import { useUser } from '../context/UserContext';
 
 const Sidebar = () => {
-  const { user } = useUser();
+  // const { user } = useUser();
 
   return (
     <aside style={styles.sidebar}>
-      <div style={styles.profileCard}>
-        {/* Check if user exists before trying to access profile_picture */}
+      {/* <div style={styles.profileCard}>
+        Check if user exists before trying to access profile_picture
         {user ? (
           <>
             <img
@@ -67,7 +67,6 @@ const Sidebar = () => {
             />
             <div style={styles.profileName}>{`${user.first_name} ${user.last_name}`}</div>
             <div style={styles.profileInfo}>
-              {/* Update with actual user info or hardcoded data */}
               Post Doctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University<br />
               MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education
             </div>
@@ -75,7 +74,7 @@ const Sidebar = () => {
         ) : (
           <div style={styles.profileInfo}>Loading user information...</div>
         )}
-      </div>
+      </div> */}
       <div style={styles.statsCard}>
         <div style={styles.statsTitle}>Your Research Statistics</div>
         <div style={styles.statsItem}>H-Index: 4.0</div>

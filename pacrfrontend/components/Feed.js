@@ -1,3 +1,7 @@
+import React from 'react';
+import Post from 'Post'; // Import the Post component
+
+
 const styles = {
   feed: {
     flex: '1',
