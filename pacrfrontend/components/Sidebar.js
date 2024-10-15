@@ -1,35 +1,55 @@
 const styles = {
   sidebar: {
-    flex: '0 0 250px',
+    height: '100%',
+  },
+  sidebarInner: {
+    overflowY: 'auto',
+    borderRadius: '8px',
     backgroundColor: '#ffffff',
     padding: '20px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    height: '100vh',
-    overflowY: 'auto',
+    boxShadow: '5px 4px 16px 0px #0000001C',
+    maxHeight: '60rem',
+    height: '100%',
   },
   profileCard: {
     marginBottom: '20px',
-    padding: '20px',
-    backgroundColor: '#f5f5f5',
-    boxShadow: '0 0 5px rgba(0, 0, 0, 0.1)',
-    borderRadius: '8px',
+    border: '0.5px solid #313131',
+    borderRadius: '10px',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    rowGap: '16px',
+  },
+  profileCoverImage: {
+    width: '100%',
+    height: '120px',
+    objectFit: 'cover',
+    objectPosition: 'center',
   },
   profileImage: {
     width: '100px',
     height: '100px',
     borderRadius: '50%',
-    marginBottom: '10px',
+    marginTop: '-72px',
+  },
+  profileContentWrap: {
+    padding: '0 20px 20px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '12px',
   },
   profileName: {
     fontSize: '1.2rem',
-    fontWeight: 'bold',
-    marginBottom: '5px',
-    color: '#333',
+    fontWeight: '700',
+    color: '#313131',
   },
   profileInfo: {
-    fontSize: '0.9rem',
-    marginBottom: '10px',
-    color: '#555',
+    fontSize: '0.875rem',
+    color: '#313131',
+    textAlign: 'center',
+    lineHeight: '20px',
   },
   statsCard: {
     marginBottom: '20px',
@@ -56,6 +76,7 @@ const Sidebar = () => {
 
   return (
     <aside style={styles.sidebar}>
+      <div style={styles.sidebarInner}>
       {/* <div style={styles.profileCard}>
         Check if user exists before trying to access profile_picture
         {user ? (
@@ -75,12 +96,23 @@ const Sidebar = () => {
           <div style={styles.profileInfo}>Loading user information...</div>
         )}
       </div> */}
+      <div style={styles.profileCard}>
+        <img style={styles.profileCoverImage} src='/Placeholder Cover.png' alt='Profile Cover' />
+        <img style={styles.profileImage} src='/Placeholder Profile Pic.png' alt='Profile Pic' />
+        <div style={styles.profileContentWrap}>
+        <div style={styles.profileName}>Dr. Matthew Antony</div>
+        <div style={styles.profileInfo}>
+          Post Doctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education
+         </div>
+         </div>
+      </div>
       <div style={styles.statsCard}>
         <div style={styles.statsTitle}>Your Research Statistics</div>
         <div style={styles.statsItem}>H-Index: 4.0</div>
         <div style={styles.statsItem}>PACR Score: 78.2</div>
         <div style={styles.statsItem}>Total Reads: 27,432</div>
         <div style={styles.statsItem}>Total Citations: 32</div>
+      </div>
       </div>
     </aside>
   );
