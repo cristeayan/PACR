@@ -89,7 +89,7 @@ const Post = () => {
   return (
     <div style={styles.postContainer}>
       <div style={styles.postHeader}>
-        <img src="/Dummy Profile.png" alt="User Profile" style={styles.profileImage} />
+        <img src="/Dummy_Profile.png" alt="User Profile" style={styles.profileImage} />
         <div>
           <div style={styles.userName}>Dr. Matthew Antony</div>
           <div style={styles.tagline}>
@@ -116,7 +116,7 @@ const Post = () => {
 
       <div style={styles.commentSection}>
         <img
-          src="/Dummy Profile.png"
+          src="/Dummy_Profile.png"
           alt="User Profile"
           style={styles.commentProfileImage}
         />

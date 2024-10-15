@@ -7,6 +7,7 @@ import axios from 'axios';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import "../app/page.js";
+import cities from 'cities.json'
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const Signup = () => {
     user_type: '',
     location: '',
   });
+  const [filteredCities, setFilteredCities] = useState([]);
 
   const [errors, setErrors] = useState({});
   const router = useRouter();
@@ -79,6 +81,28 @@ const Signup = () => {
       })
       .catch(error => alert(error.message));
   };
+    // Filter cities based on user input, limit to 3 suggestions
+    const handleCityInputChange = (input) => {
+      setFormData({ ...formData, location: input });
+  
+      // Only filter and show 3 suggestions if input is not empty
+      if (input.trim()) {
+        const filtered = cities
+          .filter((city) =>
+            city.name.toLowerCase().includes(input.toLowerCase())
+          )
+          .slice(0, 3); // Limit the results to 3
+        setFilteredCities(filtered);
+      } else {
+        setFilteredCities([]);
+      }
+    };
+  
+    // Select a city from the suggestions
+    const handleCitySelect = (cityName) => {
+      setFormData({ ...formData, location: cityName });
+      setFilteredCities([]); // Hide suggestions after selection
+    };
 
   return (
     <div style={styles.pageContainer}>
@@ -153,14 +177,25 @@ const Signup = () => {
               <img src="select-dropdown.svg" alt="Arrow Image" style={styles.arrowDropdown} />
             </div>
             <h2 style={styles.subHeading}>Tell us where you work?</h2>
-            <InputField
-              placeholder="Location"
-              name="location"
-              type="text"
+            <input
+              placeholder="Start typing a city name..."
               value={formData.location}
-              change={handleChange}
-              error={errors.location}
+              onChange={(e) => handleCityInputChange(e.target.value)}
+              style={styles.input}
             />
+            {filteredCities.length > 0 && (
+              <ul style={styles.citySuggestionList}>
+                {filteredCities.map((city) => (
+                  <li
+                    key={city.name}
+                    style={styles.citySuggestionItem}
+                    onClick={() => handleCitySelect(city.name)}
+                  >
+                    {city.name}, {city.country}
+                  </li>
+                ))}
+              </ul>
+            )}
             <h2 style={styles.subHeading}>Enter Your Phone Number (Optional)</h2>
           <div style={styles.inputField}>
             <PhoneInput
@@ -334,6 +369,20 @@ const styles = {
     color: '#FFFFFF',
     fontSize: '16px',
     fontWeight: '600',
+    cursor: 'pointer',
+  },
+  citySuggestionList: {
+    listStyleType: 'none',
+    paddingLeft: 0,
+    backgroundColor: '#fff',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    maxHeight: '150px',
+    overflowY: 'auto',
+    marginTop: '4px',
+  },
+  citySuggestionItem: {
+    padding: '10px',
     cursor: 'pointer',
   },
 };

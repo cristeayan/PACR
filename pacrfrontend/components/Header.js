@@ -257,7 +257,7 @@ const Header = () => {
           <div style={userButtonStyle} onClick={handleUsernameClick}>
             {/* <p>{user ? user.first_name +" "+ user.last_name: 'Guest'}</p> */}
             <img 
-              src={user ? user.profile_picture : 'Dummy Profile.png'} 
+              src={user ? user.profile_picture : '/Dummy_Profile.png'} 
               alt="Profile" 
               style={{ 
                 height: '60px', 

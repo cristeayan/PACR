@@ -3,6 +3,7 @@ from .models import User, Post, Comment, Like, Discipline
 
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
     class Meta:
         model = User
         fields = [
@@ -16,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
             "location",
             "profile_picture",
             "cover_picture",
+            "password"
         ]
 
     def create(self, validated_data):
@@ -32,17 +34,11 @@ class LikeSerializer(serializers.ModelSerializer):
         fields = ["post", "user"]
         read_only_fields = ["user"]
 
-# Reply Serializer
-# class ReplySerializer(serializers.ModelSerializer):
-#     author = serializers.ReadOnlyField(source="author.email")
 
-#     class Meta:
-#         model = Comment
-#         fields = ["id", "author", "content", "created_at"]
 
 # Comment Serializer
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source="author.email")
+    author = serializers.ReadOnlyField(source="author.id")
     # replies = serializers.SerializerMethodField()
 
     class Meta:

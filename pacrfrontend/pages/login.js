@@ -63,7 +63,7 @@ const Login = () => {
       .then((res) => {
         localStorage.setItem('token', res.data.access);
         localStorage.setItem('isloggedin', true);
-        // localStorage.setItem('user', JSON.stringify(res.data.user));
+        localStorage.setItem('user', JSON.stringify(res.data.user));
         router.push('/dashboard');
       })
       .catch((error) => {

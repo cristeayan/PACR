@@ -4,25 +4,74 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.decorators import action
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import authenticate
 from .models import User, Post, Comment, Like, Discipline
 from .serializers import UserSerializer, PostSerializer, CommentSerializer, LikeSerializer
 
 # Signup View
 class SignupView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
 
-            # Automatically log the user in and create JWT token
+            # Automatically generate JWT token for the new user
             refresh = RefreshToken.for_user(user)
-            
+
+            # Include user data in the response
+            user_data = UserSerializer(user).data
+
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'user': user_data  # Return user details
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Signin View (Login)
+class SigninView(APIView):
+    permission_classes = [AllowAny]
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='User email'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='User password'),
+            }
+        ),
+        responses={
+            200: openapi.Response('Login successful', UserSerializer),
+            401: 'Unauthorized',
+        }
+    )
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        # Authenticate the user
+        user = authenticate(request, email=email, password=password)
+        
+        if user is not None:
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            
+            # Serialize the user data
+            user_data = UserSerializer(user).data
+
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'user': user_data  # Include user details in response
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 # User ViewSet
 class UserViewSet(viewsets.ModelViewSet):
@@ -62,6 +111,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
+
 # Post ViewSet
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -73,23 +123,16 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def followed_posts(self, request):
-        # Get all users the current user follows
+        # Get posts from users and disciplines the user follows
         following_users = request.user.following.all()
-
-        # Get posts made by those users
         posts_from_users = Post.objects.filter(author__in=following_users)
 
-        # Get disciplines the user follows
         followed_disciplines = request.user.disciplines_followed.all()
-
-        # Get posts from those disciplines
         posts_from_disciplines = Post.objects.filter(discipline__in=followed_disciplines)
 
-        # Combine posts and order them by creation date
         combined_posts = posts_from_users | posts_from_disciplines
         combined_posts = combined_posts.order_by('-created_at')
 
-        # Serialize and return the combined posts
         serializer = PostSerializer(combined_posts, many=True)
         return Response(serializer.data)
 
@@ -101,25 +144,23 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def repost(self, request, pk=None):
-        original_post = self.get_object()  # Get the original post
-
-        # Get the content provided by the user
+        original_post = self.get_object()
         user_content = request.data.get('content')
 
         repost_data = {
-            'content': user_content,  # Use the content from the user
-            'repost_of': original_post.id,  # Reference the original post
-            'author': request.user  # Set the author to the current user
+            'content': user_content,
+            'repost_of': original_post.id,
+            'author': request.user
         }
 
-        # Create the new repost
         serializer = self.get_serializer(data=repost_data)
         if serializer.is_valid():
-            serializer.save()  # Save the repost
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 # Comment ViewSet
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -127,17 +168,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Save the comment with a potential parent
         serializer.save(author=self.request.user)
 
     def destroy(self, request, *args, **kwargs):
         comment = self.get_object()
 
-        # Check if the current user is the author of the comment
         if comment.author != request.user:
             return Response({"detail": "You can only delete your own comments."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Proceed to delete the comment
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -150,26 +188,21 @@ class LikeViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         post_id = request.data.get('post')
-        user = request.user  # Get the authenticated user
+        user = request.user
 
-        # Check if the user has already liked the post
         if Like.objects.filter(post_id=post_id, user=user).exists():
             return Response({"detail": "You already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Use the serializer to validate and save the like
         serializer = self.get_serializer(data={'post': post_id})
         serializer.is_valid(raise_exception=True)
-        
-        # Save the like and assign the user
         serializer.save(user=user)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
     def destroy(self, request, *args, **kwargs):
         like = self.get_object()
         if like.user != request.user:
             return Response({"detail": "You can only unlike your own like."}, status=status.HTTP_403_FORBIDDEN)
-        
+
         like.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

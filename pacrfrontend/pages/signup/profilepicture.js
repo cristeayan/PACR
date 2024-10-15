@@ -11,11 +11,18 @@ const ProfilePictureUpload = () => {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null); // Reference to file input element
   const router = useRouter();
+  const [user,setUser]=useState(null)
+  const [token,setToken]=useState(null)
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+    }
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
     }
   }, []);
 
@@ -68,7 +75,9 @@ const ProfilePictureUpload = () => {
     data.append('profile_picture', profilePicture);
 
     try {
-      await axios.patch(`http://127.0.0.1:8000/api/users/${user.id}/`, data);
+      await axios.patch(`http://127.0.0.1:8000/api/users/${user.id}/`, data,
+         {headers: {
+          'Authorization': `Bearer ${token}`}});
       router.push('/dashboard');
     } catch (error) {
       alert(error.message);
