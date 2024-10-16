@@ -1,11 +1,15 @@
 const styles = {
   recommendations: {
-    flex: '0 0 250px',
+    height: '100%',
+  },
+  recommendationsInner: {
+    overflowY: 'auto',
+    borderRadius: '8px',
     backgroundColor: '#ffffff',
     padding: '20px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    height: '100vh',
-    overflowY: 'auto',
+    boxShadow: '5px 4px 16px 0px #0000001C',
+    maxHeight: '60rem',
+    height: '100%',
   },
   title: {
     fontSize: '1.2rem',
@@ -37,6 +41,7 @@ const styles = {
 const Recommendations = () => {
   return (
     <aside style={styles.recommendations}>
+      <div style={styles.recommendationsInner}>
       <div style={styles.title}>Recommended Researchers</div>
       <div style={styles.recommendationItem}>
         <img style={styles.profileImage} src="/profile-pic.jpg" alt="Researcher" />
@@ -59,6 +64,7 @@ const Recommendations = () => {
           <div style={styles.recommendationInfo}>Field of Study</div>
         </div>
       </div>
+     </div>
     </aside>
   );
 }

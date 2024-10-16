@@ -302,7 +302,7 @@ const styles = {
       padding: '20px',
       borderRadius: '10px',
       boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-      margin: '72px auto 0',
+      margin: '0 auto',
       maxWidth: '40rem',
     },
     postHeader: {

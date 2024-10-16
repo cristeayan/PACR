@@ -15,16 +15,30 @@ const Profile = () => {
           <div style={leftColumnStyle}>
             {/* Profile Tab Content */}
             <div style={postStyle}>
-              <p>Just navigating my way through this world of research...</p>
-              <p>Work: Beth Israel Deaconess Medical Center</p>
-              <p>Joined: August 1st, 2022</p>
-            </div>
-            <div style={photoGalleryStyle}>
-              <h3>Photos</h3>
-              <div style={photosWrapper}>
-                <img src="/path-to-photo1.jpg" alt="Photo1" style={photoStyle} />
-                <img src="/path-to-photo2.jpg" alt="Photo2" style={photoStyle} />
-                <img src="/path-to-photo3.jpg" alt="Photo3" style={photoStyle} />
+              <h2 style={aboutHeading}>About</h2>
+              <p style={aboutText}>Passionate about transcending boundaries and igniting imaginations, I've embraced the digital canvas for my artistic journey. Specializing in graphic design, UX design, digital art, and architecture, my work aims to create meaningful experiences and evoke emotions, blending beauty with functionality.</p>
+              <p style={seeMoreText}>...See More</p>
+              <div style={aboutDetailStyle}>
+                <div style={aboutDetailwrap}>
+                  <img src='Profile Work Icon.svg'></img>
+                  <p style={aboutDetailText}>Works at Beth Israel Deaconess Medical Center</p>
+                </div>
+                <div style={aboutDetailwrap}>
+                  <img src='Profile Postdoc Icon.svg'></img>
+                  <p style={aboutDetailText}>Postdoc Research Fellow</p>
+                </div>
+                <div style={aboutDetailwrap}>
+                  <img src='Profile Studied Icon.svg'></img>
+                  <p style={aboutDetailText}>Studied at Kasturba Medical College, Mangalore</p>
+                </div>
+                <div style={aboutDetailwrap}>
+                  <img src='Profile Lives Icon.svg'></img>
+                  <p style={aboutDetailText}>Lives in Boston, MA</p>
+                </div>
+                <div style={aboutDetailwrap}>
+                  <img src='Profile Joined Icon.svg'></img>
+                  <p style={aboutDetailText}>Joined on August 1st, 2022</p>
+                </div>
               </div>
             </div>
           </div>
@@ -56,82 +70,108 @@ const Profile = () => {
         <div style={profilePageStyle}>
           {/* Header Section with Background Image */}
           <div style={headerStyle}>
-            <img src="/Placeholder Cover Image.jpg" alt="Profile Background" style={backgroundImageStyle} />
+            <img src="/Placeholder Cover.jpg" alt="Profile Background" style={backgroundImageStyle} />
           </div>
 
           {/* User Information */}
           <div style={profileMainWrapper}>
-          <div style={profileInfoWrapperStyle}>
-            <div style={userImageWrapperStyle}>
-              <img src="/Placeholder Profile Pic.png" alt="Profile" style={profileImageStyle} />
-            </div>
-            <div style={userInfoStyle}>
-              <h1 style={userNameHeading}>Dr. Matthew Antony Manoj</h1>
-              <p style={userProfileTagline}>Postdoctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University | MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education</p>
-            </div>
-          </div>
-
-          {/* User Location Information */}
-          <div style={locationWrapperStyle}>
-            <p>Boston, Massachusetts, United States</p>
-            <div style={dotWrapperStyle}></div>
-            <div style={userContactWrapStyle}>
-              <img src= 'Profile Phone Icon.svg' alt = 'Phone Icon'></img>
-              <img src= 'Profile Message Icon.svg' alt = 'Message Icon'></img>
-              <img src= 'Profile Globe Icon.svg' alt = 'Globe Icon'></img>
-            </div>
-          </div>
-
-          {/* Stats Section */}
-          <div style={mainStatsWrapperStyle}>
-            <div style={mainInnerWrapperStyle}>
-              <div style={statsWrapperStyle}>
-                <p style={statsTextStyle}>Total Reads: <span style={statsBoldStyle}>27,432</span></p>
-                <div style={dotWrapperStyle}></div>
-                <p style={statsTextStyle}>H-index: <span style={statsBoldStyle}>4.0</span></p>
-                <div style={dotWrapperStyle}></div>
-                <p style={statsTextStyle}>PACR Score: <span style={statsBoldStyle}>78.2</span></p>
-                <div style={dotWrapperStyle}></div>
-                <p style={statsTextStyle}>Citations: <span style={statsBoldStyle}>32</span></p>
+            <div style={profileInfoWrapperStyle}>
+              <div style={userImageWrapperStyle}>
+                <img src="/Placeholder Profile Pic.png" alt="Profile" style={profileImageStyle} />
               </div>
-              <div style={statsWrapperStyle}>
-                <p style={followersTextStyle}><span style={statsBoldStyle}>2,478</span> Followers</p>
-                <div style={blueDotWrapperStyle}></div>
-                <p style={followersTextStyle}><span style={statsBoldStyle}>1,298</span> Friends</p>
+              <div style={userInfoStyle}>
+                <h1 style={userNameHeading}>Dr. Matthew Antony Manoj</h1>
+                <p style={userProfileTagline}>Postdoctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University | MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education</p>
               </div>
             </div>
-            <a href= '#' style={analyticsButtonStyle}><img src='Analytics Icon.svg' alt='Analytics Icon'></img> Analytics</a>
-          </div>
 
-          {/* Horizontal Divider */}
-          <div style={dividerWrapperStyle}></div>
+            {/* User Location Information */}
+            <div style={locationWrapperStyle}>
+              <p>Boston, Massachusetts, United States</p>
+              <div style={dotWrapperStyle}></div>
+              <div style={userContactWrapStyle}>
+                <img src='Profile Phone Icon.svg' alt='Phone Icon' />
+                <img src='Profile Message Icon.svg' alt='Message Icon' />
+                <img src='Profile Globe Icon.svg' alt='Globe Icon' />
+              </div>
+            </div>
 
-          {/* Tabs Section */}
-          <div style={tabsWrapperStyle}>
-            <div style={activeTab === 'Profile' ? activeTabStyle : tabStyle} onClick={() => setActiveTab('Profile')}>Profile</div>
-            <div style={activeTab === 'About' ? activeTabStyle : tabStyle} onClick={() => setActiveTab('About')}>About</div>
-            <div style={activeTab === 'Research' ? activeTabStyle : tabStyle} onClick={() => setActiveTab('Research')}>Research</div>
-            <div style={activeTab === 'Network' ? activeTabStyle : tabStyle} onClick={() => setActiveTab('Network')}>Network</div>
-          </div>
+            {/* Stats Section */}
+            <div style={mainStatsWrapperStyle}>
+              <div style={mainInnerWrapperStyle}>
+                <div style={statsWrapperStyle}>
+                  <p style={statsTextStyle}>Total Reads: <span style={statsBoldStyle}>27,432</span></p>
+                  <div style={dotWrapperStyle}></div>
+                  <p style={statsTextStyle}>H-index: <span style={statsBoldStyle}>4.0</span></p>
+                  <div style={dotWrapperStyle}></div>
+                  <p style={statsTextStyle}>PACR Score: <span style={statsBoldStyle}>78.2</span></p>
+                  <div style={dotWrapperStyle}></div>
+                  <p style={statsTextStyle}>Citations: <span style={statsBoldStyle}>32</span></p>
+                </div>
+                <div style={statsWrapperStyle}>
+                  <p style={followersTextStyle}><span style={statsBoldStyle}>2,478</span> Followers</p>
+                  <div style={blueDotWrapperStyle}></div>
+                  <p style={followersTextStyle}><span style={statsBoldStyle}>1,298</span> Friends</p>
+                </div>
+              </div>
+              <a href='#' style={analyticsButtonStyle}><img src='Analytics Icon.svg' alt='Analytics Icon' /> Analytics</a>
+            </div>
 
-          {/* Tab Content */}
-          <div style={contentWrapperStyle}>
-            {renderTabContent()}
+            {/* Horizontal Divider */}
+            <div style={dividerWrapperStyle}></div>
 
-            {/* Featured Section (Right Column) */}
-            <div style={rightColumnStyle}>
-              <div style={featuredPostStyle}>
-                <h3>Featured</h3>
-                <p>Excited to share that I will be joining the research at Harvard...</p>
+            {/* Tabs Section */}
+            <div style={tabsWrapperStyle}>
+              <div style={activeTab === 'Profile' ? activeTabStyle : tabStyle} onClick={() => setActiveTab('Profile')}>Profile</div>
+              <div style={activeTab === 'About' ? activeTabStyle : tabStyle} onClick={() => setActiveTab('About')}>Statistics</div>
+              <div style={activeTab === 'Research' ? activeTabStyle : tabStyle} onClick={() => setActiveTab('Research')}>Research</div>
+              <div style={activeTab === 'Network' ? activeTabStyle : tabStyle} onClick={() => setActiveTab('Network')}>Network</div>
+            </div>
+
+            {/* Tab Content */}
+            <div style={contentWrapperStyle}>
+              {renderTabContent()}
+
+              {/* Right Column (This is where the posting box will appear in the Profile tab) */}
+              <div style={rightColumnStyle}>
+                {activeTab === 'Profile' && (
+                  <div style={postBoxWrapperStyle}>
+                    <img src='/Placeholder Profile Pic.png' alt='Profile' style={postBoxProfilePicStyle} />
+                    <div style={postBoxContentStyle}>
+                      <input
+                        type='text'
+                        placeholder='Let the world know what you want to say...'
+                        style={postBoxInputStyle}
+                      />
+                      <div style={postBoxButtonsWrapperStyle}>
+                        <button style={postBoxButtonStyle}>
+                          <img src='Upload Photo Icon.png' alt='Photo/Video' /> Photo/Video
+                        </button>
+                        <button style={postBoxButtonStyle}>
+                          <img src='Share Event Icon.png' alt='Share Event' /> Share Event
+                        </button>
+                        <button style={postBoxButtonStyle}>
+                          <img src='Upload Research Icon.png' alt='Upload Research' /> Upload Research
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Featured Section */}
+                <div style={featuredPostStyle}>
+                  <h3>Featured</h3>
+                  <p>Excited to share that I will be joining the research at Harvard...</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </UserProvider>
     </div>
   );
 };
+
 
 // Add CSS Styles
 const profilePageStyle = {
@@ -316,24 +356,76 @@ const activeTabStyle = {
 };
 
 const contentWrapperStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  padding: '20px',
+  display: 'grid',
+  gridTemplateColumns: '0.5fr 1fr',
+  gridTemplateRows: '1fr',
+  gridColumnGap: '20px',
+  gridRowGap: '20px',
+  marginTop: '40px',
 };
 
 const leftColumnStyle = {
-  width: '60%',
+  width: '100%',
 };
 
 const rightColumnStyle = {
-  width: '35%',
+  width: '100%',
 };
 
 const postStyle = {
-  padding: '15px',
+  padding: '24px 18px 30px 28px',
   marginBottom: '20px',
-  backgroundColor: '#f9f9f9',
-  borderRadius: '10px',
+  backgroundColor: '#ffffff',
+  borderRadius: '8px',
+  boxShadow: '5px 4px 16px 0px #0000001C',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+};
+
+const aboutHeading = {
+  fontSize: '20px',
+  color: '#313131',
+  fontWeight: '600',
+  lineHeight: '28px',
+  letterSpacing: '-2%',
+};
+
+const aboutText = {
+  fontSize: '12px',
+  lineHeight: '16.8px',
+  fontWeight: '400',
+  letterSpacing: '2%',
+  color: '#313131',
+};
+
+const seeMoreText = {
+  fontSize: '12px',
+  lineHeight: '16.8px',
+  fontWeight: '500',
+  letterSpacing: '2%',
+  color: '#4fcff5',
+  textAlign: 'end',
+};
+
+const aboutDetailStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+};
+
+const aboutDetailwrap = {
+  display: 'flex',
+  flexDirection: 'row',
+  gap: '14px',
+  alignItems: 'center',
+};
+
+const aboutDetailText = {
+  fontSize: '12px',
+  fontWeight: '400',
+  lineHeight: '26px',
+  letterSpacing: '2%',
 };
 
 const photoGalleryStyle = {
@@ -357,5 +449,62 @@ const featuredPostStyle = {
   backgroundColor: '#f0f0f0',
   borderRadius: '10px',
 };
+
+const postBoxWrapperStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  padding: '16px',
+  backgroundColor: '#ffffff',
+  borderRadius: '8px',
+  boxShadow: '5px 4px 16px 0px #0000001C',
+  marginBottom: '20px',
+  gap: '16px',
+};
+
+const postBoxProfilePicStyle = {
+  width: '90px',
+  height: '94px',
+  borderRadius: '12px',
+  border: '0.5px solid #313131',
+};
+
+const postBoxContentStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  gap: '20px',
+};
+
+const postBoxInputStyle = {
+  width: '100%',
+  padding: '14px 24px',
+  fontSize: '12px',
+  lineHeight: '13.2px',
+  border: '1px solid #ddd',
+  borderRadius: '200px',
+  backgroundColor: '#f2f2f2',
+  color: '#313131',
+};
+
+const postBoxButtonsWrapperStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+};
+
+const postBoxButtonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  color: '#313131',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '12px',
+  fontWeight: '400',
+  lineHeight: '16.8px',
+  letterSpacing: '2%',
+  backgroundColor: 'transparent',
+};
+
 
 export default Profile;
