@@ -39,16 +39,16 @@ class LikeSerializer(serializers.ModelSerializer):
 # Comment Serializer
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source="author.id")
-    # replies = serializers.SerializerMethodField()
+    replies = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ["id", "post", "author", "content", "created_at", "parent",] #"replies"]
+        fields = ["id", "post", "author", "content", "created_at", "parent","replies"] #"replies"]
 
-    # def get_replies(self, obj):
-    #     # Get nested comments (replies)
-    #     replies = Comment.objects.filter(parent=obj)
-    #     return CommentSerializer(replies, many=True).data
+    def get_replies(self, obj):
+        # Recursively get replies for the comment
+        replies = Comment.objects.filter(parent=obj)
+        return CommentSerializer(replies, many=True).data
 
 
 # Discipline Serializer
@@ -63,7 +63,7 @@ class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     likes = LikeSerializer(many=True, read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
+    comments = serializers.SerializerMethodField()
     disciplines = DisciplineSerializer(many=True, read_only=True)
     repost_of = serializers.PrimaryKeyRelatedField(read_only=True)  # Add repost_of field
 
@@ -87,3 +87,8 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments_count(self, obj):
         return obj.comments.count()
+    
+    def get_comments(self, obj):
+        # Get top-level comments for the post (where parent is None)
+        top_level_comments = Comment.objects.filter(post=obj, parent=None)
+        return CommentSerializer(top_level_comments, many=True).data

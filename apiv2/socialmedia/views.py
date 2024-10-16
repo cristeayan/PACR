@@ -167,6 +167,8 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
+    
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -178,6 +180,24 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
+    def post_comments(self, request, pk=None):
+        """
+        Custom action to get all comments for a specific post with nested replies.
+        """
+        try:
+            post = Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Fetch all top-level comments for the post (where parent is None)
+        top_level_comments = Comment.objects.filter(post=post, parent=None)
+
+        # Serialize the comments along with nested replies
+        serializer = CommentSerializer(top_level_comments, many=True)
+        return Response(serializer.data)
+
 
 
 # Like ViewSet
