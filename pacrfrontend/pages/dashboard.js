@@ -5,6 +5,7 @@ import Recommendations from '../components/Recommendations';
 import Post from '../components/Post'; // Import Post component
 import { UserProvider } from '@/context/UserContext';
 import "../app/globals.css";
+import PostBox from '@/components/PostBox';
 
 
 const Dashboard = () => {
@@ -22,27 +23,7 @@ const Dashboard = () => {
           <div style={mainInnerContainer}>
             <Sidebar />
             <main style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={postBoxWrapperStyle}>
-                    <img src='/Placeholder Profile Pic.png' alt='Profile' style={postBoxProfilePicStyle} />
-                    <div style={postBoxContentStyle}>
-                      <input
-                        type='text'
-                        placeholder='Let the world know what you want to say...'
-                        style={postBoxInputStyle}
-                      />
-                      <div style={postBoxButtonsWrapperStyle}>
-                        <button style={postBoxButtonStyle}>
-                          <img src='Upload Photo Icon.png' alt='Photo/Video' /> Photo/Video
-                        </button>
-                        <button style={postBoxButtonStyle}>
-                          <img src='Share Event Icon.png' alt='Share Event' /> Share Event
-                        </button>
-                        <button style={postBoxButtonStyle}>
-                          <img src='Upload Research Icon.png' alt='Upload Research' /> Upload Research
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+              <PostBox/>
               {/* You can directly render the Post component here */}
               <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
                 <Post />
@@ -75,60 +56,6 @@ const mainInnerContainer = {
   gridRowGap: '20px',
 };
 
-const postBoxWrapperStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  padding: '16px',
-  backgroundColor: '#ffffff',
-  borderRadius: '8px',
-  boxShadow: '5px 4px 16px 0px #0000001C',
-  marginBottom: '20px',
-  gap: '16px',
-};
 
-const postBoxProfilePicStyle = {
-  width: '90px',
-  height: '94px',
-  borderRadius: '12px',
-  border: '0.5px solid #313131',
-};
-
-const postBoxContentStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-  gap: '20px',
-};
-
-const postBoxInputStyle = {
-  width: '100%',
-  padding: '14px 24px',
-  fontSize: '12px',
-  lineHeight: '13.2px',
-  border: '1px solid #ddd',
-  borderRadius: '200px',
-  backgroundColor: '#f2f2f2',
-  color: '#313131',
-};
-
-const postBoxButtonsWrapperStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-};
-
-const postBoxButtonStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  color: '#313131',
-  border: 'none',
-  cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: '400',
-  lineHeight: '16.8px',
-  letterSpacing: '2%',
-  backgroundColor: 'transparent',
-};
 
 export default Dashboard;
