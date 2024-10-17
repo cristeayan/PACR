@@ -15,6 +15,14 @@ const Post = () => {
   const [tempCommentText, setTempCommentText] = useState('');
   const [tempReplyText, setTempReplyText] = useState('');
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   // Handle adding new comment
   const handleAddComment = () => {
     if (newComment.trim()) {
@@ -93,8 +101,9 @@ const Post = () => {
       <div style={styles.postHeader}>
         <img src="/dummy-man.png" alt="User Profile" style={styles.profileImage} />
         <div>
-          <div style={styles.userName} onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}>Dr. Matthew Antony</div>
+          <div style={styles.userName}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}>Dr. Matthew Antony</div>
           <div style={styles.tagline}>
             Post Doctoral Research Fellow at Beth Israel Deaconess...
           </div>
@@ -325,7 +334,7 @@ const styles = {
       fontWeight: 'bold',
       fontSize: '16px',
       cursor: 'pointer',
-      textDecoration: 'none',
+      textDecoration: isHovered ? 'underline' : 'none',
     },
     tagline: {
       color: '#555',
