@@ -5,13 +5,16 @@ const PostBox = () => {
 
     return (
         <div style={postBoxWrapperStyle}>
-                <img src={user ? "http://127.0.0.1:8000" + user.profile_picture : '/Dummy_Profile.png'} alt='Profile' style={postBoxProfilePicStyle} />
+                <img src={user ? "http://127.0.0.1:8000" + user.profile_picture : '/dummy-man.png'} alt='Profile' style={postBoxProfilePicStyle} />
                 <div style={postBoxContentStyle}>
+                  <div style={postBoxInputWrapStyle}>
                   <input
                     type='text'
                     placeholder='Let the world know what you want to say...'
                     style={postBoxInputStyle}
                   />
+                  <button style={postBoxSubmitStyle}>Submit</button>
+                  </div>
                   <div style={postBoxButtonsWrapperStyle}>
                     <button style={postBoxButtonStyle}>
                       <img src='Upload Photo Icon.png' alt='Photo/Video' /> Photo/Video
@@ -82,6 +85,23 @@ const postBoxWrapperStyle = {
     lineHeight: '16.8px',
     letterSpacing: '2%',
     backgroundColor: 'transparent',
+  };
+
+  const postBoxInputWrapStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  };
+
+  const postBoxSubmitStyle = {
+    backgroundColor: '#88D8F9',
+    borderRadius: '40px',
+    padding: '12px 18px',
+    border: 'none',
+    fontSize: '14px',
+    lineHeight: '18px',
+    color: '#fff',
+    cursor: 'pointer',
   };
 
 export default PostBox;
