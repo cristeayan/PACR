@@ -334,7 +334,7 @@ const styles = {
       fontWeight: 'bold',
       fontSize: '16px',
       cursor: 'pointer',
-      textDecoration: isHovered ? 'underline' : 'none',
+      textDecoration: 'none',
     },
     tagline: {
       color: '#555',
