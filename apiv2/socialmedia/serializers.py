@@ -59,7 +59,7 @@ class DisciplineSerializer(serializers.ModelSerializer):
 
 # Post Serializer
 class PostSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source="author.email")
+    author = serializers.ReadOnlyField(source="author.id")
     likes_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     likes = LikeSerializer(many=True, read_only=True)

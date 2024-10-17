@@ -1,3 +1,35 @@
+
+import { useUser } from '../context/UserContext';
+
+const Sidebar = () => {
+  const { user } = useUser();
+  
+  return (
+    <aside style={styles.sidebar}>
+      <div style={styles.sidebarInner}>
+      
+      <div style={styles.profileCard}>
+        <img style={styles.profileCoverImage} src='/Placeholder Cover.png' alt='Profile Cover' />
+        <img style={styles.profileImage} src={user? "http://127.0.0.1:8000"+user.profile_picture:'/Placeholder Profile Pic.png'} alt='Profile Pic' />
+        <div style={styles.profileContentWrap}>
+        <div style={styles.profileName} onClick={()=>{console.log(user)}}>{user? user.first_name+' '+user.last_name:null}</div>
+        <div style={styles.profileInfo}>
+          Post Doctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education
+         </div>
+         </div>
+      </div>
+      <div style={styles.statsCard}>
+        <div style={styles.statsTitle}>Your Research Statistics</div>
+        <div style={styles.statsItem}>H-Index: 4.0</div>
+        <div style={styles.statsItem}>PACR Score: 78.2</div>
+        <div style={styles.statsItem}>Total Reads: 27,432</div>
+        <div style={styles.statsItem}>Total Citations: 32</div>
+      </div>
+      </div>
+    </aside>
+  );
+}
+
 const styles = {
   sidebar: {
     height: '100%',
@@ -69,53 +101,4 @@ const styles = {
     color: '#555',
   },
 };
-import { useUser } from '../context/UserContext';
-
-const Sidebar = () => {
-  // const { user } = useUser();
-
-  return (
-    <aside style={styles.sidebar}>
-      <div style={styles.sidebarInner}>
-      {/* <div style={styles.profileCard}>
-        Check if user exists before trying to access profile_picture
-        {user ? (
-          <>
-            <img
-              style={styles.profileImage}
-              src={`http://127.0.0.1:8000${user.profile_picture}`}
-              alt={`${user.first_name} ${user.last_name}`}
-            />
-            <div style={styles.profileName}>{`${user.first_name} ${user.last_name}`}</div>
-            <div style={styles.profileInfo}>
-              Post Doctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University<br />
-              MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education
-            </div>
-          </>
-        ) : (
-          <div style={styles.profileInfo}>Loading user information...</div>
-        )}
-      </div> */}
-      <div style={styles.profileCard}>
-        <img style={styles.profileCoverImage} src='/Placeholder Cover.png' alt='Profile Cover' />
-        <img style={styles.profileImage} src='/Placeholder Profile Pic.png' alt='Profile Pic' />
-        <div style={styles.profileContentWrap}>
-        <div style={styles.profileName}>Dr. Matthew Antony</div>
-        <div style={styles.profileInfo}>
-          Post Doctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education
-         </div>
-         </div>
-      </div>
-      <div style={styles.statsCard}>
-        <div style={styles.statsTitle}>Your Research Statistics</div>
-        <div style={styles.statsItem}>H-Index: 4.0</div>
-        <div style={styles.statsItem}>PACR Score: 78.2</div>
-        <div style={styles.statsItem}>Total Reads: 27,432</div>
-        <div style={styles.statsItem}>Total Citations: 32</div>
-      </div>
-      </div>
-    </aside>
-  );
-}
-
 export default Sidebar;
