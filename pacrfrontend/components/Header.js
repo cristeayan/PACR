@@ -12,7 +12,7 @@ const Header = () => {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '12px 32px',
-    backgroundColor: '#88d8f969',
+    backgroundColor: 'rgb(0 0 0 / 25%)',
     boxShadow: '5px 7px 16px 0px #00000063',
     position: 'fixed',
     top: '20px',

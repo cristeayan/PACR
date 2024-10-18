@@ -102,8 +102,8 @@ const Post = () => {
         <img src="/dummy-man.png" alt="User Profile" style={styles.profileImage} />
         <div>
           <div style={styles.userName}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}>Dr. Matthew Antony</div>
+      onMouseOver={handleMouseEnter}
+      onMouseOut={handleMouseLeave}><a style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }} href='#'>Dr. Matthew Antony</a></div>
           <div style={styles.tagline}>
             Post Doctoral Research Fellow at Beth Israel Deaconess...
           </div>
@@ -334,7 +334,9 @@ const styles = {
       fontWeight: 'bold',
       fontSize: '16px',
       cursor: 'pointer',
-      textDecoration: 'none',
+    },
+    hover: {
+      textDecoration: 'underline',
     },
     tagline: {
       color: '#555',
