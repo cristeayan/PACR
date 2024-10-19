@@ -4,20 +4,22 @@ import React, { useState } from 'react';
 const PostBox = () => {
   const { user } = useUser();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [isDragging, setIsDragging] = useState(false); // Dragging state for visual feedback
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDropped, setIsDropped] = useState(false); // Add state to track if files are dropped
+  const [isNextClicked, setIsNextClicked] = useState(false); // Track when "Next" is clicked
 
-  // Handle file drop
-  const handleDrop = (event) => {
-    event.preventDefault();
-    setIsDragging(false);
-    const file = event.dataTransfer.files[0];
-    if (file) {
-      setUploadedFile(file);
+  // Handle file drop or file input change
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files || event.dataTransfer.files);
+    if (files.length > 0) {
+      setUploadedFiles((prevFiles) => [...prevFiles, ...files]);
+      setIsDropped(true); // Files are dropped, so we hide the drag overlay
     }
+    setIsDragging(false); // Stop drag effect once files are uploaded
   };
 
-  // Handle drag events
+  // Drag event handlers
   const handleDragOver = (event) => {
     event.preventDefault();
     setIsDragging(true);
@@ -27,44 +29,38 @@ const PostBox = () => {
     setIsDragging(false);
   };
 
-  // Handle file upload via input
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setUploadedFile(file);
-    }
+  const handleDrop = (event) => {
+    event.preventDefault();
+    handleFileUpload(event);
   };
 
-  // Delete uploaded file (prevent opening file explorer)
-  const deleteUploadedFile = (event) => {
-    event.stopPropagation(); // Prevent the file input from being triggered
-    setUploadedFile(null);
+  const handleNextClick = () => {
+    setIsNextClicked(true); // Set "Next" clicked state to true
   };
 
   return (
     <>
-      {/* Your Existing PostBox Code */}
+      {/* PostBox UI */}
       <div style={postBoxWrapperStyle}>
-        <img
-          src={user ? 'http://127.0.0.1:8000' + user.profile_picture : '/dummy-man.png'}
-          alt='Profile'
-          style={postBoxProfilePicStyle}
-        />
         <div style={postBoxContentStyle}>
           <div style={postBoxInputWrapStyle}>
+            <img
+              src={user ? 'http://127.0.0.1:8000' + user.profile_picture : '/dummy-man.png'}
+              alt='Profile'
+              style={postBoxProfilePicStyle}
+            />
             <input
               type='text'
               placeholder='Let the world know what you want to say...'
               style={postBoxInputStyle}
             />
-            <button style={postBoxSubmitStyle}>Submit</button>
           </div>
           <div style={postBoxButtonsWrapperStyle}>
             <button style={postBoxButtonStyle} onClick={() => setIsPopupOpen(true)}>
-              <img src='Upload Photo Icon.png' alt='Photo/Video' /> Photo/Video
+              <img src='Upload Photo Icon.png' alt='Photo/Video' /> Media
             </button>
             <button style={postBoxButtonStyle}>
-              <img src='Share Event Icon.png' alt='Share Event' /> Share Event
+              <img src='Share Event Icon.png' alt='Share Event' /> Event
             </button>
             <button style={postBoxButtonStyle}>
               <img src='Upload Research Icon.png' alt='Upload Research' /> Upload Research
@@ -73,50 +69,105 @@ const PostBox = () => {
         </div>
       </div>
 
-      {/* New Modal for Upload */}
+      {/* Modal for Media Upload */}
       {isPopupOpen && (
         <div style={popupOverlayStyle}>
-          <div style={popupContentStyle}>
-            <input
-              type='file'
-              id='fileInput'
-              style={{ display: 'none' }}
-              onChange={handleFileUpload}
-            />
-            <label
-              htmlFor='fileInput'
-              style={{
-                ...fileInputLabelStyle,
-                ...(isDragging ? draggingStyle : {}), // Apply drag style only to label
-              }}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              {uploadedFile ? (
-                <div style={filePreviewContainerStyle}>
-                  {uploadedFile.type.startsWith('image/') ? (
-                    <img
-                      src={URL.createObjectURL(uploadedFile)}
-                      alt='Uploaded Preview'
-                      style={previewImageStyle}
-                    />
-                  ) : (
-                    <video controls style={previewImageStyle}>
-                      <source src={URL.createObjectURL(uploadedFile)} />
-                    </video>
-                  )}
-                  <button onClick={deleteUploadedFile} style={deleteButtonStyle}>
-                    X
-                  </button>
-                </div>
-              ) : (
-                <p>Drag & drop files here or click to upload</p>
-              )}
-            </label>
-            <button onClick={() => setIsPopupOpen(false)} style={closeButtonStyle}>
-              Close
+          <div
+            style={popupContentStyle}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {/* Close Icon */}
+            <button onClick={() => setIsPopupOpen(false)} style={closeIconStyle}>
+              &times;
             </button>
+
+            {/* Dragging Overlay (visible during drag, hidden when files are dropped) */}
+            {isDragging && !isDropped && (
+              <div style={dragOverlayStyle}>
+                <p style={dragOverlayTextStyle}>Drop your files here</p>
+              </div>
+            )}
+
+            {/* Centered Content (shown when no files are uploaded) */}
+            {!uploadedFiles.length && !isDragging && (
+              <div style={centeredContentStyle}>
+                <img src='/Modal Image.svg' alt='Placeholder' style={modalImageStyle} />
+
+                <h2 style={modalHeadingStyle}>Select files to begin</h2>
+                <p style={modalSubHeadingStyle}> Share images or a single video in your post.</p>
+
+                {/* Upload Button */}
+                <input
+                  type='file'
+                  id='fileInput'
+                  style={{ display: 'none' }}
+                  onChange={handleFileUpload}
+                  multiple
+                />
+                <label htmlFor='fileInput' style={uploadButtonStyle}>
+                  Upload from computer
+                </label>
+              </div>
+            )}
+
+            {/* Display uploaded files */}
+            {uploadedFiles.length > 0 && !isNextClicked && (
+              <>
+                <div style={filePreviewContainerStyle}>
+                  {uploadedFiles.map((file, index) => (
+                    <div key={index} style={mediaGridItemStyle}>
+                      {file.type.startsWith('image/') ? (
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt='Uploaded Preview'
+                          style={previewImageStyle}
+                        />
+                      ) : (
+                        <video controls style={previewImageStyle}>
+                          <source src={URL.createObjectURL(file)} />
+                        </video>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Next Button */}
+                <button style={nextButtonStyle} onClick={handleNextClick}>
+                  Next
+                </button>
+              </>
+            )}
+
+            {/* Show Post Button after "Next" is clicked */}
+            {isNextClicked && (
+              <div style={finalPostBoxStyle}>
+                {/* Display uploaded files in grid like LinkedIn */}
+                <div style={uploadedMediaGridStyle}>
+                  {uploadedFiles.map((file, index) => (
+                    <div key={index} style={mediaGridItemStyle}>
+                      {file.type.startsWith('image/') ? (
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt='Final Preview'
+                          style={finalPreviewImageStyle}
+                        />
+                      ) : (
+                        <video controls style={finalPreviewImageStyle}>
+                          <source src={URL.createObjectURL(file)} />
+                        </video>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Post Button */}
+                <button style={postButtonStyle}>
+                  Post
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -124,7 +175,27 @@ const PostBox = () => {
   );
 };
 
-// Styles
+// Updated Styles for Drag Overlay
+const dragOverlayStyle = {
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  width: '100%',
+  height: '100%',
+  backgroundColor: 'rgba(240, 250, 255, 0.85)',
+  border: '2px dashed #88D8F9',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: '10',
+};
+
+const dragOverlayTextStyle = {
+  fontSize: '24px',
+  fontWeight: 'bold',
+  color: '#0073b1',
+};
+
 const popupOverlayStyle = {
   position: 'fixed',
   top: 0,
@@ -140,55 +211,114 @@ const popupOverlayStyle = {
 
 const popupContentStyle = {
   backgroundColor: '#fff',
-  padding: '20px',
-  borderRadius: '8px',
-  width: '400px',
-  textAlign: 'center',
-};
-
-const fileInputLabelStyle = {
-  display: 'block',
   padding: '40px',
-  border: '2px dashed #ddd',
-  cursor: 'pointer',
-  marginBottom: '20px',
-  transition: 'border-color 0.3s ease, background-color 0.3s ease',
+  borderRadius: '8px',
+  width: '100%',
+  maxWidth: '1120px',
+  height: '100%',
+  maxHeight: '860px',
+  position: 'relative',
+  textAlign: 'center',
+  boxSizing: 'border-box',
 };
 
-const draggingStyle = {
-  borderColor: '#88D8F9', // Visual feedback while dragging
-  backgroundColor: '#f0faff', // Light blue background for better feedback
+const closeIconStyle = {
+  position: 'absolute',
+  top: '10px',
+  right: '20px',
+  backgroundColor: 'transparent',
+  border: 'none',
+  fontSize: '24px',
+  cursor: 'pointer',
+};
+
+const centeredContentStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%',
+};
+
+const modalImageStyle = {
+  width: 'auto',
+  height: 'auto',
+  marginBottom: '20px',
+};
+
+const modalHeadingStyle = {
+  marginBottom: '10px',
+  fontSize: '24px',
+};
+
+const modalSubHeadingStyle = {
+  marginBottom: '24px',
+  fontSize: '16px',
+  color: '#313131',
+};
+
+const uploadButtonStyle = {
+  padding: '10px 20px',
+  backgroundColor: '#70D4FC',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '200px',
+  fontSize: '16px',
+  fontWeight: '600',
+  cursor: 'pointer',
+};
+
+const filePreviewContainerStyle = {
+  display: 'flex',
+  gap: '10px',
+  flexWrap: 'wrap',
 };
 
 const previewImageStyle = {
   maxWidth: '100%',
-  maxHeight: '300px',
-  marginTop: '10px',
+  maxHeight: '150px',
 };
 
-const filePreviewContainerStyle = {
-  position: 'relative',
-};
-
-const deleteButtonStyle = {
+const nextButtonStyle = {
   position: 'absolute',
-  top: '5px',
-  right: '5px',
-  backgroundColor: 'red',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '50%',
-  width: '24px',
-  height: '24px',
-  cursor: 'pointer',
-};
-
-const closeButtonStyle = {
+  bottom: '20px',
+  right: '20px',
   padding: '10px 20px',
   backgroundColor: '#88D8F9',
   border: 'none',
   borderRadius: '4px',
   color: '#fff',
+  cursor: 'pointer',
+};
+
+const finalPostBoxStyle = {
+  marginTop: '20px',
+};
+
+const uploadedMediaGridStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: '10px',
+  marginBottom: '20px',
+};
+
+const mediaGridItemStyle = {
+  maxWidth: '100%',
+};
+
+const finalPreviewImageStyle = {
+  width: '100%',
+  height: 'auto',
+  objectFit: 'cover',
+};
+
+const postButtonStyle = {
+  padding: '12px 20px',
+  backgroundColor: '#0073b1',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '4px',
+  fontSize: '16px',
   cursor: 'pointer',
 };
 
@@ -205,33 +335,34 @@ const postBoxWrapperStyle = {
 };
 
 const postBoxProfilePicStyle = {
-  width: '90px',
-  height: '94px',
-  borderRadius: '12px',
-  border: '0.5px solid #313131',
+  width: '48px',
+  height: '48px',
+  borderRadius: '50%',
+  backgroundColor: '#fff',
 };
 
 const postBoxContentStyle = {
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  gap: '20px',
+  gap: '24px',
 };
 
 const postBoxInputStyle = {
   width: '100%',
-  padding: '14px 24px',
-  fontSize: '12px',
-  lineHeight: '13.2px',
+  padding: '10px 16px',
+  fontSize: '14px',
+  lineHeight: '18px',
   border: '1px solid #ddd',
   borderRadius: '200px',
-  backgroundColor: '#f2f2f2',
+  backgroundColor: '#fff',
   color: '#313131',
+  height: '48px',
 };
 
 const postBoxButtonsWrapperStyle = {
   display: 'flex',
-  justifyContent: 'space-between',
+  justifyContent: 'space-around',
   alignItems: 'center',
 };
 
