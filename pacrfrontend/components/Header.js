@@ -22,7 +22,7 @@ const Header = () => {
     width: '100%',
     maxWidth: '1320px',
     backdropFilter: 'blur(30px)',
-
+    zIndex: '9999',
   };
 
   const brandSectionStyle = {
