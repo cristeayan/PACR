@@ -185,16 +185,19 @@ const DisplayPost = () => {
                                             alt="Commenter Profile"
                                             style={styles.commentProfileImage}
                                         />
-                                        <div>
+                                        <div style={styles.commentUserWrap}>
+                                            <div>
                                             <div style={styles.commentUsername}>
                                                 {comment.author.first_name} {comment.author.last_name} {/* Display name */}
                                             </div>
                                             <div style={styles.commentTagline}>{comment.author.tagline}</div>
+                                            </div>
+                                            <div style={styles.commentContent}>{comment.content}</div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div style={styles.commentContent}>{comment.content}</div>
+                                
 
                                 {/* Reply Section */}
                                 <div style={styles.replySection}>
@@ -234,15 +237,22 @@ const DisplayPost = () => {
 
 const styles = {
     postContainer: {
+        // backgroundColor: '#fff',
+        // padding: '20px',
+        // borderRadius: '10px',
+        // boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+        // margin: '0 auto',
+        // maxWidth: '40rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+    },
+    postBox: {
         backgroundColor: '#fff',
         padding: '20px',
         borderRadius: '10px',
         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        margin: '0 auto',
-        maxWidth: '40rem',
-    },
-    postBox: {
-        marginBottom: '20px',
+        maxWidth: '100%',
     },
     postHeaderWrap: {
         display: 'flex',
@@ -329,7 +339,7 @@ const styles = {
     },
     commentInfo: {
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
     },
     commentProfileImage: {
         width: '35px',
@@ -346,7 +356,6 @@ const styles = {
         color: '#777',
     },
     commentContent: {
-        marginTop: '10px',
         fontSize: '14px',
     },
     replySection: {
@@ -377,6 +386,11 @@ const styles = {
         padding: '10px',
         borderRadius: '10px',
         marginBottom: '5px',
+    },
+    commentUserWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
     },
 };
 
