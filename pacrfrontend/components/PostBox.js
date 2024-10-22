@@ -1,28 +1,25 @@
 import { useUser } from '../context/UserContext';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
-
 
 const PostBox = () => {
   const { user } = useUser();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [isDropped, setIsDropped] = useState(false); // Add state to track if files are dropped
-  const [isNextClicked, setIsNextClicked] = useState(false); // Track when "Next" is clicked
-  const [postContent, setPostContent] = useState(''); // For managing input text
+  const [postContent, setPostContent] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null); // State for the selected image for preview
+  const fileInputRef = useRef(null);
 
-  // Handle file drop or file input change
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files || event.dataTransfer.files);
     if (files.length > 0) {
       setUploadedFiles((prevFiles) => [...prevFiles, ...files]);
-      setIsDropped(true); // Files are dropped, so we hide the drag overlay
+      setIsPopupOpen(false);
     }
-    setIsDragging(false); // Stop drag effect once files are uploaded
+    setIsDragging(false);
   };
 
-  // Drag event handlers
   const handleDragOver = (event) => {
     event.preventDefault();
     setIsDragging(true);
@@ -37,46 +34,64 @@ const PostBox = () => {
     handleFileUpload(event);
   };
 
-  const handleNextClick = () => {
-    setIsNextClicked(true); // Set "Next" clicked state to true
+  const handleMediaClick = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handleRemoveFile = (indexToRemove) => {
+    setUploadedFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
   const handlePostSubmit = () => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token');
     if (token) {
       if (postContent.trim()) {
-        // Submit the post content here
         try {
-          axios.post(`http://127.0.0.1:8000/api/posts/`, {"content":postContent},
-             {headers: {
-              'Authorization': `Bearer ${token}`}});
-              alert("posted")
-
+          axios.post(
+            'http://127.0.0.1:8000/api/posts/',
+            { content: postContent },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          alert('Posted');
         } catch (error) {
           alert(error.message);
         }
-        setPostContent(''); // Clear the input after submission
+        setPostContent('');
+        setUploadedFiles([]);
       }
     }
   };
 
+  // Function to open the image preview modal
+  const handleImageClick = (file) => {
+    setSelectedImage(URL.createObjectURL(file));
+  };
+
+  // Function to close the image preview modal
+  const closeModal = () => {
+    setSelectedImage(null);
+  };
+
   return (
     <>
-      {/* PostBox UI */}
       <div style={postBoxWrapperStyle}>
         <div style={postBoxContentStyle}>
           <div style={postBoxInputWrapStyle}>
             <img
               src={user ? 'http://127.0.0.1:8000' + user.profile_picture : '/dummy-man.png'}
-              alt='Profile'
+              alt="Profile"
               style={postBoxProfilePicStyle}
             />
             <div style={inputContainerStyle}>
               <input
-                type='text'
+                type="text"
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}
-                placeholder='Let the world know what you want to say...'
+                placeholder="Let the world know what you want to say..."
                 style={postBoxInputStyle}
               />
               {postContent.trim() && (
@@ -86,21 +101,53 @@ const PostBox = () => {
               )}
             </div>
           </div>
+
+          {uploadedFiles.length > 0 && (
+            <div style={thumbnailContainerStyle}>
+              {uploadedFiles.map((file, index) => (
+                <div key={index} style={thumbnailWrapperStyle}>
+                  {file.type.startsWith('image/') ? (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Uploaded Preview"
+                      style={thumbnailStyle}
+                      onClick={() => handleImageClick(file)} // Click handler for images
+                    />
+                  ) : (
+                    <video controls style={thumbnailStyle}>
+                      <source src={URL.createObjectURL(file)} />
+                    </video>
+                  )}
+                  <button style={deleteButtonStyle} onClick={() => handleRemoveFile(index)}>
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div style={postBoxButtonsWrapperStyle}>
-            <button style={postBoxButtonStyle} onClick={() => setIsPopupOpen(true)}>
-              <img src='Upload Photo Icon.png' alt='Photo/Video' /> Media
+            <button style={postBoxButtonStyle} onClick={handleMediaClick}>
+              <img src="Upload Photo Icon.png" alt="Photo/Video" /> Media
             </button>
             <button style={postBoxButtonStyle}>
-              <img src='Share Event Icon.png' alt='Share Event' /> Event
+              <img src="Share Event Icon.png" alt="Share Event" /> Event
             </button>
             <button style={postBoxButtonStyle}>
-              <img src='Upload Research Icon.png' alt='Upload Research' /> Upload Research
+              <img src="Upload Research Icon.png" alt="Upload Research" /> Upload Research
             </button>
           </div>
         </div>
       </div>
 
-      {/* Modal for Media Upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        style={{ display: 'none' }}
+        onChange={handleFileUpload}
+      />
+
       {isPopupOpen && (
         <div style={popupOverlayStyle}>
           <div
@@ -109,96 +156,38 @@ const PostBox = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            {/* Close Icon */}
             <button onClick={() => setIsPopupOpen(false)} style={closeIconStyle}>
               &times;
             </button>
 
-            {/* Dragging Overlay (visible during drag, hidden when files are dropped) */}
-            {isDragging && !isDropped && (
+            {isDragging && (
               <div style={dragOverlayStyle}>
                 <p style={dragOverlayTextStyle}>Drop your files here</p>
               </div>
             )}
 
-            {/* Centered Content (shown when no files are uploaded) */}
             {!uploadedFiles.length && !isDragging && (
               <div style={centeredContentStyle}>
-                <img src='/Modal Image.svg' alt='Placeholder' style={modalImageStyle} />
-
+                <img src="/Modal Image.svg" alt="Placeholder" style={modalImageStyle} />
                 <h2 style={modalHeadingStyle}>Select files to begin</h2>
                 <p style={modalSubHeadingStyle}> Share images or a single video in your post.</p>
-
-                {/* Upload Button */}
-                <input
-                  type='file'
-                  id='fileInput'
-                  style={{ display: 'none' }}
-                  onChange={handleFileUpload}
-                  multiple
-                />
-                <label htmlFor='fileInput' style={uploadButtonStyle}>
+                <button style={uploadButtonStyle} onClick={() => fileInputRef.current.click()}>
                   Upload from computer
-                </label>
-              </div>
-            )}
-
-            {/* Display uploaded files */}
-            {uploadedFiles.length > 0 && !isNextClicked && (
-              <>
-                <div style={filePreviewContainerStyle}>
-                  {uploadedFiles.map((file, index) => (
-                    <div key={index} style={mediaGridItemStyle}>
-                      {file.type.startsWith('image/') ? (
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt='Uploaded Preview'
-                          style={previewImageStyle}
-                        />
-                      ) : (
-                        <video controls style={previewImageStyle}>
-                          <source src={URL.createObjectURL(file)} />
-                        </video>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Next Button */}
-                <button style={nextButtonStyle} onClick={handleNextClick}>
-                  Next
-                </button>
-              </>
-            )}
-
-            {/* Show Post Button after "Next" is clicked */}
-            {isNextClicked && (
-              <div style={finalPostBoxStyle}>
-                {/* Display uploaded files in grid like LinkedIn */}
-                <div style={uploadedMediaGridStyle}>
-                  {uploadedFiles.map((file, index) => (
-                    <div key={index} style={mediaGridItemStyle}>
-                      {file.type.startsWith('image/') ? (
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt='Final Preview'
-                          style={finalPreviewImageStyle}
-                        />
-                      ) : (
-                        <video controls style={finalPreviewImageStyle}>
-                          <source src={URL.createObjectURL(file)} />
-                        </video>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Post Button */}
-                <button style={postButtonStyle}>
-                  Post
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Image Preview Modal */}
+      {selectedImage && (
+        <div style={modalOverlayStyle}>
+          <div style={modalContentStyle}>
+            <button onClick={closeModal} style={modalCloseButtonStyle}>
+              &times;
+            </button>
+            <img src={selectedImage} alt="Preview" style={modalImageStyle} />
           </div>
         </div>
       )}
@@ -291,16 +280,20 @@ const postBoxButtonStyle = {
 
 const dragOverlayStyle = {
   position: 'absolute',
-  top: '0',
-  left: '0',
+  top: '0.75rem',
+  left: '0.75rem',
   width: '100%',
   height: '100%',
+  maxWidth: '1100px',
+  height: '100%',
+  maxHeight: '840px',
   backgroundColor: 'rgba(240, 250, 255, 0.85)',
   border: '2px dashed #88D8F9',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   zIndex: '10',
+  borderRadius: '8px',
 };
 
 const dragOverlayTextStyle = {
@@ -319,7 +312,7 @@ const popupOverlayStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  zIndex: 999,
+  zIndex: 9999,
 };
 
 const popupContentStyle = {
@@ -381,7 +374,7 @@ const uploadButtonStyle = {
   cursor: 'pointer',
 };
 
-const filePreviewContainerStyle = {
+/*const filePreviewContainerStyle = {
   display: 'flex',
   gap: '10px',
   flexWrap: 'wrap',
@@ -433,6 +426,82 @@ const postButtonStyle = {
   borderRadius: '4px',
   fontSize: '16px',
   cursor: 'pointer',
+};*/
+
+const thumbnailContainerStyle = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '10px',
+};
+
+const thumbnailWrapperStyle = {
+  position: 'relative',
+  width: '60px',
+  height: '60px',
+};
+
+const thumbnailStyle = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  objectPosition: 'center center',
+  borderRadius: '12px',
+};
+
+const deleteButtonStyle = {
+  position: 'absolute',
+  top: '-6px',
+  right: '0px',
+  backgroundColor: '#979696',
+  color: 'white',
+  border: 'none',
+  borderRadius: '50%',
+  cursor: 'pointer',
+  width: '16px',
+  height: '16px',
+  display: 'flex',
+  alignItems: 'flex-start',
+  justifyContent: 'center',
+};
+
+const modalOverlayStyle = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 9999,
+};
+
+// Modify this style for the modal content
+const modalContentStyle = {
+  position: 'relative',
+  maxWidth: '1440px', 
+  maxHeight: '80vh',
+  overflow: 'hidden',
+  background: 'white',
+  borderRadius: '8px',
+  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
+// Style for the close button
+const modalCloseButtonStyle = {
+  position: 'absolute',
+  top: '8px',
+  right: '14px',
+  background: 'none',
+  border: 'none',
+  color: '#fff',
+  fontSize: '28px',
+  cursor: 'pointer',
+  zIndex: 9999,
 };
 
 export default PostBox;
