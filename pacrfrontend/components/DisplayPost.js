@@ -161,7 +161,7 @@ const DisplayPost = () => {
 
                     {/* Comment Section */}
                     <div style={styles.commentSection}>
-                        <img src={user ? 'http://127.0.0.1:8000' + user.profile_picture : '/dummy-man.png'} alt="User Profile" style={styles.commentProfileImage} />
+                        <img src={user ?  user.profile_picture : '/dummy-man.png'} alt="User Profile" style={styles.commentProfileImage} />
                         <input
                             type="text"
                             placeholder="Say Congratulations..."
