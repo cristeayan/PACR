@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
 const PostBox = () => {
-  const { user } = useUser();
+  const { user ,token} = useUser();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -42,29 +42,37 @@ const PostBox = () => {
     setUploadedFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
-  const handlePostSubmit = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      if (postContent.trim()) {
-        try {
-          axios.post(
-            'http://127.0.0.1:8000/api/posts/',
-            { content: postContent },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          alert('Posted');
-        } catch (error) {
-          alert(error.message);
+
+  const handlePostSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('content', postContent);
+
+    // Add media files to formData
+    Array.from(uploadedFiles).forEach((file, index) => {
+        formData.append('media', file);
+    });
+
+    try {
+        const res = await fetch('http://localhost:8000/api/posts/', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,  // Include the JWT token for authentication
+            },
+            body: formData,  // Send the formData directly
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            alert('Post created successfully:', data);
+        } else {
+            console.error('Failed to create post:', res.statusText);
         }
-        setPostContent('');
-        setUploadedFiles([]);
-      }
+    } catch (error) {
+        console.error('Error:', error);
     }
-  };
+};
 
   // Function to open the image preview modal
   const handleImageClick = (file) => {
@@ -82,7 +90,7 @@ const PostBox = () => {
         <div style={postBoxContentStyle}>
           <div style={postBoxInputWrapStyle}>
             <img
-              src={user ? 'http://127.0.0.1:8000' + user.profile_picture : '/dummy-man.png'}
+              src={user ? user.profile_picture : '/dummy-man.png'}
               alt="Profile"
               style={postBoxProfilePicStyle}
             />

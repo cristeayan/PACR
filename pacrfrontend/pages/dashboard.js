@@ -5,7 +5,6 @@ import Recommendations from '../components/Recommendations';
 import Post from '../components/Post'; // Import Post component
 import "../app/globals.css";
 import PostBox from '@/components/PostBox';
-import CreatePost from '@/components/CreatePost';
 import DisplayPost from '@/components/DisplayPost';
 
 
@@ -28,7 +27,6 @@ const Dashboard = () => {
               <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
                 <Post />
                 <DisplayPost /> {/* Rendering a single Post */}
-                <CreatePost/>
               </div>
             </main>
             <Recommendations />

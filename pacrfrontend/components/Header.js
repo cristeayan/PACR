@@ -256,7 +256,7 @@ const Header = () => {
         <div style={dropdownContainerStyle}>
           <div style={userButtonStyle} onClick={handleUsernameClick}>
             <img 
-              src={user ? "http://127.0.0.1:8000"+user.profile_picture : '/dummy-man.png'} 
+              src={user ? user.profile_picture : '/dummy-man.png'} 
               alt="Profile" 
               style={{ 
                 height: '60px', 
