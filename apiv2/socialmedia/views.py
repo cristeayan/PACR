@@ -1,15 +1,16 @@
 from rest_framework import status, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.views import APIView
 from rest_framework.decorators import action
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.contrib.auth import authenticate
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework.permissions import AllowAny
-from django.contrib.auth import authenticate
-from .models import User, Post, Comment, Like, Discipline
-from .serializers import UserSerializer, PostSerializer, CommentSerializer, LikeSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from .models import User, Post, Comment, Like, Discipline, Media
+from .serializers import UserSerializer, PostSerializer, CommentSerializer, LikeSerializer, DisciplineSerializer, MediaSerializer
 
 # Signup View
 class SignupView(APIView):
@@ -24,7 +25,7 @@ class SignupView(APIView):
             refresh = RefreshToken.for_user(user)
 
             # Include user data in the response
-            user_data = UserSerializer(user).data
+            user_data = UserSerializer(user, context={'request': request}).data
 
             return Response({
                 'refresh': str(refresh),
@@ -40,6 +41,7 @@ class SigninView(APIView):
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
+            required=['email', 'password'],
             properties={
                 'email': openapi.Schema(type=openapi.TYPE_STRING, description='User email'),
                 'password': openapi.Schema(type=openapi.TYPE_STRING, description='User password'),
@@ -56,13 +58,13 @@ class SigninView(APIView):
 
         # Authenticate the user
         user = authenticate(request, email=email, password=password)
-        
+
         if user is not None:
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
-            
+
             # Serialize the user data
-            user_data = UserSerializer(user).data
+            user_data = UserSerializer(user, context={'request': request}).data
 
             return Response({
                 'refresh': str(refresh),
@@ -72,94 +74,66 @@ class SigninView(APIView):
         else:
             return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
 # User ViewSet
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_context(self):
+        return {'request': self.request}  # Ensure request is passed to serializer context
+
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def follow(self, request, pk=None):
         user_to_follow = self.get_object()
         if user_to_follow == request.user:
             return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         request.user.followers.add(user_to_follow)
-        return Response({"detail": f"You are now following {user_to_follow.email}"})
+        return Response({"detail": f"You are now following {user_to_follow.email}"}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def unfollow(self, request, pk=None):
         user_to_unfollow = self.get_object()
         request.user.followers.remove(user_to_unfollow)
-        return Response({"detail": f"You have unfollowed {user_to_unfollow.email}"})
-
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
-    def follow_discipline(self, request, pk=None):
-        discipline_to_follow = Discipline.objects.get(pk=pk)
-        request.user.disciplines_followed.add(discipline_to_follow)
-        return Response({"detail": f"You are now following {discipline_to_follow.name}"})
-
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
-    def unfollow_discipline(self, request, pk=None):
-        discipline_to_unfollow = Discipline.objects.get(pk=pk)
-        request.user.disciplines_followed.remove(discipline_to_unfollow)
-        return Response({"detail": f"You have unfollowed {discipline_to_unfollow.name}"})
+        return Response({"detail": f"You have unfollowed {user_to_unfollow.email}"}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def me(self, request):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
-
-# Post ViewSet
+# Post ViewSet with media handling
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # To handle file uploads
+
+    def get_serializer_context(self):
+        return {'request': self.request}  # Ensure request is passed to serializer context
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        post = serializer.save(author=self.request.user)
+
+        # Handle media uploads
+        media_files = self.request.FILES.getlist('media')
+        for media_file in media_files:
+            media_type = 'image' if media_file.content_type.startswith('image') else 'video'
+            Media.objects.create(post=post, file=media_file, media_type=media_type)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def followed_posts(self, request):
-        # Get posts from users and disciplines the user follows
         following_users = request.user.following.all()
         posts_from_users = Post.objects.filter(author__in=following_users)
-
         followed_disciplines = request.user.disciplines_followed.all()
-        posts_from_disciplines = Post.objects.filter(discipline__in=followed_disciplines)
+        posts_from_disciplines = Post.objects.filter(disciplines__in=followed_disciplines)
 
         combined_posts = posts_from_users | posts_from_disciplines
-        combined_posts = combined_posts.order_by('-created_at')
+        combined_posts = combined_posts.distinct().order_by('-created_at')
 
-        serializer = PostSerializer(combined_posts, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
-    def my_reposts(self, request):
-        reposts = Post.objects.filter(author=request.user, repost_of__isnull=False)
-        serializer = self.get_serializer(reposts, many=True)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
-    def repost(self, request, pk=None):
-        original_post = self.get_object()
-        user_content = request.data.get('content')
-
-        repost_data = {
-            'content': user_content,
-            'repost_of': original_post.id,
-            'author': request.user
-        }
-
-        serializer = self.get_serializer(data=repost_data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        serializer = PostSerializer(combined_posts, many=True, context={'request': self.request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # Comment ViewSet
 class CommentViewSet(viewsets.ModelViewSet):
@@ -167,7 +141,8 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
-    
+    def get_serializer_context(self):
+        return {'request': self.request}
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -180,31 +155,15 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
-    def post_comments(self, request, pk=None):
-        """
-        Custom action to get all comments for a specific post with nested replies.
-        """
-        try:
-            post = Post.objects.get(pk=pk)
-        except Post.DoesNotExist:
-            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Fetch all top-level comments for the post (where parent is None)
-        top_level_comments = Comment.objects.filter(post=post, parent=None)
-
-        # Serialize the comments along with nested replies
-        serializer = CommentSerializer(top_level_comments, many=True)
-        return Response(serializer.data)
-
-
 
 # Like ViewSet
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
     def create(self, request, *args, **kwargs):
         post_id = request.data.get('post')
@@ -218,11 +177,3 @@ class LikeViewSet(viewsets.ModelViewSet):
         serializer.save(user=user)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def destroy(self, request, *args, **kwargs):
-        like = self.get_object()
-        if like.user != request.user:
-            return Response({"detail": "You can only unlike your own like."}, status=status.HTTP_403_FORBIDDEN)
-
-        like.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)

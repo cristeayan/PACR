@@ -1,11 +1,14 @@
 import Head from 'next/head';
 import Header from '../components/Header';
-import { UserProvider } from '@/context/UserContext';
 import { useState } from 'react';
 import "../app/globals.css";
+import { useUser } from '../context/UserContext';
+import PostBox from '@/components/PostBox';
+
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('Profile'); // State to handle active tab
+  const { user } = useUser();
 
   // Function to render content based on active tab
   const renderTabContent = () => {
@@ -62,7 +65,6 @@ const Profile = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <UserProvider>
         {/* Header */}
         <Header />
 
@@ -77,10 +79,10 @@ const Profile = () => {
           <div style={profileMainWrapper}>
             <div style={profileInfoWrapperStyle}>
               <div style={userImageWrapperStyle}>
-                <img src="/Placeholder Profile Pic.png" alt="Profile" style={profileImageStyle} />
+                <img src={user ? "http://127.0.0.1:8000"+user.profile_picture : '/dummy-man.png'} alt="Profile" style={profileImageStyle} />
               </div>
               <div style={userInfoStyle}>
-                <h1 style={userNameHeading}>Dr. Matthew Antony Manoj</h1>
+                <h1 style={userNameHeading}>{user?user.first_name+' '+user.last_name:"why"}</h1>
                 <p style={userProfileTagline}>Postdoctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University | MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education</p>
               </div>
             </div>
@@ -134,29 +136,7 @@ const Profile = () => {
 
               {/* Right Column (This is where the posting box will appear in the Profile tab) */}
               <div style={rightColumnStyle}>
-                {activeTab === 'Profile' && (
-                  <div style={postBoxWrapperStyle}>
-                    <img src='/Placeholder Profile Pic.png' alt='Profile' style={postBoxProfilePicStyle} />
-                    <div style={postBoxContentStyle}>
-                      <input
-                        type='text'
-                        placeholder='Let the world know what you want to say...'
-                        style={postBoxInputStyle}
-                      />
-                      <div style={postBoxButtonsWrapperStyle}>
-                        <button style={postBoxButtonStyle}>
-                          <img src='Upload Photo Icon.png' alt='Photo/Video' /> Photo/Video
-                        </button>
-                        <button style={postBoxButtonStyle}>
-                          <img src='Share Event Icon.png' alt='Share Event' /> Share Event
-                        </button>
-                        <button style={postBoxButtonStyle}>
-                          <img src='Upload Research Icon.png' alt='Upload Research' /> Upload Research
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <PostBox/>
 
                 {/* Featured Section */}
                 <div style={featuredPostStyle}>
@@ -167,7 +147,6 @@ const Profile = () => {
             </div>
           </div>
         </div>
-      </UserProvider>
     </div>
   );
 };

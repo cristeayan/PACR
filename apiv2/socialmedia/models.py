@@ -1,3 +1,5 @@
+# models.py
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.conf import settings
@@ -62,6 +64,21 @@ class Post(models.Model):
     def __str__(self):
         return self.content[:20]
 
+# Media Model for posts (images or videos)
+class Media(models.Model):
+    MEDIA_TYPE_CHOICES = (
+        ('image', 'Image'),
+        ('video', 'Video'),
+    )
+    
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='media')
+    file = models.FileField(upload_to='post_media/')
+    media_type = models.CharField(max_length=5, choices=MEDIA_TYPE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.media_type} for post {self.post.id}"
+
 # Comment Model
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
@@ -72,7 +89,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.author} on {self.post}"
-
 
 # Like Model
 class Like(models.Model):

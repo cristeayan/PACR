@@ -255,7 +255,6 @@ const Header = () => {
       <div style={userInfoStyle}>
         <div style={dropdownContainerStyle}>
           <div style={userButtonStyle} onClick={handleUsernameClick}>
-            {/* <p>{user ? user.first_name +" "+ user.last_name: 'Guest'}</p> */}
             <img 
               src={user ? "http://127.0.0.1:8000"+user.profile_picture : '/dummy-man.png'} 
               alt="Profile" 

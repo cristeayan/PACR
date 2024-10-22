@@ -1,5 +1,7 @@
 import { useUser } from '../context/UserContext';
 import React, { useState } from 'react';
+import axios from 'axios';
+
 
 const PostBox = () => {
   const { user } = useUser();
@@ -8,6 +10,7 @@ const PostBox = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [isDropped, setIsDropped] = useState(false); // Add state to track if files are dropped
   const [isNextClicked, setIsNextClicked] = useState(false); // Track when "Next" is clicked
+  const [postContent, setPostContent] = useState(''); // For managing input text
 
   // Handle file drop or file input change
   const handleFileUpload = (event) => {
@@ -38,6 +41,25 @@ const PostBox = () => {
     setIsNextClicked(true); // Set "Next" clicked state to true
   };
 
+  const handlePostSubmit = () => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      if (postContent.trim()) {
+        // Submit the post content here
+        try {
+          axios.post(`http://127.0.0.1:8000/api/posts/`, {"content":postContent},
+             {headers: {
+              'Authorization': `Bearer ${token}`}});
+              alert("posted")
+
+        } catch (error) {
+          alert(error.message);
+        }
+        setPostContent(''); // Clear the input after submission
+      }
+    }
+  };
+
   return (
     <>
       {/* PostBox UI */}
@@ -49,11 +71,20 @@ const PostBox = () => {
               alt='Profile'
               style={postBoxProfilePicStyle}
             />
-            <input
-              type='text'
-              placeholder='Let the world know what you want to say...'
-              style={postBoxInputStyle}
-            />
+            <div style={inputContainerStyle}>
+              <input
+                type='text'
+                value={postContent}
+                onChange={(e) => setPostContent(e.target.value)}
+                placeholder='Let the world know what you want to say...'
+                style={postBoxInputStyle}
+              />
+              {postContent.trim() && (
+                <button style={submitButtonInsideInputStyle} onClick={handlePostSubmit}>
+                  Submit
+                </button>
+              )}
+            </div>
           </div>
           <div style={postBoxButtonsWrapperStyle}>
             <button style={postBoxButtonStyle} onClick={() => setIsPopupOpen(true)}>
@@ -175,7 +206,89 @@ const PostBox = () => {
   );
 };
 
-// Updated Styles for Drag Overlay
+// Styles
+const postBoxWrapperStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  padding: '16px',
+  backgroundColor: '#ffffff',
+  borderRadius: '8px',
+  boxShadow: '5px 4px 16px 0px #0000001C',
+  marginBottom: '20px',
+  gap: '16px',
+};
+
+const postBoxProfilePicStyle = {
+  width: '48px',
+  height: '48px',
+  borderRadius: '50%',
+  backgroundColor: '#fff',
+};
+
+const postBoxContentStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  gap: '24px',
+};
+
+const postBoxInputWrapStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+};
+
+const inputContainerStyle = {
+  position: 'relative',
+  width: '100%',
+};
+
+const postBoxInputStyle = {
+  width: '100%',
+  padding: '10px 16px',
+  fontSize: '14px',
+  lineHeight: '18px',
+  border: '1px solid #ddd',
+  borderRadius: '200px',
+  backgroundColor: '#fff',
+  color: '#313131',
+  height: '48px',
+  paddingRight: '70px', // Ensure space for submit button
+};
+
+const submitButtonInsideInputStyle = {
+  position: 'absolute',
+  right: '10px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  backgroundColor: '#88D8F9',
+  border: 'none',
+  borderRadius: '200px',
+  padding: '8px 16px',
+  color: '#fff',
+  cursor: 'pointer',
+};
+
+const postBoxButtonsWrapperStyle = {
+  display: 'flex',
+  justifyContent: 'space-around',
+  alignItems: 'center',
+};
+
+const postBoxButtonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  color: '#313131',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '12px',
+  fontWeight: '400',
+  lineHeight: '16.8px',
+  letterSpacing: '2%',
+  backgroundColor: 'transparent',
+};
+
 const dragOverlayStyle = {
   position: 'absolute',
   top: '0',
@@ -319,81 +432,6 @@ const postButtonStyle = {
   border: 'none',
   borderRadius: '4px',
   fontSize: '16px',
-  cursor: 'pointer',
-};
-
-// Your Existing Styles
-const postBoxWrapperStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  padding: '16px',
-  backgroundColor: '#ffffff',
-  borderRadius: '8px',
-  boxShadow: '5px 4px 16px 0px #0000001C',
-  marginBottom: '20px',
-  gap: '16px',
-};
-
-const postBoxProfilePicStyle = {
-  width: '48px',
-  height: '48px',
-  borderRadius: '50%',
-  backgroundColor: '#fff',
-};
-
-const postBoxContentStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-  gap: '24px',
-};
-
-const postBoxInputStyle = {
-  width: '100%',
-  padding: '10px 16px',
-  fontSize: '14px',
-  lineHeight: '18px',
-  border: '1px solid #ddd',
-  borderRadius: '200px',
-  backgroundColor: '#fff',
-  color: '#313131',
-  height: '48px',
-};
-
-const postBoxButtonsWrapperStyle = {
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-};
-
-const postBoxButtonStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  color: '#313131',
-  border: 'none',
-  cursor: 'pointer',
-  fontSize: '12px',
-  fontWeight: '400',
-  lineHeight: '16.8px',
-  letterSpacing: '2%',
-  backgroundColor: 'transparent',
-};
-
-const postBoxInputWrapStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-};
-
-const postBoxSubmitStyle = {
-  backgroundColor: '#88D8F9',
-  borderRadius: '40px',
-  padding: '12px 18px',
-  border: 'none',
-  fontSize: '14px',
-  lineHeight: '18px',
-  color: '#fff',
   cursor: 'pointer',
 };
 
