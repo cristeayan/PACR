@@ -12,7 +12,7 @@ const Header = () => {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '12px 32px',
-    backgroundColor: '#6060601F',
+    backgroundColor: 'rgb(0 0 0 / 25%)',
     boxShadow: '5px 7px 16px 0px #00000063',
     position: 'fixed',
     top: '20px',
@@ -22,7 +22,7 @@ const Header = () => {
     width: '100%',
     maxWidth: '1320px',
     backdropFilter: 'blur(30px)',
-
+    zIndex: '9999',
   };
 
   const brandSectionStyle = {
@@ -148,7 +148,7 @@ const Header = () => {
     position: 'absolute',
     top: '100%',
     left: 0,
-    backgroundColor: 'rgb(229 229 229 / 97%)',
+    backgroundColor: '#88d8f9',
     border: '1px solid #ffffff',
     borderRadius: '16px',
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
@@ -255,9 +255,8 @@ const Header = () => {
       <div style={userInfoStyle}>
         <div style={dropdownContainerStyle}>
           <div style={userButtonStyle} onClick={handleUsernameClick}>
-            {/* <p>{user ? user.first_name +" "+ user.last_name: 'Guest'}</p> */}
             <img 
-              src={user ? "http://127.0.0.1:8000"+user.profile_picture : '/Dummy_Profile.png'} 
+              src={user ? "http://127.0.0.1:8000"+user.profile_picture : '/dummy-man.png'} 
               alt="Profile" 
               style={{ 
                 height: '60px', 

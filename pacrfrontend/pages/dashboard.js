@@ -3,9 +3,10 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Recommendations from '../components/Recommendations';
 import Post from '../components/Post'; // Import Post component
-import { UserProvider } from '@/context/UserContext';
 import "../app/globals.css";
 import PostBox from '@/components/PostBox';
+import CreatePost from '@/components/CreatePost';
+import DisplayPost from '@/components/DisplayPost';
 
 
 const Dashboard = () => {
@@ -17,7 +18,6 @@ const Dashboard = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <UserProvider>
         <Header />
         <div style={mainContainer}>
           <div style={mainInnerContainer}>
@@ -27,13 +27,13 @@ const Dashboard = () => {
               {/* You can directly render the Post component here */}
               <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
                 <Post />
-                <Post /> {/* Rendering a single Post */}
+                <DisplayPost /> {/* Rendering a single Post */}
+                <CreatePost/>
               </div>
             </main>
             <Recommendations />
           </div>
         </div>
-      </UserProvider>
     </div>
   );
 }

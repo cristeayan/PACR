@@ -1,4 +1,4 @@
-
+import router from 'next/router';
 import { useUser } from '../context/UserContext';
 
 const Sidebar = () => {
@@ -10,9 +10,9 @@ const Sidebar = () => {
       
       <div style={styles.profileCard}>
         <img style={styles.profileCoverImage} src='/Placeholder Cover.png' alt='Profile Cover' />
-        <img style={styles.profileImage} src={user? "http://127.0.0.1:8000"+user.profile_picture:'/Placeholder Profile Pic.png'} alt='Profile Pic' />
+        <img style={styles.profileImage} src={user? "http://127.0.0.1:8000"+user.profile_picture:'/dummy-man.png'} alt='Profile Pic' onClick={()=>{router.push('/profile')}} />
         <div style={styles.profileContentWrap}>
-        <div style={styles.profileName} onClick={()=>{console.log(user)}}>{user? user.first_name+' '+user.last_name:null}</div>
+        <div style={styles.profileName} onClick={()=>{router.push('/profile')}}>{user? user.first_name+' '+user.last_name:null}</div>
         <div style={styles.profileInfo}>
           Post Doctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education
          </div>
@@ -64,6 +64,7 @@ const styles = {
     height: '100px',
     borderRadius: '50%',
     marginTop: '-72px',
+    backgroundColor: '#fff',
   },
   profileContentWrap: {
     padding: '0 20px 20px',
@@ -76,6 +77,7 @@ const styles = {
     fontSize: '1.2rem',
     fontWeight: '700',
     color: '#313131',
+    cursor: 'pointer',
   },
   profileInfo: {
     fontSize: '0.875rem',

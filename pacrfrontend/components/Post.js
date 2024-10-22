@@ -9,10 +9,19 @@ const Post = () => {
   const [replyText, setReplyText] = useState('');
   const [optionsOpen, setOptionsOpen] = useState(null);
   const [replyOptionsOpen, setReplyOptionsOpen] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Temporary state to hold the current text while editing
   const [tempCommentText, setTempCommentText] = useState('');
   const [tempReplyText, setTempReplyText] = useState('');
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
   // Handle adding new comment
   const handleAddComment = () => {
@@ -88,15 +97,20 @@ const Post = () => {
 
   return (
     <div style={styles.postContainer}>
+      <div style={styles.postHeaderWrap}>
       <div style={styles.postHeader}>
-        <img src="/Dummy_Profile.png" alt="User Profile" style={styles.profileImage} />
+        <img src="/dummy-man.png" alt="User Profile" style={styles.profileImage} />
         <div>
-          <div style={styles.userName}>Dr. Matthew Antony</div>
+          <div style={styles.userName}
+      onMouseOver={handleMouseEnter}
+      onMouseOut={handleMouseLeave}><a style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }} href='#'>Dr. Matthew Antony</a></div>
           <div style={styles.tagline}>
             Post Doctoral Research Fellow at Beth Israel Deaconess...
           </div>
           <div style={styles.postTime}>2 mins ago</div>
         </div>
+      </div>
+      <a style={styles.postFollowButton} href='#'><img style={styles.postFollowIcon} src='/follow-icon.svg' alt='Follow Icon' />Follow</a>
       </div>
 
       <div style={styles.postContent}>
@@ -319,6 +333,10 @@ const styles = {
     userName: {
       fontWeight: 'bold',
       fontSize: '16px',
+      cursor: 'pointer',
+    },
+    hover: {
+      textDecoration: 'underline',
     },
     tagline: {
       color: '#555',
@@ -491,6 +509,28 @@ const styles = {
       borderRadius: '5px',
       padding: '5px 10px',
       cursor: 'pointer',
+    },
+    postHeaderWrap: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    postFollowButton: {
+      fontSize: '16px',
+      lineHeight: '20px',
+      fontWeight: '600',
+      color: '#88D8F9',
+      textDecoration: 'none',
+      padding: '12px 16px',
+      borderRadius: '6px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      marginBottom: '15px',
+    },
+    postFollowIcon: {
+      width: '16px',
+      fill: '#88D8F9',
     },
   };
 

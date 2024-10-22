@@ -1,6 +1,6 @@
 import React from 'react';
 import Post from 'Post'; // Import the Post component
-
+import CreatePost from './CreatePost';
 
 const styles = {
   feed: {
