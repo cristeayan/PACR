@@ -105,7 +105,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 # Post ViewSet with media handling
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-created_at')   
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]  # To handle file uploads
@@ -129,11 +129,11 @@ class PostViewSet(viewsets.ModelViewSet):
         followed_disciplines = request.user.disciplines_followed.all()
         posts_from_disciplines = Post.objects.filter(disciplines__in=followed_disciplines)
 
-        combined_posts = posts_from_users | posts_from_disciplines
-        combined_posts = combined_posts.distinct().order_by('-created_at')
+        combined_posts = (posts_from_users | posts_from_disciplines).distinct().order_by('-created_at')
 
         serializer = PostSerializer(combined_posts, many=True, context={'request': self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 # Comment ViewSet
 class CommentViewSet(viewsets.ModelViewSet):
