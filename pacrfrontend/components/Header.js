@@ -196,21 +196,54 @@ const Header = () => {
     setShowDropdown(!showDropdown);
   };
 
-   // Scroll event listener to change the background color of the header
-   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 350) {
-        setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
-      } else {
-        setHeaderBgColor('rgb(89 89 89 / 24%)'); // Original color
-      }
-    };
+  //  // Scroll event listener to change the background color of the header
+  //  useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (window.scrollY > 350) {
+  //       setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
+  //     } else {
+  //       setHeaderBgColor('rgb(89 89 89 / 24%)'); // Original color
+  //     }
+  //   };
 
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    // Set initial background color based on the current route
+    if (router.pathname === '/dashboard') {
+      setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
+    } else if (router.pathname === '/profile') {
+      setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
+    } else {
+      setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
+    }
+  }, [router.pathname]);
+
+  const handleScroll = () => {
+    if (window.scrollY > 300) {
+      setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
+    } else {
+      // Reset to the initial background color based on the current page
+      if (router.pathname === '/dashboard') {
+        setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
+      } else if (router.pathname === '/profile') {
+        setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
+      } else {
+        setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
+      }
+    }
+  };
+
+  useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [router.pathname]);
 
   return (
     <header style={headerStyle}>
