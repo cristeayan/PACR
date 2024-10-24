@@ -109,6 +109,70 @@ const DisplayPost = () => {
             }
         }
     };
+    
+    const MediaSlider = ({ media }) => {
+        const [currentIndex, setCurrentIndex] = useState(0);
+    
+        const handleNext = () => {
+            setCurrentIndex((prevIndex) =>
+                prevIndex === media.length - 1 ? 0 : prevIndex + 1
+            );
+        };
+    
+        const handlePrev = () => {
+            setCurrentIndex((prevIndex) =>
+                prevIndex === 0 ? media.length - 1 : prevIndex - 1
+            );
+        };
+    
+        return (
+            <div style={styles.sliderContainer}>
+                <div style={styles.sliderWrapper}>
+                    {media.map((item, index) => (
+                        <div
+                            key={index}
+                            style={{
+                                ...styles.slide,
+                                transform: `translateX(-${currentIndex * 100}%)`,
+                            }}
+                        >
+                            <img
+                                src={item.file}
+                                alt={`Post Media ${index + 1}`}
+                                style={styles.postImage}
+                            />
+                        </div>
+                    ))}
+                </div>
+    
+                {media.length > 1 && (
+                    <>
+                        <button style={styles.prevButton} onClick={handlePrev}>
+                            &#8249;
+                        </button>
+                        <button style={styles.nextButton} onClick={handleNext}>
+                            &#8250;
+                        </button>
+    
+                        <div style={styles.dotsContainer}>
+                            {media.map((_, index) => (
+                                <span
+                                    key={index}
+                                    style={{
+                                        ...styles.dot,
+                                        backgroundColor:
+                                            index === currentIndex ? '#007bff' : '#ccc',
+                                    }}
+                                ></span>
+                            ))}
+                        </div>
+                    </>
+                )}
+            </div>
+        );
+    };
+    
+    
 
     return (
         <div style={styles.postContainer}>
@@ -399,6 +463,71 @@ const styles = {
         padding: '10px',
         borderRadius: '10px',
         marginBottom: '5px',
+    },
+    commentUserWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+    },
+    sliderContainer: {
+        position: 'relative',
+        width: '100%',
+        overflow: 'hidden',  // Hides the overflow (images that go beyond one view)
+        height: '400px',     // Adjust this based on your image height requirement
+    },
+    sliderWrapper: {
+        display: 'flex',  // Aligns the images in a horizontal line
+        transition: 'transform 0.5s ease-in-out',  // Smooth sliding transition
+        width: '100%',
+    },
+    slide: {
+        minWidth: '100%',    // Each image takes the full width of the container
+        transition: 'transform 0.5s ease',  // Smooth sliding effect
+    },
+    postImage: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',  // Ensures image covers the entire slide area
+    },
+    prevButton: {
+        position: 'absolute',
+        top: '50%',
+        left: '10px',
+        transform: 'translateY(-50%)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '50%',
+        padding: '10px',
+        cursor: 'pointer',
+        zIndex: 1,
+    },
+    nextButton: {
+        position: 'absolute',
+        top: '50%',
+        right: '10px',
+        transform: 'translateY(-50%)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '50%',
+        padding: '10px',
+        cursor: 'pointer',
+        zIndex: 1,
+    },
+    dotsContainer: {
+        position: 'absolute',
+        bottom: '10px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        gap: '5px',
+    },
+    dot: {
+        width: '10px',
+        height: '10px',
+        borderRadius: '50%',
+        backgroundColor: '#ccc',
     },
 };
 
