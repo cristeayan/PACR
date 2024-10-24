@@ -2,7 +2,8 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Recommendations from '../components/Recommendations';
-import Post from '../components/Post'; // Import Post component
+import Post from '../components/Post';
+import ResearchPost from '../components/ResearchPost';
 import "../app/globals.css";
 import PostBox from '@/components/PostBox';
 import DisplayPost from '@/components/DisplayPost';
@@ -23,10 +24,10 @@ const Dashboard = () => {
             <Sidebar />
             <main style={{ display: 'flex', flexDirection: 'column' }}>
               <PostBox/>
-              {/* You can directly render the Post component here */}
               <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
                 <Post />
-                <DisplayPost /> {/* Rendering a single Post */}
+                <DisplayPost />
+                <ResearchPost />
               </div>
             </main>
             <Recommendations />

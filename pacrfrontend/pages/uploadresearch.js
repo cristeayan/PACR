@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import Header from '../components/Header';
 
 const UploadResearch = () => {
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
+    authorName: '',
     authors: [],
     publicationType: '',
     articleType: '',
@@ -29,7 +31,7 @@ const UploadResearch = () => {
     onDragEnter: () => setDragging(true),
     onDragLeave: () => setDragging(false),
     onDrop: (acceptedFiles) => {
-      setFiles([...files, ...acceptedFiles]);
+      setFiles([...files, ...acceptedFiles]); // Append new files
       setDragging(false);
     },
   });
@@ -47,16 +49,30 @@ const UploadResearch = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleMultiSelectChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-    setFormData({ ...formData, authors: selectedOptions });
+  // Add author on 'Enter' or 'Comma' key press
+  const handleAuthorKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();  // Prevent form submission
+      if (formData.authorName.trim()) {
+        setFormData({
+          ...formData,
+          authors: [...formData.authors, formData.authorName.trim()],
+          authorName: '',
+        });
+      }
+    }
+  };
+
+  const handleRemoveAuthor = (index) => {
+    const updatedAuthors = formData.authors.filter((_, i) => i !== index);
+    setFormData({ ...formData, authors: updatedAuthors });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newErrors = {};
 
-    // Form validation here
+    // Basic validation
     if (!formData.title) newErrors.title = 'Title is required';
     if (!formData.publicationType) newErrors.publicationType = 'Publication type is required';
     if (!formData.articleType) newErrors.articleType = 'Article type is required';
@@ -73,6 +89,8 @@ const UploadResearch = () => {
   };
 
   return (
+    <div style={styles.mainWrapper}>
+      <Header />
     <div style={styles.formContainer}>
       <form onSubmit={handleSubmit} style={styles.form}>
         {/* Type of Publication */}
@@ -149,6 +167,7 @@ const UploadResearch = () => {
                 ...styles.dropzone,
                 borderColor: dragging ? '#007bff' : '#ccc',
                 backgroundColor: dragging ? '#e9f7ff' : '#f9f9f9',
+                transition: 'all 0.3s ease',
               },
             })}
           >
@@ -158,21 +177,33 @@ const UploadResearch = () => {
           {files.length > 0 && renderUploadedFiles()}
         </div>
 
-        {/* Authors Field (Multiselect) */}
+        {/* Authors Field (Input and List) */}
         <div style={styles.formGroup}>
           <label htmlFor="authors" style={styles.label}>Authors</label>
-          <select
-            id="authors"
-            name="authors"
-            multiple
-            value={formData.authors}
-            onChange={handleMultiSelectChange}
-            style={styles.multiSelect}
-          >
-            <option value="author1">Dr. Matthew Mosai</option>
-            <option value="author2">Dr. Jacob D'Elia</option>
-            <option value="author3">Dr. Tanya Singh</option>
-          </select>
+          <div style={styles.authorInputGroup}>
+            <input
+              type="text"
+              id="authorName"
+              name="authorName"
+              value={formData.authorName}
+              onChange={handleInputChange}
+              onKeyDown={handleAuthorKeyDown}
+              placeholder="Enter author's name and press Enter"
+              style={styles.input}
+            />
+          </div>
+          {formData.authors.length > 0 && (
+            <ul style={styles.authorList}>
+              {formData.authors.map((author, index) => (
+                <li key={index} style={styles.authorItem}>
+                  <span style={styles.authorTag}>{author}</span>
+                  <button type="button" onClick={() => handleRemoveAuthor(index)} style={styles.removeButton}>
+                    &times;
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* DOI Field */}
@@ -231,9 +262,9 @@ const UploadResearch = () => {
           />
         </div>
 
-        {/* Date of Publication Fields (Dropdowns) */}
+        {/* Date of Publication */}
         <div style={styles.formGroup}>
-          <label htmlFor="publicationDate" style={styles.label}>Date of Publication</label>
+          <label htmlFor="date" style={styles.label}>Date of Publication</label>
           <div style={styles.dateGroup}>
             <select
               id="publicationDay"
@@ -289,10 +320,16 @@ const UploadResearch = () => {
         </button>
       </form>
     </div>
+   </div>
   );
 };
 
 const styles = {
+  mainWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '140px 20px 80px',
+  },
   formContainer: {
     maxWidth: '600px',
     margin: '0 auto',
@@ -300,6 +337,7 @@ const styles = {
     backgroundColor: '#f5f5f5',
     borderRadius: '8px',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    transition: 'all 0.3s ease-in-out',
   },
   form: {
     display: 'flex',
@@ -316,26 +354,28 @@ const styles = {
     marginBottom: '4px',
   },
   input: {
-    padding: '8px',
+    padding: '10px',
     border: '1px solid #ccc',
     borderRadius: '4px',
+    transition: 'border-color 0.3s ease',
+    outline: 'none',
+    fontSize: '1rem',
+  },
+  inputFocus: {
+    borderColor: '#007bff',
   },
   textarea: {
-    padding: '8px',
+    padding: '10px',
     border: '1px solid #ccc',
     borderRadius: '4px',
     resize: 'vertical',
+    fontSize: '1rem',
   },
   select: {
-    padding: '8px',
+    padding: '10px',
     border: '1px solid #ccc',
     borderRadius: '4px',
-  },
-  multiSelect: {
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    height: '100px',
+    fontSize: '1rem',
   },
   dropzone: {
     padding: '20px',
@@ -346,21 +386,73 @@ const styles = {
     backgroundColor: '#f9f9f9',
     textAlign: 'center',
     cursor: 'pointer',
+    transition: 'all 0.3s ease',
   },
   fileList: {
     listStyleType: 'none',
     padding: '0',
     marginTop: '10px',
   },
+  authorInputGroup: {
+    display: 'flex',
+    gap: '10px',
+  },
+  authorList: {
+    listStyleType: 'none',
+    padding: '0',
+    marginTop: '10px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px',
+  },
+  authorItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '5px',
+    backgroundColor: '#e9f7ff',
+    borderRadius: '4px',
+    marginBottom: '5px',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  },
+  authorTag: {
+    padding: '8px 12px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    borderRadius: '20px',
+    fontSize: '0.9rem',
+    fontWeight: '500',
+    marginRight: '8px',
+  },
+  addButton: {
+    padding: '8px 12px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+  },
+  removeButton: {
+    padding: '4px 8px',
+    backgroundColor: '#dc3545',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+  },
   dateGroup: {
     display: 'flex',
     gap: '10px',
   },
   dateSelect: {
-    padding: '8px',
+    padding: '10px',
     border: '1px solid #ccc',
     borderRadius: '4px',
     width: '30%',
+    fontSize: '1rem',
+    transition: 'border-color 0.3s ease',
   },
   button: {
     padding: '10px 15px',
@@ -369,6 +461,12 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    transition: 'background-color 0.3s ease',
+  },
+  buttonHover: {
+    backgroundColor: '#0056b3',
   },
   error: {
     color: 'red',
