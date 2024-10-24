@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useUser } from '../context/UserContext';
+import { Router } from 'next/router';
 
 const UploadResearch = () => {
+  const { user, token } = useUser();
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
+  const [newAuthor, setNewAuthor] = useState(""); // Input field for adding new authors
   const [formData, setFormData] = useState({
     title: '',
     authors: [],
-    publicationType: '',
-    articleType: '',
-    day: '',
-    month: '',
-    year: '',
+    publication_type: '',
+    article_type: '', // Add article_type to the formData state
+    date_of_publication: '', // Replaced day, month, year with single date_of_publication field
     abstract: '',
     doi: '',
     articleLink: '',
@@ -47,41 +49,92 @@ const UploadResearch = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleMultiSelectChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-    setFormData({ ...formData, authors: selectedOptions });
+  // Function to add a new author
+  const handleAddAuthor = () => {
+    if (newAuthor.trim() !== "") {
+      setFormData({ ...formData, authors: [...formData.authors, newAuthor] });
+      setNewAuthor(""); // Clear the input field after adding
+    }
   };
 
-  const handleSubmit = (e) => {
+  // Function to remove an author by index
+  const handleRemoveAuthor = (indexToRemove) => {
+    setFormData({
+      ...formData,
+      authors: formData.authors.filter((_, index) => index !== indexToRemove)
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
     // Form validation here
     if (!formData.title) newErrors.title = 'Title is required';
-    if (!formData.publicationType) newErrors.publicationType = 'Publication type is required';
-    if (!formData.articleType) newErrors.articleType = 'Article type is required';
+    if (!formData.publication_type) newErrors.publication_type = 'Publication type is required';
+    if (!formData.article_type) newErrors.article_type = 'Article type is required';
     if (!formData.abstract) newErrors.abstract = 'Abstract is required';
-    if (!formData.day || !formData.month || !formData.year) newErrors.date = 'Complete publication date is required';
+    if (!formData.date_of_publication) newErrors.date_of_publication = 'Publication date is required';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      // Handle form submission logic here
-      console.log('Form Submitted', formData, files);
-      setErrors({});
+      try {
+        const submissionData = new FormData();
+        submissionData.append('title', formData.title);
+        submissionData.append('authors', formData.authors);
+        submissionData.append('publication_type', formData.publication_type);
+        submissionData.append('article_type', formData.article_type);
+        submissionData.append('date_of_publication', formData.date_of_publication);
+        submissionData.append('abstract', formData.abstract);
+        submissionData.append('doi', formData.doi);
+        submissionData.append('articleLink', formData.articleLink);
+        submissionData.append('pubMedID', formData.pubMedID);
+        submissionData.append('scopusLink', formData.scopusLink);
+
+        // Append files to the form data
+        files.forEach((file) => {
+          submissionData.append('files', file);
+        });
+
+        const response = await fetch('http://127.0.0.1:8000/api/journals/', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,  // Include the JWT token for authentication
+          },
+          body: submissionData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to submit form');
+        }
+
+        const result = await response.json();
+        console.log('Form Submitted', result);
+        setErrors({});
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
+    }
+  };
+
+  // Prevent form submission on Enter key press
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
     }
   };
 
   return (
     <div style={styles.formContainer}>
-      <form onSubmit={handleSubmit} style={styles.form}>
+      <form onSubmit={handleSubmit} style={styles.form} onKeyDown={handleKeyDown}>
         {/* Type of Publication */}
         <div style={styles.formGroup}>
-          <label htmlFor="publicationType" style={styles.label}>Type of Publication</label>
+          <label htmlFor="publication_type" style={styles.label}>Type of Publication</label>
           <select
-            id="publicationType"
-            name="publicationType"
-            value={formData.publicationType}
+            id="publication_type"
+            name="publication_type"
+            value={formData.publication_type}
             onChange={handleInputChange}
             style={styles.select}
           >
@@ -90,16 +143,16 @@ const UploadResearch = () => {
             <option value="review">Review</option>
             <option value="caseReport">Case Report</option>
           </select>
-          {errors.publicationType && <span style={styles.error}>{errors.publicationType}</span>}
+          {errors.publication_type && <span style={styles.error}>{errors.publication_type}</span>}
         </div>
 
         {/* Type of Article */}
         <div style={styles.formGroup}>
-          <label htmlFor="articleType" style={styles.label}>Type of Article</label>
+          <label htmlFor="article_type" style={styles.label}>Type of Article</label>
           <select
-            id="articleType"
-            name="articleType"
-            value={formData.articleType}
+            id="article_type"
+            name="article_type"
+            value={formData.article_type}
             onChange={handleInputChange}
             style={styles.select}
           >
@@ -108,7 +161,38 @@ const UploadResearch = () => {
             <option value="clinicalTrial">Clinical Trial</option>
             <option value="metaAnalysis">Meta Analysis</option>
           </select>
-          {errors.articleType && <span style={styles.error}>{errors.articleType}</span>}
+          {errors.article_type && <span style={styles.error}>{errors.article_type}</span>}
+        </div>
+
+        {/* Authors Field */}
+        <div style={styles.formGroup}>
+          <label htmlFor="authors" style={styles.label}>Authors</label>
+          <div style={styles.authorsField}>
+            <input
+              type="text"
+              value={newAuthor}
+              onChange={(e) => setNewAuthor(e.target.value)}
+              placeholder="Add a new author"
+              style={styles.input}
+            />
+            <button type="button" onClick={handleAddAuthor} style={styles.addButton}>
+              Add Author
+            </button>
+          </div>
+          <ul style={styles.authorsList}>
+            {formData.authors.map((author, index) => (
+              <li key={index} style={styles.authorItem}>
+                {author}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveAuthor(index)}
+                  style={styles.removeButton}
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Title Field */}
@@ -156,23 +240,6 @@ const UploadResearch = () => {
             <p>Drag 'n' drop files here, or click to select files (PDF, DOC)</p>
           </div>
           {files.length > 0 && renderUploadedFiles()}
-        </div>
-
-        {/* Authors Field (Multiselect) */}
-        <div style={styles.formGroup}>
-          <label htmlFor="authors" style={styles.label}>Authors</label>
-          <select
-            id="authors"
-            name="authors"
-            multiple
-            value={formData.authors}
-            onChange={handleMultiSelectChange}
-            style={styles.multiSelect}
-          >
-            <option value="author1">Dr. Matthew Mosai</option>
-            <option value="author2">Dr. Jacob D'Elia</option>
-            <option value="author3">Dr. Tanya Singh</option>
-          </select>
         </div>
 
         {/* DOI Field */}
@@ -231,56 +298,18 @@ const UploadResearch = () => {
           />
         </div>
 
-        {/* Date of Publication Fields (Dropdowns) */}
+        {/* Date of Publication (Now as a single date input) */}
         <div style={styles.formGroup}>
-          <label htmlFor="publicationDate" style={styles.label}>Date of Publication</label>
-          <div style={styles.dateGroup}>
-            <select
-              id="publicationDay"
-              name="day"
-              value={formData.day}
-              onChange={handleInputChange}
-              style={styles.dateSelect}
-            >
-              <option value="">Day</option>
-              {[...Array(31).keys()].map((day) => (
-                <option key={day + 1} value={day + 1}>
-                  {day + 1}
-                </option>
-              ))}
-            </select>
-            <select
-              id="publicationMonth"
-              name="month"
-              value={formData.month}
-              onChange={handleInputChange}
-              style={styles.dateSelect}
-            >
-              <option value="">Month</option>
-              {[
-                'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',
-              ].map((month, index) => (
-                <option key={index} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            <select
-              id="publicationYear"
-              name="year"
-              value={formData.year}
-              onChange={handleInputChange}
-              style={styles.dateSelect}
-            >
-              <option value="">Year</option>
-              {[...Array(100).keys()].map((year) => (
-                <option key={year + 1923} value={year + 1923}>
-                  {year + 1923}
-                </option>
-              ))}
-            </select>
-          </div>
-          {errors.date && <span style={styles.error}>{errors.date}</span>}
+          <label htmlFor="date_of_publication" style={styles.label}>Date of Publication</label>
+          <input
+            type="date"
+            id="date_of_publication"
+            name="date_of_publication"
+            value={formData.date_of_publication}
+            onChange={handleInputChange}
+            style={styles.input}
+          />
+          {errors.date_of_publication && <span style={styles.error}>{errors.date_of_publication}</span>}
         </div>
 
         {/* Submit Button */}
@@ -331,12 +360,6 @@ const styles = {
     border: '1px solid #ccc',
     borderRadius: '4px',
   },
-  multiSelect: {
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    height: '100px',
-  },
   dropzone: {
     padding: '20px',
     borderWidth: '2px',
@@ -352,19 +375,42 @@ const styles = {
     padding: '0',
     marginTop: '10px',
   },
-  dateGroup: {
-    display: 'flex',
-    gap: '10px',
-  },
-  dateSelect: {
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    width: '30%',
-  },
   button: {
     padding: '10px 15px',
     backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  authorsField: {
+    display: 'flex',
+    gap: '10px',
+  },
+  addButton: {
+    padding: '8px 12px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  authorsList: {
+    listStyleType: 'none',
+    padding: '0',
+    marginTop: '10px',
+  },
+  authorItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '8px',
+    backgroundColor: '#f9f9f9',
+    borderRadius: '4px',
+    marginBottom: '4px',
+  },
+  removeButton: {
+    backgroundColor: 'red',
     color: '#fff',
     border: 'none',
     borderRadius: '4px',
