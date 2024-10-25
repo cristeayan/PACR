@@ -53,16 +53,50 @@ class Discipline(models.Model):
     def __str__(self):
         return self.name
 
-# Post Model
-class Post(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
-    disciplines = models.ManyToManyField('Discipline', blank=True, related_name='posts')  
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    repost_of = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='reposts')
+# Journal Model
+class Journal(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='journal',null=True,blank=True)
+    title = models.CharField(max_length=255)
+    authors = models.CharField(max_length=255)  # A text field for authors
+    publication_type = models.CharField(max_length=100, choices=[
+        ('article', 'Article'),
+        ('review', 'Review'),
+        ('caseReport', 'Case Report')
+    ])
+    article_type = models.CharField(max_length=100, choices=[
+        ('originalResearch', 'Original Research'),
+        ('clinicalTrial', 'Clinical Trial'),
+        ('metaAnalysis', 'Meta Analysis')
+    ])
+    date_of_publication = models.DateField()  # Single date field instead of day, month, year
+    abstract = models.TextField()
+    doi = models.CharField(max_length=255, blank=True, null=True)
+    article_link = models.URLField(blank=True, null=True)
+    pubmed_id = models.CharField(max_length=100, blank=True, null=True)
+    scopus_link = models.URLField(blank=True, null=True)
+    uploaded_files = models.FileField(upload_to='journal_files/', blank=True, null=True)
 
     def __str__(self):
-        return self.content[:20]
+        return self.title
+
+# Post Model
+class Post(models.Model):
+    POST_TYPE_CHOICES = [
+        ('post', 'Post'),
+        ('repost', 'Repost'),
+        ('journal', 'Journal'),
+    ]
+
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
+    disciplines = models.ManyToManyField('Discipline', blank=True, related_name='posts')
+    content = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    repost_of = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='reposts')
+    post_type = models.CharField(max_length=20, choices=POST_TYPE_CHOICES, default='post')
+    journal = models.ForeignKey(Journal, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
+
+    def __str__(self):
+        return f"{self.get_post_type_display()} by {self.author}"
 
 # Media Model for posts (images or videos)
 class Media(models.Model):

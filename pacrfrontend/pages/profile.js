@@ -79,7 +79,7 @@ const Profile = () => {
           <div style={profileMainWrapper}>
             <div style={profileInfoWrapperStyle}>
               <div style={userImageWrapperStyle}>
-                <img src={user ? "http://127.0.0.1:8000"+user.profile_picture : '/dummy-man.png'} alt="Profile" style={profileImageStyle} />
+                <img src={user ? user.profile_picture : '/dummy-man.png'} alt="Profile" style={profileImageStyle} />
               </div>
               <div style={userInfoStyle}>
                 <h1 style={userNameHeading}>{user?user.first_name+' '+user.last_name:"why"}</h1>

@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router'
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { useUser } from '../context/UserContext';
 import "../app/globals.css";
 
 const Header = () => {
   const router = useRouter()
   const { user } = useUser();
+  const [headerBgColor, setHeaderBgColor] = useState('rgb(89 89 89 / 24%)'); // Initial background color
 
   const headerStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '12px 32px',
-    backgroundColor: 'rgb(0 0 0 / 25%)',
-    boxShadow: '5px 7px 16px 0px #00000063',
+    backgroundColor: headerBgColor,
+    boxShadow: 'rgba(0, 0, 0, 0.3) 5px 7px 16px 0px',
     position: 'fixed',
     top: '20px',
     alignSelf: 'center',
@@ -23,6 +24,7 @@ const Header = () => {
     maxWidth: '1320px',
     backdropFilter: 'blur(30px)',
     zIndex: '9999',
+    transition: 'background-color 0.3s ease',
   };
 
   const brandSectionStyle = {
@@ -194,11 +196,60 @@ const Header = () => {
     setShowDropdown(!showDropdown);
   };
 
+  //  // Scroll event listener to change the background color of the header
+  //  useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (window.scrollY > 350) {
+  //       setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
+  //     } else {
+  //       setHeaderBgColor('rgb(89 89 89 / 24%)'); // Original color
+  //     }
+  //   };
+
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    // Set initial background color based on the current route
+    if (router.pathname === '/dashboard') {
+      setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
+    } else if (router.pathname === '/profile') {
+      setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
+    } else {
+      setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
+    }
+  }, [router.pathname]);
+
+  const handleScroll = () => {
+    if (window.scrollY > 300) {
+      setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
+    } else {
+      // Reset to the initial background color based on the current page
+      if (router.pathname === '/dashboard') {
+        setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
+      } else if (router.pathname === '/profile') {
+        setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
+      } else {
+        setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [router.pathname]);
+
   return (
     <header style={headerStyle}>
       <div style={navLogoWrapStyle}>
       <div style={brandSectionStyle}>
-        <img src='Header PACR Logo.svg'></img>
+        <img src='PACR White Logo.svg'></img>
         {/* <h1 style={brandNameStyle}>PACR</h1>
         <p style={brandTaglineStyle}>Empowering Research, Together</p> */}
       </div>

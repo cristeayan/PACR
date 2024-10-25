@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import SignupView,SigninView, UserViewSet, PostViewSet, CommentViewSet, LikeViewSet
+from .views import SignupView,SigninView, UserViewSet, PostViewSet, CommentViewSet, LikeViewSet,JournalViewSet
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -21,10 +21,11 @@ schema_view = get_schema_view(
 )
 # Router for viewsets
 router = DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'posts', PostViewSet)
 router.register(r'comments', CommentViewSet)
+router.register(r'posts', PostViewSet)
+router.register(r'users', UserViewSet)
 router.register(r'likes', LikeViewSet)
+router.register(r'journals', JournalViewSet)
 
 
 urlpatterns = [

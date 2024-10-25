@@ -38,7 +38,7 @@ const Dashboard = () => {
 
 const mainContainer = {
   width: '100%',
-  backgroundColor: '#fff',
+  backgroundColor: '#F4F2EE',
   display: 'flex',
   justifyContent: 'center',
   paddingTop: '130px',

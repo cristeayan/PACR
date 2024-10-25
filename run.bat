@@ -15,3 +15,4 @@ REM Start the Next.js frontend
 echo Starting Next.js Frontend...
 cd D:\PACR\pacrfrontend
 npm run dev
+	
