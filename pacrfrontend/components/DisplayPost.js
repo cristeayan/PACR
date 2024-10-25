@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 
+<<<<<<< HEAD
 // MediaSlider Component
 const MediaSlider = ({ media }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -66,18 +67,28 @@ const MediaSlider = ({ media }) => {
 };
 
 // DisplayPost Component
+=======
+>>>>>>> d758587042db57db733452fe7ebe61bd3c930bbb
 const DisplayPost = () => {
     const [posts, setPosts] = useState([]);
     const [newComment, setNewComment] = useState({});
     const [newReply, setNewReply] = useState({});
     const { user, token } = useUser();
+<<<<<<< HEAD
+=======
+    const [replyingTo, setReplyingTo] = useState(null); // Track which comment is being replied to
+>>>>>>> d758587042db57db733452fe7ebe61bd3c930bbb
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/posts/', {
                     headers: {
+<<<<<<< HEAD
                         Authorization: `Bearer ${token}`,
+=======
+                        Authorization: `Bearer ${token}`, // Pass the token in headers
+>>>>>>> d758587042db57db733452fe7ebe61bd3c930bbb
                     },
                 });
                 setPosts(response.data);
@@ -159,6 +170,7 @@ const DisplayPost = () => {
                 );
                 setPosts(updatedPosts);
                 setNewReply({ ...newReply, [commentId]: '' });
+                setReplyingTo(null); // Reset replyingTo after reply is added
             } catch (error) {
                 console.error('Error adding reply:', error);
             }
@@ -204,7 +216,7 @@ const DisplayPost = () => {
 
                     {/* Comment Section */}
                     <div style={styles.commentSection}>
-                        <img src={user ?  user.profile_picture : '/dummy-man.png'} alt="User Profile" style={styles.commentProfileImage} />
+                        <img src={user ? user.profile_picture : '/dummy-man.png'} alt="User Profile" style={styles.commentProfileImage} />
                         <input
                             type="text"
                             placeholder="Say Congratulations..."
@@ -228,6 +240,7 @@ const DisplayPost = () => {
                                             alt="Commenter Profile"
                                             style={styles.commentProfileImage}
                                         />
+<<<<<<< HEAD
                                         <div style={styles.commentUserWrap}>
                                             <div>
                                                 <div style={styles.commentUsername}>
@@ -235,11 +248,19 @@ const DisplayPost = () => {
                                                 </div>
                                                 <div style={styles.commentTagline}>{comment.author.tagline}</div>
                                             </div>
+=======
+                                        <div>
+                                            <div style={styles.commentUsername}>
+                                                {comment.author.first_name} {comment.author.last_name} {/* Display name */}
+                                            </div>
+                                            <div style={styles.commentTagline}>{comment.author.tagline}</div>
+>>>>>>> d758587042db57db733452fe7ebe61bd3c930bbb
                                             <div style={styles.commentContent}>{comment.content}</div>
                                         </div>
                                     </div>
                                 </div>
 
+<<<<<<< HEAD
                                 {/* Reply Section */}
                                 <div style={styles.replySection}>
                                     <input
@@ -250,9 +271,39 @@ const DisplayPost = () => {
                                         style={styles.replyInput}
                                     />
                                     <button onClick={() => handleAddReply(comment.id, post.id)} style={styles.replyButton}>
+=======
+                                {/* Show "Reply" button */}
+                                <div style={styles.commentActions}>
+                                    <button
+                                        style={styles.replyButton}
+                                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)} // Toggle reply input
+                                    >
+>>>>>>> d758587042db57db733452fe7ebe61bd3c930bbb
                                         Reply
                                     </button>
                                 </div>
+
+                                {/* Reply Section: Show reply input only for the current comment */}
+                                {replyingTo === comment.id && (
+                                    <div style={styles.replySection}>
+                                        <input
+                                            type="text"
+                                            placeholder="Reply to this comment..."
+                                            value={newReply[comment.id] || ''}
+                                            onChange={(e) => setNewReply({ ...newReply, [comment.id]: e.target.value })}
+                                            style={styles.replyInput}
+                                        />
+                                        <button onClick={() => handleAddReply(comment.id, post.id)} style={styles.replyButton}>
+                                            Post
+                                        </button>
+                                        <button
+                                            style={styles.cancelButton}
+                                            onClick={() => setReplyingTo(null)} // Close the reply input
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                )}
 
                                 {/* Display replies */}
                                 {comment.replies && comment.replies.length > 0 && (
@@ -278,12 +329,6 @@ const DisplayPost = () => {
 
 const styles = {
     postContainer: {
-        // backgroundColor: '#fff',
-        // padding: '20px',
-        // borderRadius: '10px',
-        // boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        // margin: '0 auto',
-        // maxWidth: '40rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '16px',
@@ -417,6 +462,14 @@ const styles = {
         background: 'none',
         border: 'none',
         cursor: 'pointer',
+    },
+    cancelButton: {
+        fontSize: '12px',
+        color: '#ff4d4f',
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        marginLeft: '10px',
     },
     replies: {
         marginTop: '10px',

@@ -8,10 +8,11 @@ call env\Scripts\activate
 
 REM Start the Django backend
 echo Starting DRF Backend...
-cd D:\All PACR\PACR\apiv2
+cd D:\PACR\apiv2
 start cmd /k "python manage.py runserver"
 
 REM Start the Next.js frontend
 echo Starting Next.js Frontend...
-cd D:\All PACR\PACR\pacrfrontend
+cd D:\PACR\pacrfrontend
 npm run dev
+	

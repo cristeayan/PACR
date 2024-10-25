@@ -9,8 +9,8 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import User, Post, Comment, Like, Discipline, Media
-from .serializers import UserSerializer, PostSerializer, CommentSerializer, LikeSerializer, DisciplineSerializer, MediaSerializer
+from .models import User, Post, Comment, Like, Discipline, Media, Journal
+from .serializers import UserSerializer, PostSerializer, CommentSerializer, LikeSerializer, DisciplineSerializer, MediaSerializer, JournalSerializer
 
 # Signup View
 class SignupView(APIView):
@@ -21,16 +21,13 @@ class SignupView(APIView):
         if serializer.is_valid():
             user = serializer.save()
 
-            # Automatically generate JWT token for the new user
             refresh = RefreshToken.for_user(user)
-
-            # Include user data in the response
             user_data = UserSerializer(user, context={'request': request}).data
 
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
-                'user': user_data  # Return user details
+                'user': user_data
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -38,6 +35,7 @@ class SignupView(APIView):
 # Signin View (Login)
 class SigninView(APIView):
     permission_classes = [AllowAny]
+
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -47,29 +45,21 @@ class SigninView(APIView):
                 'password': openapi.Schema(type=openapi.TYPE_STRING, description='User password'),
             }
         ),
-        responses={
-            200: openapi.Response('Login successful', UserSerializer),
-            401: 'Unauthorized',
-        }
+        responses={200: openapi.Response('Login successful', UserSerializer), 401: 'Unauthorized'}
     )
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
 
-        # Authenticate the user
         user = authenticate(request, email=email, password=password)
-
         if user is not None:
-            # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
-
-            # Serialize the user data
             user_data = UserSerializer(user, context={'request': request}).data
 
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
-                'user': user_data  # Include user details in response
+                'user': user_data
             }, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -81,7 +71,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_serializer_context(self):
-        return {'request': self.request}  # Ensure request is passed to serializer context
+        return {'request': self.request}
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def follow(self, request, pk=None):
@@ -103,18 +93,37 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
-# Post ViewSet with media handling
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+# Journal ViewSet with owner handling
+class JournalViewSet(viewsets.ModelViewSet):
+    queryset = Journal.objects.all().order_by('-date_of_publication')
+    serializer_class = JournalSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]  # To handle file uploads
-
-    def get_serializer_context(self):
-        return {'request': self.request}  # Ensure request is passed to serializer context
+    parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
-        post = serializer.save(author=self.request.user)
+        serializer.save(owner=self.request.user)  # Set the owner of the journal
+
+# Post ViewSet with media handling and journal linking
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all().order_by('-created_at')   
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+    def perform_create(self, serializer):
+        journal_data = self.request.data.get('journal', None)
+        if journal_data:
+            journal_serializer = JournalSerializer(data=journal_data)
+            if journal_serializer.is_valid():
+                journal = journal_serializer.save(owner=self.request.user)  # Set the owner when creating the journal
+                serializer.save(author=self.request.user, journal=journal)
+            else:
+                return Response(journal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            post = serializer.save(author=self.request.user)
 
         # Handle media uploads
         media_files = self.request.FILES.getlist('media')
@@ -129,8 +138,7 @@ class PostViewSet(viewsets.ModelViewSet):
         followed_disciplines = request.user.disciplines_followed.all()
         posts_from_disciplines = Post.objects.filter(disciplines__in=followed_disciplines)
 
-        combined_posts = posts_from_users | posts_from_disciplines
-        combined_posts = combined_posts.distinct().order_by('-created_at')
+        combined_posts = (posts_from_users | posts_from_disciplines).distinct().order_by('-created_at')
 
         serializer = PostSerializer(combined_posts, many=True, context={'request': self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -149,7 +157,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         comment = self.get_object()
-
         if comment.author != request.user:
             return Response({"detail": "You can only delete your own comments."}, status=status.HTTP_403_FORBIDDEN)
 

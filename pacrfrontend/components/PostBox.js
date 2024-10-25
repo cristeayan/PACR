@@ -1,6 +1,7 @@
 import { useUser } from '../context/UserContext';
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import Router from 'next/router';
 
 const PostBox = () => {
   const { user ,token} = useUser();
@@ -141,8 +142,8 @@ const PostBox = () => {
             <button style={postBoxButtonStyle}>
               <img src="Share Event Icon.png" alt="Share Event" /> Event
             </button>
-            <button style={postBoxButtonStyle}>
-              <img src="Upload Research Icon.png" alt="Upload Research" /> Upload Research
+            <button style={postBoxButtonStyle} onClick={()=>{Router.push('/uploadresearch')}}>
+              <img src="Upload Research Icon.png" alt="Upload Research"  /> Upload Research
             </button>
           </div>
         </div>

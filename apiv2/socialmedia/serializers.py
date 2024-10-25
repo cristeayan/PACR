@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Post, Comment, Like, Discipline, Media
+from .models import User, Post, Comment, Like, Discipline, Media, Journal
 
 # Serializer for user summary
 class UserSummarySerializer(serializers.ModelSerializer):
@@ -50,6 +50,18 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+# Journal Serializer (with owner field)
+class JournalSerializer(serializers.ModelSerializer):
+    owner = UserSummarySerializer(read_only=True)  # Include the owner's info
+
+    class Meta:
+        model = Journal
+        fields = [
+            'id', 'title', 'authors', 'publication_type', 'article_type',
+            'date_of_publication', 'abstract', 'doi', 'article_link',
+            'pubmed_id', 'scopus_link', 'uploaded_files', 'owner'  # Include the owner field
+        ]
+
 # Media Serializer
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,12 +86,10 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ["id", "post", "author", "content", "created_at", "parent", "replies"]
 
     def get_replies(self, obj):
-        # Recursively get replies for the comment and pass the context to child serializers
         replies = Comment.objects.filter(parent=obj)
-        context = self.context  # Pass context to the nested replies
-        return CommentSerializer(replies, many=True, context=context).data
+        return CommentSerializer(replies, many=True).data
 
-# Post Serializer with media and author
+# Post Serializer with media, author, and journal
 class PostSerializer(serializers.ModelSerializer):
     author = UserSummarySerializer(read_only=True)  # Use UserSummarySerializer for author
     likes_count = serializers.SerializerMethodField()
@@ -89,12 +99,13 @@ class PostSerializer(serializers.ModelSerializer):
     disciplines = DisciplineSerializer(many=True, read_only=True)
     repost_of = serializers.PrimaryKeyRelatedField(read_only=True)
     media = MediaSerializer(many=True, read_only=True)
+    journal = JournalSerializer(read_only=True)  # Include journal details if applicable
 
     class Meta:
         model = Post
         fields = [
             "id", "author", "content", "disciplines", "created_at", "likes_count",
-            "comments_count", "likes", "comments", "repost_of", "media",
+            "comments_count", "likes", "comments", "repost_of", "media", "post_type", "journal"
         ]
 
     def get_likes_count(self, obj):
@@ -105,5 +116,4 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments(self, obj):
         top_level_comments = Comment.objects.filter(post=obj, parent=None)
-        context = self.context  # Pass context to the comments
-        return CommentSerializer(top_level_comments, many=True, context=context).data
+        return CommentSerializer(top_level_comments, many=True).data
