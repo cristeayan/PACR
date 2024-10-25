@@ -94,7 +94,7 @@ const UploadResearch = () => {
 
         // Append files to the form data
         files.forEach((file) => {
-          submissionData.append('files', file);
+          submissionData.append('uploaded_files', file);
         });
 
         const response = await fetch('http://127.0.0.1:8000/api/journals/', {
