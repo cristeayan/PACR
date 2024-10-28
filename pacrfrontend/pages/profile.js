@@ -72,14 +72,17 @@ const Profile = () => {
         <div style={profilePageStyle}>
           {/* Header Section with Background Image */}
           <div style={headerStyle}>
-            <img src="/Placeholder Cover.jpg" alt="Profile Background" style={backgroundImageStyle} />
+            <img src="/Monitor Image.png" alt="Profile Background" style={backgroundImageStyle} />
+            <div style={coverEditImageWrap}>
+              <img src='Cover Edit Icon.svg' alt='Edit Icon' style={coverEditImage} />
+            </div>
           </div>
 
           {/* User Information */}
           <div style={profileMainWrapper}>
             <div style={profileInfoWrapperStyle}>
               <div style={userImageWrapperStyle}>
-                <img src={user ? user.profile_picture : '/dummy-man.png'} alt="Profile" style={profileImageStyle} />
+                <img src={/*user ? user.profile_picture :*/ 'dummy-man.png'} alt="Profile" style={profileImageStyle} />
               </div>
               <div style={userInfoStyle}>
                 <h1 style={userNameHeading}>{user?user.first_name+' '+user.last_name:"why"}</h1>
@@ -167,7 +170,11 @@ const profileMainWrapper = {
 
 const headerStyle = {
   width: '100%',
-  height: '524px',
+  height: '100%',
+  maxHeight: '32.75rem',
+  position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
 };
 
 const backgroundImageStyle = {
@@ -191,6 +198,7 @@ const userImageWrapperStyle = {
   padding: '10px',
   borderRadius: '16px',
   backgroundColor: '#fff',
+  position: 'relative',
 };
 
 const profileImageStyle = {
@@ -198,6 +206,7 @@ const profileImageStyle = {
   height: '230px',
   borderRadius: '12px',
   objectFit: 'cover',
+  
 };
 
 const userNameHeading = {
@@ -485,5 +494,17 @@ const postBoxButtonStyle = {
   backgroundColor: 'transparent',
 };
 
+const coverEditImageWrap = {
+  width: '100%',
+  maxWidth: '1320px',
+  position: 'absolute',
+  bottom: '20px',
+  display: 'flex',
+  justifyContent: 'flex-end',
+};
+
+const coverEditImage = {
+  width: 'auto',
+};
 
 export default Profile;

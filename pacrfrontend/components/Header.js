@@ -6,7 +6,7 @@ import "../app/globals.css";
 const Header = () => {
   const router = useRouter()
   const { user } = useUser();
-  const [headerBgColor, setHeaderBgColor] = useState('rgb(89 89 89 / 24%)'); // Initial background color
+  const [headerBgColor, setHeaderBgColor] = useState('#FFFFFFA3'); // Initial background color
 
   const headerStyle = {
     display: 'flex',
@@ -22,7 +22,7 @@ const Header = () => {
     borderRadius: '16px',
     width: '100%',
     maxWidth: '1320px',
-    backdropFilter: 'blur(30px)',
+    backdropFilter: 'blur(16px)',
     zIndex: '9999',
     transition: 'background-color 0.3s ease',
   };
@@ -47,7 +47,7 @@ const Header = () => {
 
   const searchBarStyle = {
     flex: 1,
-    maxWidth: '356px',
+    maxWidth: '29.25rem',
     position: 'relative'
   };
 
@@ -74,7 +74,7 @@ const Header = () => {
 
   const navIconsStyle = {
     display: 'flex',
-    gap: '28px',
+    gap: '20px',
   };
 
   const navButtonStyle = {
@@ -95,17 +95,17 @@ const Header = () => {
   };
 
   const iconStyle = {
-    width: '32px',
-    height: '32px',
+    width: '20px',
+    height: '20px',
   };
 
   const navTextStyle = {
-    fontSize: '16px',
+    fontSize: '12px',
     textAlign: 'center',
-    color: '#ffffff',
+    color: '#313131',
     fontWeight: '400',
-    lineHeight: '17.6px',
-    letterSpacing: '2%'
+    lineHeight: '13.2px',
+    letterSpacing: '2%',
   };
 
   const userInfoStyle = {
@@ -118,7 +118,7 @@ const Header = () => {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: '14px',
   };
 
   const uploadButtonStyle = {
@@ -149,9 +149,8 @@ const Header = () => {
   const dropdownStyle = {
     position: 'absolute',
     top: '100%',
-    left: 0,
-    backgroundColor: '#88d8f9',
-    border: '1px solid #ffffff',
+    left: '-150%',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: '16px',
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
     zIndex: 2,
@@ -161,7 +160,7 @@ const Header = () => {
     transition: 'opacity 0.3s ease, transform 0.3s ease',
     pointerEvents: 'none',
     boxShadow: '5px 7px 16px 0px #00000063',
-    backdropFilter: 'blur(30px)',
+    backdropFilter: 'blur(16px)',
   };
 
   const dropdownVisibleStyle = {
@@ -173,20 +172,37 @@ const Header = () => {
   const dropdownItemStyle = {
     padding: '10px',
     cursor: 'pointer',
-    color: '#ffffff',
+    color: '#313131',
+    fontSize: '14px',
   };
 
   const navLogoWrapStyle = {
     display: 'flex',
-    gap: '30px',
+    gap: '36px',
     width: '100%',
     alignItems: 'center',
   };
 
   const navMenuWrapStyle = {
     display: 'flex',
-    gap: '30px',
+    gap: '64px',
     alignItems: 'center',
+  };
+
+  const gradientWrapStyle = {
+    background: 'linear-gradient(180deg, #FFFFFF 35%, rgba(255, 255, 255, 0) 100%)',
+    position: 'fixed',
+    width: '100%',
+    height: '106px',
+    zIndex: '5',
+    top: '104px',
+    left: '0',
+    right: '0',
+  };
+
+  const parentStyle = {
+    display: 'flex',
+    flexDirection: 'column',
   };
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -212,44 +228,45 @@ const Header = () => {
   //   };
   // }, []);
 
-  useEffect(() => {
-    // Set initial background color based on the current route
-    if (router.pathname === '/dashboard') {
-      setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
-    } else if (router.pathname === '/profile') {
-      setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
-    } else {
-      setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
-    }
-  }, [router.pathname]);
+  // useEffect(() => {
+  //   // Set initial background color based on the current route
+  //   if (router.pathname === '/dashboard') {
+  //     setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
+  //   } else if (router.pathname === '/profile') {
+  //     setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
+  //   } else {
+  //     setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
+  //   }
+  // }, [router.pathname]);
 
-  const handleScroll = () => {
-    if (window.scrollY > 300) {
-      setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
-    } else {
-      // Reset to the initial background color based on the current page
-      if (router.pathname === '/dashboard') {
-        setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
-      } else if (router.pathname === '/profile') {
-        setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
-      } else {
-        setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
-      }
-    }
-  };
+  // const handleScroll = () => {
+  //   if (window.scrollY > 300) {
+  //     setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
+  //   } else {
+  //     // Reset to the initial background color based on the current page
+  //     if (router.pathname === '/dashboard') {
+  //       setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
+  //     } else if (router.pathname === '/profile') {
+  //       setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
+  //     } else {
+  //       setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [router.pathname]);
+  // useEffect(() => {
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, [router.pathname]);
 
   return (
+    <div style={parentStyle}><div style={gradientWrapStyle}></div>
     <header style={headerStyle}>
       <div style={navLogoWrapStyle}>
       <div style={brandSectionStyle}>
-        <img src='PACR White Logo.svg'></img>
+        <img src='PACR New Logo.svg'></img>
         {/* <h1 style={brandNameStyle}>PACR</h1>
         <p style={brandTaglineStyle}>Empowering Research, Together</p> */}
       </div>
@@ -266,7 +283,7 @@ const Header = () => {
       <div style={navIconsStyle}>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="Header Home Icon.svg" alt="home" onClick={()=>{
+            <img style={iconStyle} src="Home Black Icon.svg" alt="home" onClick={()=>{
               router.push('/dashboard')
             }}/>
           </div>
@@ -274,31 +291,31 @@ const Header = () => {
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="Header Research Icon.svg" alt="literature"/>
+            <img style={iconStyle} src="Research Black Icon.svg" alt="literature"/>
           </div>
           <span style={navTextStyle}>Research</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="Header Communites Icon.svg" alt="people-working-together"/>
+            <img style={iconStyle} src="Communities Black Icon.svg" alt="people-working-together"/>
           </div>
           <span style={navTextStyle}>Communities</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="Header Stats Icon.svg" alt="bookmark-ribbon"/>
+            <img style={iconStyle} src="Stats Black Icon.svg" alt="bookmark-ribbon"/>
           </div>
           <span style={navTextStyle}>Library</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="Header Notification Icon.svg" alt="notification-bell"/>
+            <img style={iconStyle} src="Notifications Black Icon.svg" alt="notification-bell"/>
           </div>
           <span style={navTextStyle}>Alerts</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
-            <img style={iconStyle} src="Header Messages Icon.svg" alt="chat-message"/>
+            <img style={iconStyle} src="Messages Black Icon.svg" alt="chat-message"/>
           </div>
           <span style={navTextStyle}>Messages</span>
         </div>
@@ -315,7 +332,7 @@ const Header = () => {
                 borderRadius: '50%' 
               }} 
             />
-            <img src='Profile Down Arrow.svg'></img>
+            <img src='Header Dropdown Black Icon.svg'></img>
           </div >
           <div style={{ ...dropdownStyle, ...(showDropdown ? dropdownVisibleStyle : {}) }}>
             <div style={dropdownItemStyle} on onClick={()=>{router.push('/profile')}}>Profile Settings</div>
@@ -330,6 +347,7 @@ const Header = () => {
       </div>
       </div>
     </header>
+    </div>
   );
 };
 
