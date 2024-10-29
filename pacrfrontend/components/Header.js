@@ -5,7 +5,7 @@ import "../app/globals.css";
 
 const Header = () => {
   const router = useRouter()
-  const { user } = useUser();
+  const { user,token } = useUser();
   const [headerBgColor, setHeaderBgColor] = useState('rgb(89 89 89 / 24%)'); // Initial background color
 
   const headerStyle = {

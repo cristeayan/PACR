@@ -11,8 +11,10 @@ class UserSummarySerializer(serializers.ModelSerializer):
 
     def get_profile_picture(self, obj):
         request = self.context.get('request')
-        if obj.profile_picture:
+        if request and obj.profile_picture:
             return request.build_absolute_uri(obj.profile_picture.url)
+        elif obj.profile_picture:
+            return obj.profile_picture.url
         return None
 
 class DisciplineSerializer(serializers.ModelSerializer):
@@ -87,7 +89,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_replies(self, obj):
         replies = Comment.objects.filter(parent=obj)
-        return CommentSerializer(replies, many=True).data
+        return CommentSerializer(replies, many=True, context=self.context).data
 
 # Post Serializer with media, author, and journal
 class PostSerializer(serializers.ModelSerializer):
@@ -116,4 +118,4 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments(self, obj):
         top_level_comments = Comment.objects.filter(post=obj, parent=None)
-        return CommentSerializer(top_level_comments, many=True).data
+        return CommentSerializer(top_level_comments, many=True, context=self.context).data
