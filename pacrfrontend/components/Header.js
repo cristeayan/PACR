@@ -189,22 +189,6 @@ const Header = () => {
     alignItems: 'center',
   };
 
-  const gradientWrapStyle = {
-    background: 'linear-gradient(180deg, #FFFFFF 35%, rgba(255, 255, 255, 0) 100%)',
-    position: 'fixed',
-    width: '100%',
-    height: '106px',
-    zIndex: '5',
-    top: '104px',
-    left: '0',
-    right: '0',
-  };
-
-  const parentStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-  };
-
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleUsernameClick = () => {
@@ -228,41 +212,40 @@ const Header = () => {
   //   };
   // }, []);
 
-  // useEffect(() => {
-  //   // Set initial background color based on the current route
-  //   if (router.pathname === '/dashboard') {
-  //     setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
-  //   } else if (router.pathname === '/profile') {
-  //     setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
-  //   } else {
-  //     setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
-  //   }
-  // }, [router.pathname]);
+  useEffect(() => {
+    // Set initial background color based on the current route
+    if (router.pathname === '/dashboard') {
+      setHeaderBgColor('#FFFFFFA3'); // Sky blue for dashboard
+    } else if (router.pathname === '/profile') {
+      setHeaderBgColor('#FFFFFFA3'); // White for profile
+    } else {
+      setHeaderBgColor('#FFFFFFA3'); // Default for other pages
+    }
+  }, [router.pathname]);
 
-  // const handleScroll = () => {
-  //   if (window.scrollY > 300) {
-  //     setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
-  //   } else {
-  //     // Reset to the initial background color based on the current page
-  //     if (router.pathname === '/dashboard') {
-  //       setHeaderBgColor('#70D4FC'); // Sky blue for dashboard
-  //     } else if (router.pathname === '/profile') {
-  //       setHeaderBgColor('rgb(89 89 89 / 24%)'); // White for profile
-  //     } else {
-  //       setHeaderBgColor('rgb(89 89 89 / 24%)'); // Default for other pages
-  //     }
-  //   }
-  // };
+  const handleScroll = () => {
+    if (window.scrollY > 300) {
+      setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
+    } else {
+      // Reset to the initial background color based on the current page
+      if (router.pathname === '/dashboard') {
+        setHeaderBgColor('#FFFFFFA3'); // Sky blue for dashboard
+      } else if (router.pathname === '/profile') {
+        setHeaderBgColor('#FFFFFFA3'); // White for profile
+      } else {
+        setHeaderBgColor('#FFFFFFA3'); // Default for other pages
+      }
+    }
+  };
 
-  // useEffect(() => {
-  //   window.addEventListener('scroll', handleScroll);
-  //   return () => {
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, [router.pathname]);
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [router.pathname]);
 
   return (
-    <div style={parentStyle}><div style={gradientWrapStyle}></div>
     <header style={headerStyle}>
       <div style={navLogoWrapStyle}>
       <div style={brandSectionStyle}>
@@ -347,7 +330,6 @@ const Header = () => {
       </div>
       </div>
     </header>
-    </div>
   );
 };
 
