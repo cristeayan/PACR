@@ -250,13 +250,13 @@ const postBoxInputStyle = {
   borderRadius: '200px',
   backgroundColor: '#F2F2F2',
   color: '#adadad',
-  height: '40px',
+  height: '44px',
   paddingRight: '70px', // Ensure space for submit button
 };
 
 const submitButtonInsideInputStyle = {
   position: 'absolute',
-  right: '10px',
+  right: '6px',
   top: '50%',
   transform: 'translateY(-50%)',
   backgroundColor: '#88D8F9',

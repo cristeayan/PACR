@@ -51,7 +51,7 @@ const mainInnerContainer = {
   display: 'grid',
   gridTemplateColumns: '0.5fr 1fr 0.5fr',
   gridTemplateRows: '1fr',
-  gridColumnGap: '32px',
+  gridColumnGap: '20px',
   gridRowGap: '20px',
 };
 

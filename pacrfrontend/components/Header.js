@@ -212,38 +212,38 @@ const Header = () => {
   //   };
   // }, []);
 
-  useEffect(() => {
-    // Set initial background color based on the current route
-    if (router.pathname === '/dashboard') {
-      setHeaderBgColor('#FFFFFFA3'); // Sky blue for dashboard
-    } else if (router.pathname === '/profile') {
-      setHeaderBgColor('#FFFFFFA3'); // White for profile
-    } else {
-      setHeaderBgColor('#FFFFFFA3'); // Default for other pages
-    }
-  }, [router.pathname]);
+  // useEffect(() => {
+  //   // Set initial background color based on the current route
+  //   if (router.pathname === '/dashboard') {
+  //     setHeaderBgColor('#FFFFFFA3'); // Sky blue for dashboard
+  //   } else if (router.pathname === '/profile') {
+  //     setHeaderBgColor('#FFFFFFA3'); // White for profile
+  //   } else {
+  //     setHeaderBgColor('#FFFFFFA3'); // Default for other pages
+  //   }
+  // }, [router.pathname]);
 
-  const handleScroll = () => {
-    if (window.scrollY > 300) {
-      setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
-    } else {
-      // Reset to the initial background color based on the current page
-      if (router.pathname === '/dashboard') {
-        setHeaderBgColor('#FFFFFFA3'); // Sky blue for dashboard
-      } else if (router.pathname === '/profile') {
-        setHeaderBgColor('#FFFFFFA3'); // White for profile
-      } else {
-        setHeaderBgColor('#FFFFFFA3'); // Default for other pages
-      }
-    }
-  };
+  // const handleScroll = () => {
+  //   if (window.scrollY > 300) {
+  //     setHeaderBgColor('#70D4FC'); // Sky blue color after scrolling
+  //   } else {
+  //     // Reset to the initial background color based on the current page
+  //     if (router.pathname === '/dashboard') {
+  //       setHeaderBgColor('#FFFFFFA3'); // Sky blue for dashboard
+  //     } else if (router.pathname === '/profile') {
+  //       setHeaderBgColor('#FFFFFFA3'); // White for profile
+  //     } else {
+  //       setHeaderBgColor('#FFFFFFA3'); // Default for other pages
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [router.pathname]);
+  // useEffect(() => {
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, [router.pathname]);
 
   return (
     <header style={headerStyle}>
