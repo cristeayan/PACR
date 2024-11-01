@@ -172,6 +172,7 @@ const Post = () => {
         </div>
       </div>
 
+      <div style={styles.commentSectionMainWrapper}>
       <div style={styles.commentSection}>
         <img
           src="/dummy-man.png"
@@ -198,70 +199,80 @@ const Post = () => {
       <div style={styles.commentsList}>
         {comments.map((comment, index) => (
           <div key={index} style={styles.commentBox}>
-            <div style={styles.commentHeader}>
-              <div style={styles.commentInfo}>
+            <div style={styles.singleCommentWrapper}>
+              <div style={styles.commentImageWrapper}>
                 <img
-                  src="/Dummy Profile.png"
+                  src="/dummy-man.png"
                   alt="Commenter Profile"
                   style={styles.commentProfileImage}
                 />
-                <div>
-                  <div style={styles.commentUsername}>{comment.username}</div>
-                  <div style={styles.commentTagline}>{comment.tagline}</div>
+              </div>
+              <div style={styles.commentInfoMainWrapper}>
+                <div style={styles.commentInfo}>
+                  <div style={styles.commentUserDetails}>
+                    <div style={styles.commentUsername}>{comment.username}</div>
+                    <div style={styles.commentTagline}>{comment.tagline}</div>
+                  </div>
+                  <div style={styles.commentOptionsWrapper}>
+                    <span style={styles.commentPostTiming}>30 mins. ago</span>
+                    <div style={styles.commentOptions}>
+                      <button
+                        style={styles.optionsButton}
+                        onClick={() =>
+                          setOptionsOpen(optionsOpen === index ? null : index)
+                        }
+                      >
+                        <img src='/More_Vertical.svg' alt='Options Icon' />
+                      </button>
+                      {optionsOpen === index && (
+                        <div style={styles.optionsDropdown}>
+                          <button
+                            onClick={() => handleEditComment(index)}
+                            style={styles.editButton}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteComment(index)}
+                            style={styles.deleteButton}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {editingCommentIndex === index ? (
+                  <>
+                    <div style={styles.commentInputEditWrap}>
+                      <input
+                        type="text"
+                        value={tempCommentText}
+                        onChange={(e) => setTempCommentText(e.target.value)}
+                        style={styles.editCommentInput}
+                      />
+                      <button
+                        onClick={() => saveEditedComment(index)}
+                        style={styles.saveButton}
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div style={styles.commentContent}>{comment.text}</div>
+                )}
+
+                <div style={styles.commentActions}>
+                  <button style={styles.likeButton}><img src='/Thumbs Up.svg' alt='Thumbs Icon' />Like</button>
+                  <div style={styles.commentActionsDivider}></div>
+                  <button style={styles.replyButton} onClick={() => setReplyingTo(index)}>
+                    <img src='/Arrow_Reply.svg' alt='Reply Icon' />Reply
+                  </button>
                 </div>
               </div>
-              <div style={styles.commentOptions}>
-                <button
-                  style={styles.optionsButton}
-                  onClick={() =>
-                    setOptionsOpen(optionsOpen === index ? null : index)
-                  }
-                >
-                  ...
-                </button>
-                {optionsOpen === index && (
-                  <div style={styles.optionsDropdown}>
-                    <button
-                      onClick={() => handleEditComment(index)}
-                      style={styles.editButton}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteComment(index)}
-                      style={styles.deleteButton}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {editingCommentIndex === index ? (
-              <>
-                <input
-                  type="text"
-                  value={tempCommentText}
-                  onChange={(e) => setTempCommentText(e.target.value)}
-                  style={styles.editCommentInput}
-                />
-                <button
-                  onClick={() => saveEditedComment(index)}
-                  style={styles.saveButton}
-                >
-                  Save
-                </button>
-              </>
-            ) : (
-              <div style={styles.commentContent}>{comment.text}</div>
-            )}
-
-            <div style={styles.commentActions}>
-              <button style={styles.replyButton} onClick={() => setReplyingTo(index)}>
-                Reply
-              </button>
-              <button style={styles.likeButton}>Like</button>
             </div>
 
             {replyingTo === index && (
@@ -354,6 +365,7 @@ const Post = () => {
             )}
           </div>
         ))}
+      </div>
       </div>
     </div>
   );
@@ -500,6 +512,11 @@ const styles = {
     gap: '6px',
     textDecoration: 'none',
   },
+  commentSectionMainWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
+  },
   commentSection: {
     display: 'flex',
     alignItems: 'center',
@@ -530,13 +547,34 @@ const styles = {
     cursor: 'pointer',
   },
   commentsList: {
-    marginTop: '15px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
   },
   commentBox: {
-    backgroundColor: '#f9f9f9',
-    padding: '10px',
+    backgroundColor: '#fff',
+  },
+  singleCommentWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '20px',
+  },
+  commentImageWrapper: {
+    width: 'auto',
+  },
+  commentProfileImage: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '6px',
+  },
+  commentInfoMainWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+    backgroundColor: '#F0F0F0',
     borderRadius: '10px',
-    marginBottom: '10px',
+    padding: '16px',
+    width: '100%',
   },
   commentHeader: {
     display: 'flex',
@@ -545,37 +583,73 @@ const styles = {
   commentInfo: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '20px',
   },
-  commentProfileImage: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '6px',
+  commentUserDetails: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
   },
   commentUsername: {
-    fontWeight: 'bold',
-    fontSize: '14px',
+    fontSize: '16px',
+    fontWeight: '500',
+    lineHeight: '20px',
+    color: '#000000',
   },
   commentTagline: {
-    fontSize: '12px',
-    color: '#777',
+    fontSize: '14px',
+    lineHeight: '16px',
+    fontWeight: '400',
+    color: '#ADADAD',
+  },
+  commentOptionsWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  commentPostTiming: {
+    fontSize: '14px',
+    lineHeight: '16px',
+    fontWeight: '400',
+    color: '#ADADAD',
+  },
+  commentOptions: {
+    position: 'relative',
   },
   commentContent: {
-    marginTop: '10px',
-    fontSize: '14px',
+    fontSize: '16px',
+    lineHeight: '24px',
+    fontWeight: '400',
+    color: '#313131',
+    letterSpacing: '0.4px',
   },
   commentActions: {
-    marginTop: '10px',
+    display: 'flex',
+    alignItems: 'stretch',
+    gap: '12px',
+  },
+  commentActionsDivider: {
+    width: '1px',
+    height: 'auto',
+    backgroundColor: '#ADADAD',
   },
   replyButton: {
-    fontSize: '12px',
-    color: '#007bff',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontSize: '14px',
+    color: '#ADADAD',
     background: 'none',
     border: 'none',
     cursor: 'pointer',
   },
   likeButton: {
-    fontSize: '12px',
-    color: '#007bff',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontSize: '14px',
+    color: '#ADADAD',
     background: 'none',
     border: 'none',
     cursor: 'pointer',
@@ -614,6 +688,7 @@ const styles = {
   },
   optionsDropdown: {
     position: 'absolute',
+    right: '8px',
     backgroundColor: '#fff',
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
     borderRadius: '4px',
@@ -634,19 +709,31 @@ const styles = {
     cursor: 'pointer',
     padding: '5px',
   },
+  commentInputEditWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: '8px',
+  },
   editCommentInput: {
+    fontSize: '14px',
+    lineHeight: '24px',
+    fontWeight: '400',
+    color: '#313131',
     width: '100%',
-    padding: '8px',
+    padding: '14px',
     borderRadius: '5px',
-    border: '1px solid #ddd',
+    border: 'none',
+    backgroundColor: 'rgb(255 255 255 / 0%)'
   },
   saveButton: {
-    marginTop: '5px',
-    backgroundColor: '#007bff',
+    fontSize: '16px',
+    lineHeight: '18px',
+    backgroundColor: '#70D4FC',
     color: '#fff',
     border: 'none',
-    borderRadius: '5px',
-    padding: '5px 10px',
+    borderRadius: '200px',
+    padding: '8px 20px',
     cursor: 'pointer',
   },
   postHeaderWrap: {
