@@ -70,6 +70,7 @@ const DisplayPost = () => {
     const [posts, setPosts] = useState([]);
     const [newComment, setNewComment] = useState({});
     const [newReply, setNewReply] = useState({});
+    const [replyingTo, setReplyingTo] = useState(null);
     const { user, token } = useUser();
 
     useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const UploadResearchPost = () => {
+const Post = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [editingCommentIndex, setEditingCommentIndex] = useState(null);
@@ -10,6 +10,10 @@ const UploadResearchPost = () => {
   const [optionsOpen, setOptionsOpen] = useState(null);
   const [replyOptionsOpen, setReplyOptionsOpen] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
+
+  // Temporary state to hold the current text while editing
+  const [tempCommentText, setTempCommentText] = useState('');
+  const [tempReplyText, setTempReplyText] = useState('');
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -38,11 +42,12 @@ const UploadResearchPost = () => {
   // Handle edit comment
   const handleEditComment = (index) => {
     setEditingCommentIndex(index);
+    setTempCommentText(comments[index].text); // Set the temporary state with the current comment text
   };
 
   const saveEditedComment = (index) => {
     const updatedComments = [...comments];
-    updatedComments[index].text = newComment; // Commit the temporary text to the actual comment
+    updatedComments[index].text = tempCommentText; // Commit the temporary text to the actual comment
     setComments(updatedComments);
     setEditingCommentIndex(null); // Exit edit mode
   };
@@ -71,11 +76,12 @@ const UploadResearchPost = () => {
   // Handle edit reply
   const handleEditReply = (commentIndex, replyIndex) => {
     setEditingReplyIndex({ commentIndex, replyIndex });
+    setTempReplyText(comments[commentIndex].replies[replyIndex].text); // Set the temporary state with the current reply text
   };
 
   const saveEditedReply = (commentIndex, replyIndex) => {
     const updatedComments = [...comments];
-    updatedComments[commentIndex].replies[replyIndex].text = replyText; // Commit the temporary text to the actual reply
+    updatedComments[commentIndex].replies[replyIndex].text = tempReplyText; // Commit the temporary text to the actual reply
     setComments(updatedComments);
     setEditingReplyIndex(null); // Exit edit mode
   };
@@ -90,20 +96,16 @@ const UploadResearchPost = () => {
   };
 
   return (
-    <div style={styles.container}>
-      {/* Header with profile and actions */}
-      <div style={styles.header}>
-        <div style={styles.profileSection}>
-          <img src="/Dummy Profile.png" alt="Dr. Max" style={styles.profileImage} />
-          <div>
-            <div
-              style={styles.userName}
-              onMouseOver={() => setIsHovered(true)}
-              onMouseOut={() => setIsHovered(false)}
-            >
-              <a href="#" style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }}>
-                Dr. Max O' Brian | MPH, PhD
-              </a>
+    <div style={styles.postContainer}>
+      <div style={styles.postHeaderWrap}>
+        <div style={styles.postHeader}>
+          <img src="/dummy-man.png" alt="User Profile" style={styles.profileImage} />
+          <div style={styles.userDetailWrap}>
+            <div style={styles.userName}
+              onMouseOver={handleMouseEnter}
+              onMouseOut={handleMouseLeave}><a style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }} href='#'>Dr. Matthew Antony</a></div>
+            <div style={styles.tagline}>
+              Post Doctoral Research Fellow at Beth Israel Deaconess...
             </div>
             <div style={styles.postTime}>2 mins ago</div>
           </div>
@@ -255,58 +257,72 @@ const UploadResearchPost = () => {
                   style={styles.commentProfileImage}
                 />
               </div>
-              <div style={styles.commentOptions}>
-                <button
-                  style={styles.optionsButton}
-                  onClick={() =>
-                    setOptionsOpen(optionsOpen === index ? null : index)
-                  }
-                >
-                  ...
-                </button>
-                {optionsOpen === index && (
-                  <div style={styles.optionsDropdown}>
-                    <button
-                      onClick={() => handleEditComment(index)}
-                      style={styles.editButton}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteComment(index)}
-                      style={styles.deleteButton}
-                    >
-                      Delete
-                    </button>
+              <div style={styles.commentInfoMainWrapper}>
+                <div style={styles.commentInfo}>
+                  <div style={styles.commentUserDetails}>
+                    <div style={styles.commentUsername}>{comment.username}</div>
+                    <div style={styles.commentTagline}>{comment.tagline}</div>
                   </div>
-                )}
-              </div>
-            </div>
+                  <div style={styles.commentOptionsWrapper}>
+                    <span style={styles.commentPostTiming}>30 mins. ago</span>
+                    <div style={styles.commentOptions}>
+                      <button
+                        style={styles.optionsButton}
+                        onClick={() =>
+                          setOptionsOpen(optionsOpen === index ? null : index)
+                        }
+                      >
+                        <img src='/More_Vertical.svg' alt='Options Icon' />
+                      </button>
+                      {optionsOpen === index && (
+                        <div style={styles.optionsDropdown}>
+                          <button
+                            onClick={() => handleEditComment(index)}
+                            style={styles.editButton}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteComment(index)}
+                            style={styles.deleteButton}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
-            {editingCommentIndex === index ? (
-              <>
-                <input
-                  type="text"
-                  value={tempCommentText}
-                  onChange={(e) => setTempCommentText(e.target.value)}
-                  style={styles.editCommentInput}
-                />
-                <button
-                  onClick={() => saveEditedComment(index)}
-                  style={styles.saveButton}
-                >
-                  Save
-                </button>
-              </>
-            ) : (
-              <div style={styles.commentContent}>{comment.text}</div>
-            )}
-            
-            <div style={styles.commentActions}>
-              <button style={styles.likeButton}>👍 Like | </button>
-              <button style={styles.commentAction} onClick={() => setReplyingTo(index)}>
-              💬 Reply
-              </button>
+                {editingCommentIndex === index ? (
+                  <>
+                    <div style={styles.commentInputEditWrap}>
+                      <input
+                        type="text"
+                        value={tempCommentText}
+                        onChange={(e) => setTempCommentText(e.target.value)}
+                        style={styles.editCommentInput}
+                      />
+                      <button
+                        onClick={() => saveEditedComment(index)}
+                        style={styles.saveButton}
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div style={styles.commentContent}>{comment.text}</div>
+                )}
+
+                <div style={styles.commentActions}>
+                  <button style={styles.likeButton}><img src='/Thumbs Up.svg' alt='Thumbs Icon' />Like</button>
+                  <div style={styles.commentActionsDivider}></div>
+                  <button style={styles.replyButton} onClick={() => setReplyingTo(index)}>
+                    <img src='/Arrow_Reply.svg' alt='Reply Icon' />Reply
+                  </button>
+                </div>
+              </div>
             </div>
 
             {replyingTo === index && (
@@ -318,49 +334,80 @@ const UploadResearchPost = () => {
                   onChange={(e) => setReplyText(e.target.value)}
                   style={styles.replyInput}
                 />
-                <button onClick={() => handleReply(index)} style={styles.replyButton}>Reply</button>
+                <button onClick={() => handleReply(index)} style={styles.replyButton}>
+                  Reply
+                </button>
               </div>
             )}
 
             {comment.replies.length > 0 && (
-              <div style={styles.repliesList}>
+              <div style={styles.replies}>
                 {comment.replies.map((reply, replyIndex) => (
                   <div key={replyIndex} style={styles.replyBox}>
                     <div style={styles.replyHeader}>
-                      <img src="/Dummy Profile.png" alt="Replier" style={styles.replyProfileImage} />
+                      <img
+                        src="/Dummy Profile.png"
+                        alt="Replier Profile"
+                        style={styles.commentProfileImage}
+                      />
                       <div>
-                        <div style={styles.replyUsername}>Dr. Blake Peck</div>
-                        <div style={styles.replyTagline}>{reply.tagline}</div>
+                        <div style={styles.commentUsername}>{reply.username}</div>
+                        <div style={styles.commentTagline}>{reply.tagline}</div>
                       </div>
-                      <div style={styles.replyOptions}>
+                      <div style={styles.commentOptions}>
                         <button
                           style={styles.optionsButton}
-                          onClick={() => setReplyOptionsOpen(replyOptionsOpen === replyIndex ? null : replyIndex)}
+                          onClick={() =>
+                            setReplyOptionsOpen(
+                              replyOptionsOpen === replyIndex ? null : replyIndex
+                            )
+                          }
                         >
                           ...
                         </button>
                         {replyOptionsOpen === replyIndex && (
-                          <div style={styles.replyOptionsDropdown}>
-                            <button onClick={() => handleEditReply(index, replyIndex)} style={styles.editButton}>Edit</button>
-                            <button onClick={() => handleDeleteReply(index, replyIndex)} style={styles.deleteButton}>Delete</button>
+                          <div style={styles.optionsDropdown}>
+                            <button
+                              onClick={() =>
+                                handleEditReply(index, replyIndex)
+                              }
+                              style={styles.editButton}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDeleteReply(index, replyIndex)
+                              }
+                              style={styles.deleteButton}
+                            >
+                              Delete
+                            </button>
                           </div>
                         )}
                       </div>
                     </div>
 
                     {editingReplyIndex?.commentIndex === index &&
-                    editingReplyIndex?.replyIndex === replyIndex ? (
+                      editingReplyIndex?.replyIndex === replyIndex ? (
                       <>
                         <input
                           type="text"
-                          value={replyText}
-                          onChange={(e) => setReplyText(e.target.value)}
-                          style={styles.editReplyInput}
+                          value={tempReplyText}
+                          onChange={(e) => setTempReplyText(e.target.value)}
+                          style={styles.editCommentInput}
                         />
-                        <button onClick={() => saveEditedReply(index, replyIndex)} style={styles.saveButton}>Save</button>
+                        <button
+                          onClick={() =>
+                            saveEditedReply(index, replyIndex)
+                          }
+                          style={styles.saveButton}
+                        >
+                          Save
+                        </button>
                       </>
                     ) : (
-                      <div style={styles.replyContent}>{reply.text}</div>
+                      <div style={styles.commentContent}>{reply.text}</div>
                     )}
                   </div>
                 ))}
@@ -375,27 +422,28 @@ const UploadResearchPost = () => {
 };
 
 const styles = {
-  container: {
+  postContainer: {
     backgroundColor: '#fff',
-    borderRadius: '10px',
     padding: '20px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-    maxWidth: '700px',
-    fontFamily: 'Arial, sans-serif',
+    borderRadius: '10px',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
   },
   postHeader: {
     display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '16px',
-  },
-  profileSection: {
-    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+    width: '100%',
+    maxWidth: '25.375rem',
   },
   profileImage: {
     width: '50px',
     height: '50px',
-    borderRadius: '50%',
-    marginRight: '12px',
+    borderRadius: '12px',
+  },
+  userDetailWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
   },
   userName: {
     fontWeight: '500',
@@ -404,13 +452,15 @@ const styles = {
     color: '#000',
     cursor: 'pointer',
   },
-  userTitle: {
-    fontSize: '14px',
-    color: '#555',
+  hover: {
+    textDecoration: 'underline',
   },
   tagline: {
     fontSize: '12px',
-    color: '#888',
+    lineHeight: '16px',
+    fontWeight: '400',
+    color: '#ADADAD',
+    marginBottom: '2px',
   },
   postTime: {
     color: '#313131',
@@ -436,128 +486,275 @@ const styles = {
   },
   researchTagsWrapper: {
     display: 'flex',
-    gap: '10px',
     alignItems: 'center',
-  },
-  downloadButton: {
-    backgroundColor: '#70D4FC',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '40px',
-    padding: '14px 20px',
-    cursor: 'pointer',
-  },
-  summarizeButton: {
-    backgroundColor: '#2196F3',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    padding: '8px 12px',
-    cursor: 'pointer',
-  },
-  tags: {
-    display: 'flex',
-    gap: '10px',
-    fontSize: '12px',
-    color: '#007bff',
-    marginBottom: '16px',
-  },
-  tag: {
-    background: '#e0f7fa',
-    padding: '4px 8px',
-    borderRadius: '4px',
-  },
-  title: {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    marginBottom: '8px',
-  },
-  links: {
-    fontSize: '12px',
-    color: '#007bff',
-    marginBottom: '8px',
-  },
-  description: {
-    fontSize: '14px',
-    color: '#555',
-    marginBottom: '8px',
-  },
-  tagList: {
-    display: 'flex',
-    gap: '8px',
-    marginBottom: '16px',
-  },
-  abstract: {
-    fontSize: '14px',
-    color: '#333',
-    marginBottom: '16px',
-  },
-  imagePreview: {
-    marginBottom: '16px',
-  },
-  previewImage: {
+    gap: '4px',
     width: '100%',
-    borderRadius: '8px',
+    marginTop: '10px',
   },
-  metadata: {
-    fontSize: '12px',
-    color: '#888',
-    marginBottom: '16px',
+  researchTags: {
+    backgroundColor: '#fff',
+    borderRadius: '200px',
+    border: '1px solid #4FCFF5',
+    padding: '8px 20px',
+    fontSize: '14px',
+    lineHeight: '18px',
+    color: '#4FCFF5',
+    textAlign: 'center',
+    textDecoration: 'none',
   },
-  viewStats: {
-    color: '#007bff',
-    fontSize: '12px',
+  researchHeadingWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    marginTop: '28px',
+  },
+  researchHeading: {
+    fontSize: '24px',
+    lineHeight: '30px',
+    fontWeight: '400',
+    color: '#000000',
+  },
+  researchLinksWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+  },
+  researchLinkHeading: {
+    fontSize: '14px',
+    lineHeight: '16px',
+    fontWeight: '400',
+    color: '#313131',
+  },
+  researchLink: {
+    fontWeight: '600',
+    color: '#4FCFF5',
+  },
+  postTagsWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+  },
+  postTags: {
+    backgroundColor: '#fff',
+    border: '1px solid #ADADAD',
+    borderRadius: '200px',
+    padding: '8px 24px',
+    textDecoration: 'none',
+    textAlign: 'center',
+    fontSize: '14px',
+    lineHeight: '18px',
+    color: '#ADADAD',
+  },
+  postContentRight: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    width: '100%',
+    maxWidth: '14rem',
+  },
+  researchButtonWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    width: '100%',
+  },
+  researchButton: {
+    backgroundColor: '#fff',
+    borderRadius: '200px',
+    border: '1px solid #313131',
+    padding: '16px 48px',
+    fontSize: '16px',
+    lineHeight: '18px',
+    color: '#313131',
+    textAlign: 'center',
+    cursor: 'pointer',
+  },
+  abstractTextWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  },
+  abstractInner: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+  },
+  abstractHeading: {
+    fontSize: '14px',
+    lineHeight: '18px',
+    fontWeight: '600',
+    color: '#313131',
+  },
+  abstractText: {
+    fontSize: '14px',
+    lineHeight: '20px',
+    color: '#313131',
+    maxWidth: '48rem',
+    textTransform: 'capitalize',
+  },
+  moreText: {
+    fontSize: '14px',
+    lineHeight: '20px',
+    fontWeight: '500',
+    color: '#4FCFF5',
+    textAlign: 'end',
+  },
+  postMediaWrapper: {
+    width: 'auto',
+  },
+  postImage: {
+    width: '100%',
+    borderRadius: '10px',
+  },
+  researchPostInsights: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    width: '100%',
+    maxWidth: '30.5rem',
+    borderRadius: '200px',
+    border: '1px solid #313131',
+    padding: '8px 36px',
+    margin: '20px 0 14px',
+  },
+  postSingleInsight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+  },
+  insightText: {
+    fontSize: '14px',
+    lineHeight: '18px',
+    fontWeight: '400',
+    color: '#313131',
+  },
+  postActions: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
+    marginTop: '18px',
+  },
+  reactionDataWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   postReactionsWrap: {
     display: 'flex',
-    justifyContent: 'space-around',
-    marginBottom: '16px',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: '16px',
   },
   actionButton: {
-    border: 'none',
-    background: 'none',
-    fontSize: '14px',
-    color: '#007bff',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '4px',
+    textDecoration: 'none',
     cursor: 'pointer',
   },
-  socialCount: {
-    fontSize: '12px',
-    color: '#888',
-    marginBottom: '16px',
+  reactionNumber: {
+    fontSize: '14px',
+    lineHeight: '18px',
+    fontWeight: '400',
+    color: '#313131',
+  },
+  awardsStyle: {
+    fontSize: '14px',
+    lineHeight: '18px',
+    fontWeight: '400',
+    color: '#313131',
+  },
+  postActionsDivider: {
+    width: '100%',
+    height: '1px',
+    backgroundColor: '#ADADAD',
+  },
+  reactionActionWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  actionText: {
+    fontSize: '16px',
+    lineHeight: '22px',
+    fontWeight: '400',
+    color: '#ADADAD',
+  },
+  reactionAction: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    textDecoration: 'none',
+  },
+  commentSectionMainWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
   },
   commentSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    marginBottom: '16px',
-  },
-  commentProfileImage: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '50%',
+    marginTop: '20px',
+    columnGap: '18px',
+    position: 'relative',
   },
   commentInput: {
     flex: 1,
-    padding: '8px',
-    borderRadius: '20px',
-    border: '1px solid #ddd',
+    padding: '14px 24px',
+    borderRadius: '200px',
+    border: '1px solid #ADADAD',
+    backgroundColor: '#F2F2F2',
+    fontSize: '14px',
+    lineHeight: '18px',
+    fontWeight: '400',
   },
-  postButton: {
-    padding: '8px 16px',
-    backgroundColor: '#2196F3',
-    color: '#fff',
+  commentButton: {
+    position: 'absolute',
+    right: '6px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    backgroundColor: '#70D4FC',
     border: 'none',
-    borderRadius: '20px',
+    borderRadius: '200px',
+    padding: '8px 16px',
+    color: '#fff',
     cursor: 'pointer',
   },
   commentsList: {
-    marginTop: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
   },
   commentBox: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: '8px',
-    padding: '12px',
-    marginBottom: '8px',
+    backgroundColor: '#fff',
+  },
+  singleCommentWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '20px',
+  },
+  commentImageWrapper: {
+    width: 'auto',
+  },
+  commentProfileImage: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '6px',
+  },
+  commentInfoMainWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+    backgroundColor: '#F0F0F0',
+    borderRadius: '10px',
+    padding: '16px',
+    width: '100%',
   },
   commentHeader: {
     display: 'flex',
@@ -566,32 +763,102 @@ const styles = {
   commentInfo: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '8px',
+    justifyContent: 'space-between',
+    gap: '20px',
+  },
+  commentUserDetails: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
   },
   commentUsername: {
-    fontSize: '14px',
-    fontWeight: 'bold',
-  },
-  commentTimestamp: {
-    fontSize: '12px',
-    color: '#888',
-  },
-  commentText: {
-    fontSize: '14px',
-    color: '#333',
-    marginBottom: '8px',
-  },
-  commentActions: {
-    fontSize: '12px',
-    color: '#007bff',
-  },
-  commentAction: {
-    marginRight: '8px',
-    cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: '500',
+    lineHeight: '20px',
+    color: '#000000',
   },
   commentTagline: {
-    fontSize: '12px',
-    color: '#777',
+    fontSize: '14px',
+    lineHeight: '16px',
+    fontWeight: '400',
+    color: '#ADADAD',
+  },
+  commentOptionsWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  commentPostTiming: {
+    fontSize: '14px',
+    lineHeight: '16px',
+    fontWeight: '400',
+    color: '#ADADAD',
+  },
+  commentOptions: {
+    position: 'relative',
+  },
+  commentContent: {
+    fontSize: '16px',
+    lineHeight: '24px',
+    fontWeight: '400',
+    color: '#313131',
+    letterSpacing: '0.4px',
+  },
+  commentActions: {
+    display: 'flex',
+    alignItems: 'stretch',
+    gap: '12px',
+  },
+  commentActionsDivider: {
+    width: '1px',
+    height: 'auto',
+    backgroundColor: '#ADADAD',
+  },
+  replyButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontSize: '14px',
+    color: '#ADADAD',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  likeButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontSize: '14px',
+    color: '#ADADAD',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  replySection: {
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: '10px',
+  },
+  replyInput: {
+    flex: 1,
+    padding: '10px',
+    borderRadius: '20px',
+    border: '1px solid #ddd',
+    marginRight: '10px',
+  },
+  replies: {
+    marginTop: '10px',
+    paddingLeft: '20px',
+  },
+  replyBox: {
+    backgroundColor: '#f1f1f1',
+    padding: '10px',
+    borderRadius: '10px',
+    marginBottom: '5px',
+  },
+  replyHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   optionsButton: {
     background: 'none',
@@ -601,6 +868,7 @@ const styles = {
   },
   optionsDropdown: {
     position: 'absolute',
+    right: '8px',
     backgroundColor: '#fff',
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
     borderRadius: '4px',
@@ -621,170 +889,62 @@ const styles = {
     cursor: 'pointer',
     padding: '5px',
   },
+  commentInputEditWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: '8px',
+  },
   editCommentInput: {
+    fontSize: '14px',
+    lineHeight: '24px',
+    fontWeight: '400',
+    color: '#313131',
     width: '100%',
-    padding: '8px',
+    padding: '14px',
     borderRadius: '5px',
-    border: '1px solid #ddd',
+    border: 'none',
+    backgroundColor: 'rgb(255 255 255 / 0%)'
   },
   saveButton: {
-    marginTop: '5px',
-    backgroundColor: '#007bff',
+    fontSize: '16px',
+    lineHeight: '18px',
+    backgroundColor: '#70D4FC',
     color: '#fff',
     border: 'none',
-    borderRadius: '5px',
-    padding: '5px 10px',
+    borderRadius: '200px',
+    padding: '8px 20px',
     cursor: 'pointer',
-    marginRight: '5px',
   },
-  commentContent: {
-    marginTop: '10px',
-    fontSize: '14px',
-  },
-  replySection: {
-    display: 'flex',
-    alignItems: 'center',
-    marginTop: '10px',
-  },
-  replyInput: {
-    flex: 1,
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-  },
-  replyButton: {
-    padding: '8px 12px',
-    borderRadius: '4px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    cursor: 'pointer',
-    marginLeft: '5px',
-  },
-  repliesList: {
-    marginLeft: '40px',
-    marginTop: '10px',
-    borderLeft: '1px solid #ccc',
-    paddingLeft: '10px',
-  },
-  replyBox: {
-    padding: '10px',
-    borderBottom: '1px solid #e0e0e0',
-  },
-  replyHeader: {
+  postHeaderWrap: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: '8px',
   },
-  replyProfileImage: {
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
-    marginRight: '10px',
+  postFollowButton: {
+    fontSize: '16px',
+    lineHeight: '18px',
+    fontWeight: '500',
+    color: '#4FCFF5',
+    textDecoration: 'none',
+    padding: '16px 30px',
+    borderRadius: '200px',
+    textAlign: 'center',
+    border: '1px solid #4FCFF5',
   },
-  replyUsername: {
-    fontWeight: 'bold',
-    marginRight: '10px',
-  },
-  replyTagline: {
-    fontSize: '12px',
-    color: '#777',
-  },
-  replyOptions: {
-    position: 'relative',
-  },
-  replyOptionsDropdown: {
-    position: 'absolute',
-    backgroundColor: '#fff',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    borderRadius: '4px',
-    zIndex: 1,
-  },
-  editButton: {
-    background: 'none',
-    border: 'none',
-    color: '#007bff',
-    cursor: 'pointer',
-    padding: '5px',
-  },
-  deleteButton: {
-    background: 'none',
-    border: 'none',
-    color: '#ff4d4f',
-    cursor: 'pointer',
-    padding: '5px',
-  },
-  editCommentInput: {
-    width: '100%',
-    padding: '8px',
-    borderRadius: '5px',
-    border: '1px solid #ddd',
-  },
-  saveButton: {
-    marginTop: '5px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    padding: '5px 10px',
-    cursor: 'pointer',
-  },
-  replyButton: {
-    fontSize: '12px',
-    color: '#007bff',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-  },
-  // PDF Styling
-  pdfPreview: {
-    cursor: 'pointer',
+  postFunctionsWrap: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'column',
-    border: '1px solid #ddd',
-    padding: '10px',
-    borderRadius: '8px',
+    gap: '14px',
   },
-  previewText: {
-    marginTop: '8px',
-    fontSize: '14px',
-    color: '#888',
-  },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  postfunctions: {
     display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: '20px',
-    borderRadius: '8px',
-    width: '80%',
-    maxHeight: '80%',
-    overflowY: 'auto',
-    position: 'relative',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    backgroundColor: '#f00',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '50%',
-    width: '30px',
-    height: '30px',
-    cursor: 'pointer',
+    justifyContent: 'center',
+    gap: '8px',
   },
 };
 
-export default UploadResearchPost;
+export default Post;
