@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ResearchPost = () => {
+const Post = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [editingCommentIndex, setEditingCommentIndex] = useState(null);
@@ -98,78 +98,135 @@ const ResearchPost = () => {
           <div>
             <div
               style={styles.userName}
-              onMouseOver={handleMouseEnter}
-              onMouseOut={handleMouseLeave}
+              onMouseOver={() => setIsHovered(true)}
+              onMouseOut={() => setIsHovered(false)}
             >
               <a href="#" style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }}>
                 Dr. Max O' Brian | MPH, PhD
               </a>
             </div>
-            <div style={styles.userTitle}>Research analyst at University de Sociedad</div>
-            <div style={styles.timestamp}>26 mins ago</div>
+            <div style={styles.postTime}>2 mins ago</div>
           </div>
         </div>
-        <div style={styles.headerActions}>
-          <button style={styles.downloadButton}>Download PDF</button>
+        <div style={styles.postFunctionsWrap}>
+          <a style={styles.postFollowButton} href='#'>Boost Post</a>
+          <div style={styles.postfunctions}>
+            <img src='/Post Globe Icon.svg' alt='Globe Icon' />
+            <img src='/Hamburger Icon.svg' alt='Menu Icon' />
+          </div>
         </div>
       </div>
 
-      {/* Tags */}
-      <div style={styles.tags}>
-        <span style={styles.tag}>Original Article</span>
-        <span style={styles.tag}>Journal of Primary Care</span>
-        <span style={styles.tag}>PDF Available</span>
-      </div>
-
-      {/* Post Content */}
-      <div style={styles.content}>
-        <h2 style={styles.title}>Systemic Meta-analysis of the socioeconomic determinants of health-related behavior and perceptions of primary care treatment</h2>
-        <div style={styles.links}>
-          <a href="#" style={styles.link}>Link To Article</a> | 
-          <a href="#" style={styles.link}>Scopus</a> | 
-          <a href="#" style={styles.link}>PMID</a>
+      <div style={styles.researchPostMainWrap}>
+      <div style={styles.postContent}>
+        <div style={styles.postContentleft}>
+          <div style={styles.researchTagsWrapper}>
+            <a href='#' style={styles.researchTags}>Case Report</a>
+            <a href='#' style={styles.researchTags}>Open Medical Case Reports</a>
+            <a href='#' style={styles.researchTags}>PDF Available</a>
+          </div>
+          <div style={styles.researchHeadingWrap}>
+            <span style={styles.researchHeading}>An unusual case report of bee sting toxicity as a result of 500 bee stings</span>
+            <div style={styles.researchLinksWrap}>
+              <span style={styles.researchLinkHeading}>Link To Article : <a href='https://medicolegaljournal.com/issue23/volue124' target='_blank' style={styles.researchLink}>https://medicolegaljournal.com/issue23/volue124</a></span>
+              <span style={styles.researchLinkHeading}>Scopus : <a href='https://scopus.com/article328396' target='_blank' style={styles.researchLink}>https://scopus.com/article328396</a></span>
+              <span style={styles.researchLinkHeading}>PMID : <span style={styles.researchLink}>32476</span></span>
+            </div>
+            <div style={styles.postTagsWrapper}>
+              <a href='#' style={styles.postTags}>Toxicology</a>
+              <a href='#' style={styles.postTags}>Case - Report</a>
+              <a href='#' style={styles.postTags}>Anatomy</a>
+              <a href='#' style={styles.postTags}>Complication</a>
+            </div>
+          </div>
         </div>
-        <p style={styles.description}>
-          I am happy to share my latest publication about socioeconomic determinants of primary care health. If you do enjoy reading, please share this post with your network.
+        <div style={styles.postContentRight}>
+          <div style={styles.researchButtonWrapper}>
+            <button style={styles.researchButton}>Download PDF</button>
+            <button style={styles.researchButton}>Summarize</button>
+          </div>
+        </div>
+      </div>
+      <div style={styles.abstractTextWrap}>
+        <div style={styles.abstractInner}>
+        <span style={styles.abstractHeading}>Abstract</span>
+        <p style={styles.abstractText}>
+        Bee stings are reported all over the world but bee sting attacks approximatey being reported with a prevelance of 54% in tropical countries. Toxicity can therefore lead to a variety of issues such as contact dermatitis, asphyix..
         </p>
-        <div style={styles.tagList}>
-          <span style={styles.tag}>health-care</span>
-          <span style={styles.tag}>meta-analysis</span>
-          <span style={styles.tag}>treatment</span>
-          <span style={styles.tag}>public health</span>
         </div>
-        <div style={styles.abstract}>
-          <h3>Abstract</h3>
-          <p>
-            Understanding the interplay between socioeconomic factors and health-related behaviors, along with perceptions of primary care treatment, is essential for effective public health strategies. This meta-analysis synthesizes...
-          </p>
+        <span style={styles.moreText}>...See More</span>
         </div>
       </div>
 
-      {/* Meta data */}
-      <div style={styles.metadata}>
-        <span>April 2024</span> | <span>534 Reads</span> | <span>8 Citations</span> | <span>42 Downloads</span>
-        <a href="#" style={styles.viewStats}>View Article Statistics</a>
+      <div style={styles.postMediaWrapper}>
+        <img src="Placeholder Cover.jpg" alt="Post" style={styles.postImage} />
       </div>
 
-      {/* Actions */}
-      <div style={styles.actions}>
-        <button style={styles.actionButton}>👍 Like</button>
-        <button style={styles.actionButton}>💬 Comment</button>
-        <button style={styles.actionButton}>🔄 Repost</button>
-        <button style={styles.actionButton}>↻ Share</button>
+      <div style={styles.researchPostInsights}>
+        <div style={styles.postSingleInsight}>
+          <img src='/Calendar_Icon.svg' alt='Calender Icon' />
+          <span style={styles.insightText}>12th Jan 2024; <span>12:40 PM</span></span>
+        </div>
+        <div style={styles.postSingleInsight}>
+          <img src='/Book_Open.svg' alt='Book Open Icon' />
+          <span style={styles.insightText}>627</span>
+        </div>
+        <div style={styles.postSingleInsight}>
+          <img src='/Double_Quotes_Icon.svg' alt='Book Open Icon' />
+          <span style={styles.insightText}>627</span>
+        </div>
+        <div style={styles.postSingleInsight}>
+          <img src='Arrow_Circle_Down.svg' alt='Book Open Icon' />
+          <span style={styles.insightText}>627</span>
+        </div>
       </div>
 
-      {/* Like, Comment, and Share Count */}
-      <div style={styles.socialCount}>
-        <span>88 Likes</span>
-        <span>3 Comments</span>
-        <span>12 Shares</span>
+      <div style={styles.postActions}>
+        <div style={styles.reactionDataWrap}>
+          <div style={styles.awardsStyle}>29 Reactions/Awards</div>
+          <div style={styles.postReactionsWrap}>
+            <a style={styles.actionButton} href='#'>
+              <span style={styles.reactionNumber}>22</span>
+              <img src='/Thumbs Up.svg' alt='Thumbs Icon' />
+            </a>
+            <a style={styles.actionButton} href='#'>
+              <span style={styles.reactionNumber}>13</span>
+              <img src='/Chat.svg' alt='Chat Icon' />
+            </a>
+            <a style={styles.actionButton} href='#'>
+              <span style={styles.reactionNumber}>28</span>
+              <img src='/Paper_Plane.svg' alt='Paper Clip Icon' />
+            </a>
+          </div>
+        </div>
+        <div style={styles.postActionsDivider}></div>
+        <div style={styles.reactionActionWrap}>
+          <a href='#' style={styles.reactionAction}>
+            <img src='/Thumbs Up.svg' alt='Thumbs Icon' />
+            <span style={styles.actionText}>Like</span>
+          </a>
+          <a href='#' style={styles.reactionAction}>
+            <img src='/Chat.svg' alt='Chat Icon' />
+            <span style={styles.actionText}>Comment</span>
+          </a>
+          <a href='#' style={styles.reactionAction}>
+            <img src='/Arrows_Reload_Icon.svg' alt='Chat Icon' />
+            <span style={styles.actionText}>Repost</span>
+          </a>
+          <a href='#' style={styles.reactionAction}>
+            <img src='/Paper_Plane.svg' alt='Paper Clip Icon' />
+            <span style={styles.actionText}>Share</span>
+          </a>
+        </div>
       </div>
 
-      {/* Comment Section */}
+      <div style={styles.commentSectionMainWrapper}>
       <div style={styles.commentSection}>
-        <img src="/Dummy Profile.png" alt="User Profile" style={styles.commentProfileImage} />
+        <img
+          src="/dummy-man.png"
+          alt="User Profile"
+          style={styles.commentProfileImage}
+        />
         <input
           type="text"
           placeholder="Say Congratulations..."
@@ -177,31 +234,50 @@ const ResearchPost = () => {
           onChange={(e) => setNewComment(e.target.value)}
           style={styles.commentInput}
         />
-        <button onClick={handleAddComment} style={styles.postButton}>Post</button>
+        {newComment.trim() && (
+          <button style={styles.commentButton} onClick={handleAddComment}>
+            Comment
+          </button>
+        )}
+        {/* <button onClick={handleAddComment} style={styles.commentButton}>
+          Post
+        </button> */}
       </div>
 
-      {/* Display Comments */}
       <div style={styles.commentsList}>
         {comments.map((comment, index) => (
           <div key={index} style={styles.commentBox}>
-            <div style={styles.commentHeader}>
-              <img src="/Dummy Profile.png" alt="Commenter" style={styles.commentProfileImage} />
-              <div>
-                <div style={styles.commentUsername}>Dr. Blake Peck</div>
-                <div style={styles.commentTagline}>{comment.tagline}</div>
-                <div style={styles.commentTimestamp}>10 mins ago</div>
+            <div style={styles.singleCommentWrapper}>
+              <div style={styles.commentImageWrapper}>
+                <img
+                  src="/dummy-man.png"
+                  alt="Commenter Profile"
+                  style={styles.commentProfileImage}
+                />
               </div>
               <div style={styles.commentOptions}>
                 <button
                   style={styles.optionsButton}
-                  onClick={() => setOptionsOpen(optionsOpen === index ? null : index)}
+                  onClick={() =>
+                    setOptionsOpen(optionsOpen === index ? null : index)
+                  }
                 >
                   ...
                 </button>
                 {optionsOpen === index && (
                   <div style={styles.optionsDropdown}>
-                    <button onClick={() => handleEditComment(index)} style={styles.editButton}>Edit</button>
-                    <button onClick={() => handleDeleteComment(index)} style={styles.deleteButton}>Delete</button>
+                    <button
+                      onClick={() => handleEditComment(index)}
+                      style={styles.editButton}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteComment(index)}
+                      style={styles.deleteButton}
+                    >
+                      Delete
+                    </button>
                   </div>
                 )}
               </div>
@@ -211,11 +287,16 @@ const ResearchPost = () => {
               <>
                 <input
                   type="text"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
+                  value={tempCommentText}
+                  onChange={(e) => setTempCommentText(e.target.value)}
                   style={styles.editCommentInput}
                 />
-                <button onClick={() => saveEditedComment(index)} style={styles.saveButton}>Save</button>
+                <button
+                  onClick={() => saveEditedComment(index)}
+                  style={styles.saveButton}
+                >
+                  Save
+                </button>
               </>
             ) : (
               <div style={styles.commentContent}>{comment.text}</div>
@@ -223,7 +304,9 @@ const ResearchPost = () => {
             
             <div style={styles.commentActions}>
               <button style={styles.likeButton}>👍 Like | </button>
-              <button style={styles.commentAction} onClick={() => setReplyingTo(index)}>💬 Reply</button>
+              <button style={styles.commentAction} onClick={() => setReplyingTo(index)}>
+              💬 Reply
+              </button>
             </div>
 
             {replyingTo === index && (
@@ -265,7 +348,8 @@ const ResearchPost = () => {
                       </div>
                     </div>
 
-                    {editingReplyIndex?.commentIndex === index && editingReplyIndex.replyIndex === replyIndex ? (
+                    {editingReplyIndex?.commentIndex === index &&
+                    editingReplyIndex?.replyIndex === replyIndex ? (
                       <>
                         <input
                           type="text"
@@ -285,214 +369,277 @@ const ResearchPost = () => {
           </div>
         ))}
       </div>
+      </div>
     </div>
   );
 };
 
 const styles = {
   container: {
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
     backgroundColor: '#fff',
-    maxWidth: '800px',
-    margin: '20px auto',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    borderRadius: '10px',
+    padding: '20px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    maxWidth: '700px',
+    fontFamily: 'Arial, sans-serif',
   },
-  header: {
+  postHeader: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    marginBottom: '16px',
   },
   profileSection: {
     display: 'flex',
-    alignItems: 'center',
   },
   profileImage: {
     width: '50px',
     height: '50px',
     borderRadius: '50%',
-    marginRight: '10px',
+    marginRight: '12px',
   },
   userName: {
+    fontWeight: '500',
     fontSize: '16px',
-    fontWeight: 'bold',
+    lineHeight: '20px',
+    color: '#000',
+    cursor: 'pointer',
   },
   userTitle: {
     fontSize: '14px',
-    color: '#777',
+    color: '#555',
   },
-  timestamp: {
+  tagline: {
     fontSize: '12px',
-    color: '#999',
+    color: '#888',
   },
-  headerActions: {
+  postTime: {
+    color: '#313131',
+    fontSize: '10px',
+    lineHeight: '14px',
+  },
+  researchPostMainWrap: {
     display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    marginBottom: '16px',
+  },
+  postContent: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '40px',
+  },
+  postContentleft: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    maxWidth: '33rem',
+  },
+  researchTagsWrapper: {
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center',
   },
   downloadButton: {
-    padding: '8px 12px',
-    borderRadius: '4px',
-    backgroundColor: '#007bff',
+    backgroundColor: '#70D4FC',
     color: '#fff',
     border: 'none',
+    borderRadius: '40px',
+    padding: '14px 20px',
+    cursor: 'pointer',
+  },
+  summarizeButton: {
+    backgroundColor: '#2196F3',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '8px 12px',
     cursor: 'pointer',
   },
   tags: {
-    margin: '10px 0',
+    display: 'flex',
+    gap: '10px',
+    fontSize: '12px',
+    color: '#007bff',
+    marginBottom: '16px',
   },
   tag: {
-    backgroundColor: '#e0e0e0',
+    background: '#e0f7fa',
+    padding: '4px 8px',
     borderRadius: '4px',
-    padding: '5px 10px',
-    marginRight: '5px',
-    fontSize: '12px',
-  },
-  content: {
-    margin: '10px 0',
   },
   title: {
     fontSize: '20px',
     fontWeight: 'bold',
+    marginBottom: '8px',
   },
   links: {
-    margin: '5px 0',
-  },
-  link: {
+    fontSize: '12px',
     color: '#007bff',
-    textDecoration: 'none',
+    marginBottom: '8px',
   },
   description: {
-    margin: '10px 0',
     fontSize: '14px',
+    color: '#555',
+    marginBottom: '8px',
   },
   tagList: {
-    margin: '10px 0',
+    display: 'flex',
+    gap: '8px',
+    marginBottom: '16px',
   },
   abstract: {
-    margin: '10px 0',
+    fontSize: '14px',
+    color: '#333',
+    marginBottom: '16px',
+  },
+  imagePreview: {
+    marginBottom: '16px',
+  },
+  previewImage: {
+    width: '100%',
+    borderRadius: '8px',
   },
   metadata: {
-    margin: '10px 0',
     fontSize: '12px',
-    color: '#999',
+    color: '#888',
+    marginBottom: '16px',
   },
-  actions: {
+  viewStats: {
+    color: '#007bff',
+    fontSize: '12px',
+  },
+  postReactionsWrap: {
     display: 'flex',
-    margin: '10px 0',
+    justifyContent: 'space-around',
+    marginBottom: '16px',
   },
   actionButton: {
-    padding: '8px 12px',
-    borderRadius: '4px',
-    backgroundColor: '#f0f0f0',
     border: 'none',
-    marginRight: '5px',
+    background: 'none',
+    fontSize: '14px',
+    color: '#007bff',
     cursor: 'pointer',
   },
   socialCount: {
-    margin: '5px 0',
     fontSize: '12px',
-    color: '#999',
+    color: '#888',
+    marginBottom: '16px',
   },
   commentSection: {
     display: 'flex',
     alignItems: 'center',
-    margin: '20px 0',
+    gap: '8px',
+    marginBottom: '16px',
   },
   commentProfileImage: {
-    width: '40px',
-    height: '40px',
+    width: '36px',
+    height: '36px',
     borderRadius: '50%',
-    marginRight: '10px',
   },
   commentInput: {
     flex: 1,
     padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
+    borderRadius: '20px',
+    border: '1px solid #ddd',
   },
   postButton: {
-    padding: '8px 12px',
-    borderRadius: '4px',
-    backgroundColor: '#007bff',
+    padding: '8px 16px',
+    backgroundColor: '#2196F3',
     color: '#fff',
     border: 'none',
+    borderRadius: '20px',
     cursor: 'pointer',
   },
   commentsList: {
-    marginTop: '20px',
+    marginTop: '16px',
   },
   commentBox: {
-    padding: '10px',
-    borderBottom: '1px solid #e0e0e0',
+    backgroundColor: '#f9f9f9',
+    borderRadius: '8px',
+    padding: '12px',
+    marginBottom: '8px',
   },
   commentHeader: {
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'space-between',
   },
+  commentInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '8px',
+  },
   commentUsername: {
+    fontSize: '14px',
     fontWeight: 'bold',
-    marginRight: '10px',
+  },
+  commentTimestamp: {
+    fontSize: '12px',
+    color: '#888',
+  },
+  commentText: {
+    fontSize: '14px',
+    color: '#333',
+    marginBottom: '8px',
+  },
+  commentActions: {
+    fontSize: '12px',
+    color: '#007bff',
+  },
+  commentAction: {
+    marginRight: '8px',
+    cursor: 'pointer',
   },
   commentTagline: {
     fontSize: '12px',
     color: '#777',
   },
-  commentTimestamp: {
-    fontSize: '12px',
-    color: '#999',
-  },
-  commentOptions: {
-    position: 'relative',
-  },
   optionsButton: {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    color: '#999',
+    color: '#777',
   },
   optionsDropdown: {
     position: 'absolute',
-    right: '0',
-    top: '100%',
     backgroundColor: '#fff',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
     borderRadius: '4px',
+    padding: '5px',
     zIndex: 1,
   },
   editButton: {
-    padding: '8px',
-    border: 'none',
-    backgroundColor: '#f0f0f0',
-    cursor: 'pointer',
-    width: '100%',
-    textAlign: 'left',
-  },
-  deleteButton: {
-    padding: '8px',
-    border: 'none',
-    backgroundColor: '#f0f0f0',
-    cursor: 'pointer',
-    width: '100%',
-    textAlign: 'left',
-  },
-  commentContent: {
-    margin: '10px 0',
-    fontSize: '14px',
-  },
-  commentActions: {
-    margin: '10px 0',
-  },
-  likeButton: {
     background: 'none',
     border: 'none',
+    color: '#007bff',
+    cursor: 'pointer',
+    padding: '5px',
+  },
+  deleteButton: {
+    background: 'none',
+    border: 'none',
+    color: '#ff4d4f',
+    cursor: 'pointer',
+    padding: '5px',
+  },
+  editCommentInput: {
+    width: '100%',
+    padding: '8px',
+    borderRadius: '5px',
+    border: '1px solid #ddd',
+  },
+  saveButton: {
+    marginTop: '5px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    padding: '5px 10px',
     cursor: 'pointer',
     marginRight: '5px',
   },
-  commentAction: {
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
+  commentContent: {
+    marginTop: '10px',
+    fontSize: '14px',
   },
   replySection: {
     display: 'flex',
@@ -548,26 +695,96 @@ const styles = {
   },
   replyOptionsDropdown: {
     position: 'absolute',
-    right: '0',
-    top: '100%',
     backgroundColor: '#fff',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     borderRadius: '4px',
     zIndex: 1,
   },
-  editReplyInput: {
+  editButton: {
+    background: 'none',
+    border: 'none',
+    color: '#007bff',
+    cursor: 'pointer',
+    padding: '5px',
+  },
+  deleteButton: {
+    background: 'none',
+    border: 'none',
+    color: '#ff4d4f',
+    cursor: 'pointer',
+    padding: '5px',
+  },
+  editCommentInput: {
+    width: '100%',
     padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
+    borderRadius: '5px',
+    border: '1px solid #ddd',
   },
   saveButton: {
-    padding: '8px 12px',
-    borderRadius: '4px',
+    marginTop: '5px',
     backgroundColor: '#007bff',
     color: '#fff',
     border: 'none',
+    borderRadius: '5px',
+    padding: '5px 10px',
+    cursor: 'pointer',
+  },
+  replyButton: {
+    fontSize: '12px',
+    color: '#007bff',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+  },
+  // PDF Styling
+  pdfPreview: {
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    border: '1px solid #ddd',
+    padding: '10px',
+    borderRadius: '8px',
+  },
+  previewText: {
+    marginTop: '8px',
+    fontSize: '14px',
+    color: '#888',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: '20px',
+    borderRadius: '8px',
+    width: '80%',
+    maxHeight: '80%',
+    overflowY: 'auto',
+    position: 'relative',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    backgroundColor: '#f00',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '50%',
+    width: '30px',
+    height: '30px',
     cursor: 'pointer',
   },
 };
 
-export default ResearchPost; 
+export default UploadResearchPost;

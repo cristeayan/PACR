@@ -4,6 +4,7 @@ import { useState } from 'react';
 import "../app/globals.css";
 import { useUser } from '../context/UserContext';
 import PostBox from '@/components/PostBox';
+import ResearchPost from '../components/ResearchPost';
 import Post from '../components/Post';
 
 
@@ -145,8 +146,7 @@ const Profile = () => {
               <div style={rightColumnStyle}>
                 <PostBox/>
                 <Post />
-
-              
+                <ResearchPost />
               </div>
             </div>
           </div>
@@ -378,6 +378,9 @@ const leftColumnStyle = {
 
 const rightColumnStyle = {
   width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
 };
 
 const postStyle = {
