@@ -424,8 +424,8 @@ const styles = {
     marginBottom: '12px',
   },
   postText: {
-    fontSize: '12px',
-    lineHeight: '16px',
+    fontSize: '14px',
+    lineHeight: '20px',
     color: '#313131',
     maxWidth: '48rem',
     textTransform: 'capitalize',
@@ -436,9 +436,9 @@ const styles = {
     gap: '4px',
   },
   tagStyle: {
-    fontSize: '12px',
+    fontSize: '14px',
     fontWeight: '500',
-    lineHeight: '16px',
+    lineHeight: '18px',
     color: '#4FCFF5',
   },
   postMediaWrapper: {
@@ -478,14 +478,14 @@ const styles = {
     cursor: 'pointer',
   },
   reactionNumber: {
-    fontSize: '12px',
-    lineHeight: '16px',
+    fontSize: '14px',
+    lineHeight: '18px',
     fontWeight: '400',
     color: '#313131',
   },
   awardsStyle: {
-    fontSize: '12px',
-    lineHeight: '16px',
+    fontSize: '14px',
+    lineHeight: '18px',
     fontWeight: '400',
     color: '#313131',
   },
@@ -530,8 +530,8 @@ const styles = {
     borderRadius: '200px',
     border: '1px solid #ADADAD',
     backgroundColor: '#F2F2F2',
-    fontSize: '12px',
-    lineHeight: '14px',
+    fontSize: '14px',
+    lineHeight: '18px',
     fontWeight: '400',
   },
   commentButton: {

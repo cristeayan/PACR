@@ -18,21 +18,21 @@ const Dashboard = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-        <Header />
-        <div style={mainContainer}>
-          <div style={mainInnerContainer}>
-            <Sidebar />
-            <main style={{ display: 'flex', flexDirection: 'column' }}>
-              <PostBox/>
-              <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
-                <Post />
-                <DisplayPost />
-                <ResearchPost />
-              </div>
-            </main>
-            <Recommendations />
-          </div>
+      <Header />
+      <div style={mainContainer}>
+        <div style={mainInnerContainer}>
+          <Sidebar />
+          <main style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
+              <PostBox />
+              <Post />
+              <DisplayPost />
+              <ResearchPost />
+            </div>
+          </main>
+          <Recommendations />
         </div>
+      </div>
     </div>
   );
 }

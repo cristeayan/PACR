@@ -212,7 +212,6 @@ const postBoxWrapperStyle = {
   backgroundColor: '#ffffff',
   borderRadius: '8px',
   boxShadow: '5px 4px 16px 0px #0000001C',
-  marginBottom: '20px',
   gap: '16px',
 };
 
