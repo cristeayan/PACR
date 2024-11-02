@@ -2,7 +2,8 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Recommendations from '../components/Recommendations';
-import Post from '../components/Post'; // Import Post component
+import Post from '../components/Post';
+import ResearchPost from '../components/ResearchPost';
 import "../app/globals.css";
 import PostBox from '@/components/PostBox';
 import DisplayPost from '@/components/DisplayPost';
@@ -17,28 +18,28 @@ const Dashboard = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-        <Header />
-        <div style={mainContainer}>
-          <div style={mainInnerContainer}>
-            <Sidebar />
-            <main style={{ display: 'flex', flexDirection: 'column' }}>
-              <PostBox/>
-              {/* You can directly render the Post component here */}
-              <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
-                <Post />
-                <DisplayPost /> {/* Rendering a single Post */}
-              </div>
-            </main>
-            <Recommendations />
-          </div>
+      <Header />
+      <div style={mainContainer}>
+        <div style={mainInnerContainer}>
+          <Sidebar />
+          <main style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
+              <PostBox />
+              <Post />
+              <ResearchPost />
+              <DisplayPost />
+            </div>
+          </main>
+          <Recommendations />
         </div>
+      </div>
     </div>
   );
 }
 
 const mainContainer = {
   width: '100%',
-  backgroundColor: '#F4F2EE',
+  backgroundColor: '#fff',
   display: 'flex',
   justifyContent: 'center',
   paddingTop: '130px',
@@ -50,7 +51,7 @@ const mainInnerContainer = {
   display: 'grid',
   gridTemplateColumns: '0.5fr 1fr 0.5fr',
   gridTemplateRows: '1fr',
-  gridColumnGap: '32px',
+  gridColumnGap: '20px',
   gridRowGap: '20px',
 };
 

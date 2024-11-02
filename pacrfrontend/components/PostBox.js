@@ -88,13 +88,13 @@ const PostBox = () => {
   return (
     <>
       <div style={postBoxWrapperStyle}>
+        <img
+          src={/*user ? user.profile_picture :*/ '/dummy-man.png'}
+          alt="Profile"
+          style={postBoxProfilePicStyle}
+        />
         <div style={postBoxContentStyle}>
           <div style={postBoxInputWrapStyle}>
-            <img
-              src={user ? user.profile_picture : '/dummy-man.png'}
-              alt="Profile"
-              style={postBoxProfilePicStyle}
-            />
             <div style={inputContainerStyle}>
               <input
                 type="text"
@@ -137,13 +137,13 @@ const PostBox = () => {
 
           <div style={postBoxButtonsWrapperStyle}>
             <button style={postBoxButtonStyle} onClick={handleMediaClick}>
-              <img src="Upload Photo Icon.png" alt="Photo/Video" /> Media
+              <img src="Post Box Media Icon.svg" alt="Photo/Video" /> Photo/Video
             </button>
             <button style={postBoxButtonStyle}>
-              <img src="Share Event Icon.png" alt="Share Event" /> Event
+              <img src="Calendar_Event.svg" alt="Share Event" /> Share Event
             </button>
             <button style={postBoxButtonStyle} onClick={()=>{Router.push('/uploadresearch')}}>
-              <img src="Upload Research Icon.png" alt="Upload Research"  /> Upload Research
+              <img src="Upload Paperclip.svg" alt="Upload Research"  /> Upload Research
             </button>
           </div>
         </div>
@@ -212,15 +212,14 @@ const postBoxWrapperStyle = {
   backgroundColor: '#ffffff',
   borderRadius: '8px',
   boxShadow: '5px 4px 16px 0px #0000001C',
-  marginBottom: '20px',
   gap: '16px',
 };
 
 const postBoxProfilePicStyle = {
-  width: '48px',
-  height: '48px',
-  borderRadius: '50%',
+  width: '90px',
+  height: '94px',
   backgroundColor: '#fff',
+  borderRadius: '12px',
 };
 
 const postBoxContentStyle = {
@@ -243,20 +242,20 @@ const inputContainerStyle = {
 
 const postBoxInputStyle = {
   width: '100%',
-  padding: '10px 16px',
-  fontSize: '14px',
-  lineHeight: '18px',
-  border: '1px solid #ddd',
+  padding: '10px 24px',
+  fontSize: '12px',
+  lineHeight: '13.2px',
+  border: '1px solid #adadad',
   borderRadius: '200px',
-  backgroundColor: '#fff',
-  color: '#313131',
-  height: '48px',
+  backgroundColor: '#F2F2F2',
+  color: '#adadad',
+  height: '44px',
   paddingRight: '70px', // Ensure space for submit button
 };
 
 const submitButtonInsideInputStyle = {
   position: 'absolute',
-  right: '10px',
+  right: '6px',
   top: '50%',
   transform: 'translateY(-50%)',
   backgroundColor: '#88D8F9',
@@ -269,8 +268,9 @@ const submitButtonInsideInputStyle = {
 
 const postBoxButtonsWrapperStyle = {
   display: 'flex',
-  justifyContent: 'space-around',
+  justifyContent: 'space-between',
   alignItems: 'center',
+  padding: '0 24px',
 };
 
 const postBoxButtonStyle = {
@@ -282,7 +282,7 @@ const postBoxButtonStyle = {
   cursor: 'pointer',
   fontSize: '12px',
   fontWeight: '400',
-  lineHeight: '16.8px',
+  lineHeight: '14px',
   letterSpacing: '2%',
   backgroundColor: 'transparent',
 };

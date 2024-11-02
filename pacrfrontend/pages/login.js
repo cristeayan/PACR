@@ -1,5 +1,5 @@
 'use client'
-
+import { useUser } from '../context/UserContext';
 import "../app/globals.css";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -29,6 +29,8 @@ const Login = () => {
   const [errors, setErrors] = useState({ email: '', password: '' });
   const [formError, setFormError] = useState('');
   const router = useRouter();
+  const { setUserAndToken } = useUser();
+
 
   useEffect(() => {
     localStorage.clear();
@@ -61,10 +63,7 @@ const Login = () => {
     axios
       .post('http://127.0.0.1:8000/api/signin/', inputs)
       .then((res) => {
-        localStorage.setItem('token', res.data.access);
-        localStorage.setItem('isloggedin', true);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        router.push('/dashboard');
+        setUserAndToken(res.data.user, res.data.access);        router.push('/dashboard');
       })
       .catch((error) => {
         if (error.response) {
