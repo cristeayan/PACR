@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Post = () => {
+const UploadResearchPost = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [editingCommentIndex, setEditingCommentIndex] = useState(null);

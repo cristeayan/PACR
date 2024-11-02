@@ -26,8 +26,8 @@ const Dashboard = () => {
             <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
               <PostBox />
               <Post />
-              <DisplayPost />
               <ResearchPost />
+              <DisplayPost />
             </div>
           </main>
           <Recommendations />
