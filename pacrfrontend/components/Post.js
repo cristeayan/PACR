@@ -100,7 +100,7 @@ const Post = () => {
       <div style={styles.postHeaderWrap}>
       <div style={styles.postHeader}>
         <img src="/dummy-man.png" alt="User Profile" style={styles.profileImage} />
-        <div>
+        <div style={styles.userDetailWrap}>
           <div style={styles.userName}
       onMouseOver={handleMouseEnter}
       onMouseOut={handleMouseLeave}><a style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }} href='#'>Dr. Matthew Antony</a></div>
@@ -110,15 +110,23 @@ const Post = () => {
           <div style={styles.postTime}>2 mins ago</div>
         </div>
       </div>
-      <a style={styles.postFollowButton} href='#'><img style={styles.postFollowIcon} src='/follow-icon.svg' alt='Follow Icon' />Follow</a>
+      <div style={styles.postFunctionsWrap}>
+        <a style={styles.postFollowButton} href='#'>Boost Post</a>
+        <div style={styles.postfunctions}>
+          <img src='/Post Globe Icon.svg' alt='Globe Icon'/>
+          <img src='/Hamburger Icon.svg' alt='Menu Icon'/>
+        </div>
+      </div>
       </div>
 
       <div style={styles.postContent}>
         <p style={styles.postText}>
-          I had the honor of graduating from my medical school. It was a long
-          journey...
+        I had the honor of graduating from my medical school. It was a long journey and road of rocks. But all fun things 
+must come to an end.
+
+Having my parents and grandparents at the event made it even more special, fulfilling a wish of my grandparents to see their grandchild graduate. My Dad was an alumni of KMC Mangalore and I was lucky to have done my undergraduate in the same place where he learnt to become the Doctor he is today.
         </p>
-        <img src="Placeholder Post Image.jpeg" alt="Post" style={styles.postImage} />
+        <img src="Placeholder Cover.jpg" alt="Post" style={styles.postImage} />
       </div>
 
       <div style={styles.postActions}>
@@ -316,35 +324,45 @@ const styles = {
       padding: '20px',
       borderRadius: '10px',
       boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-      margin: '0 auto',
-      maxWidth: '40rem',
     },
     postHeader: {
       display: 'flex',
       alignItems: 'center',
-      marginBottom: '15px',
+      gap: '14px',
+      width: '100%',
+      maxWidth: '25.375rem',
     },
     profileImage: {
       width: '50px',
       height: '50px',
-      borderRadius: '50%',
-      marginRight: '15px',
+      borderRadius: '12px',
+    },
+    userDetailWrap: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '2px',
     },
     userName: {
-      fontWeight: 'bold',
+      fontWeight: '500',
       fontSize: '16px',
+      lineHeight: '20px',
+      color: '#000',
       cursor: 'pointer',
     },
     hover: {
       textDecoration: 'underline',
     },
     tagline: {
-      color: '#555',
-      fontSize: '14px',
+      fontSize: '12px',
+      lineHeight: '16px',
+      fontWeight: '400',
+      color: '#ADADAD',
+      marginBottom: '2px',
     },
     postTime: {
-      color: '#999',
-      fontSize: '12px',
+      color: '#313131',
+      fontSize: '10px',
+      lineHeight: '14px',
     },
     postContent: {
       marginBottom: '15px',
@@ -514,23 +532,30 @@ const styles = {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
+      marginBottom: '24px',
     },
     postFollowButton: {
       fontSize: '16px',
-      lineHeight: '20px',
-      fontWeight: '600',
-      color: '#88D8F9',
+      lineHeight: '18px',
+      fontWeight: '500',
+      color: '#4FCFF5',
       textDecoration: 'none',
-      padding: '12px 16px',
-      borderRadius: '6px',
+      padding: '16px 30px',
+      borderRadius: '200px',
+      textAlign: 'center',
+      border: '1px solid #4FCFF5',
+    },
+    postFunctionsWrap: {
       display: 'flex',
       alignItems: 'center',
-      gap: '8px',
-      marginBottom: '15px',
+      justifyContent: 'center',
+      gap: '14px',
     },
-    postFollowIcon: {
-      width: '16px',
-      fill: '#88D8F9',
+    postfunctions: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
     },
   };
 

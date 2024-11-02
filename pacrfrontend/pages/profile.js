@@ -4,6 +4,7 @@ import { useState } from 'react';
 import "../app/globals.css";
 import { useUser } from '../context/UserContext';
 import PostBox from '@/components/PostBox';
+import Post from '../components/Post';
 
 
 const Profile = () => {
@@ -72,14 +73,20 @@ const Profile = () => {
         <div style={profilePageStyle}>
           {/* Header Section with Background Image */}
           <div style={headerStyle}>
-            <img src="/Placeholder Cover.jpg" alt="Profile Background" style={backgroundImageStyle} />
+            <img src="/Monitor Image.png" alt="Profile Background" style={backgroundImageStyle} />
+            <div style={coverEditImageWrap}>
+              <img src='Cover Edit Icon.svg' alt='Edit Icon' style={coverEditImage} />
+            </div>
           </div>
 
           {/* User Information */}
           <div style={profileMainWrapper}>
             <div style={profileInfoWrapperStyle}>
               <div style={userImageWrapperStyle}>
-                <img src={user ? user.profile_picture : '/dummy-man.png'} alt="Profile" style={profileImageStyle} />
+                <img src={/*user ? user.profile_picture :*/ 'dummy-man.png'} alt="Profile" style={profileImageStyle} />
+                <div style={profileEditImageWrap}>
+                  <img src='Profile Editable Icon.svg' alt='Edit Icon' style={coverEditImage} />
+                </div>
               </div>
               <div style={userInfoStyle}>
                 <h1 style={userNameHeading}>{user?user.first_name+' '+user.last_name:"why"}</h1>
@@ -89,7 +96,7 @@ const Profile = () => {
 
             {/* User Location Information */}
             <div style={locationWrapperStyle}>
-              <p>Boston, Massachusetts, United States</p>
+              <p style={userLocationStyle}>Boston, Massachusetts, United States</p>
               <div style={dotWrapperStyle}></div>
               <div style={userContactWrapStyle}>
                 <img src='Profile Phone Icon.svg' alt='Phone Icon' />
@@ -102,18 +109,18 @@ const Profile = () => {
             <div style={mainStatsWrapperStyle}>
               <div style={mainInnerWrapperStyle}>
                 <div style={statsWrapperStyle}>
-                  <p style={statsTextStyle}>Total Reads: <span style={statsBoldStyle}>27,432</span></p>
-                  <div style={dotWrapperStyle}></div>
-                  <p style={statsTextStyle}>H-index: <span style={statsBoldStyle}>4.0</span></p>
-                  <div style={dotWrapperStyle}></div>
-                  <p style={statsTextStyle}>PACR Score: <span style={statsBoldStyle}>78.2</span></p>
-                  <div style={dotWrapperStyle}></div>
-                  <p style={statsTextStyle}>Citations: <span style={statsBoldStyle}>32</span></p>
+                  <p style={followersTextStyle}><span style={statsBoldStyle}>2,478</span> Followers</p>
+                  <div style={greyDotWrapperStyle}></div>
+                  <p style={followersTextStyle}><span style={statsBoldStyle}>1,298</span> Friends</p>
                 </div>
                 <div style={statsWrapperStyle}>
-                  <p style={followersTextStyle}><span style={statsBoldStyle}>2,478</span> Followers</p>
+                  <p style={statsTextStyle}>Total Reads: <span style={analyticsBoldStyle}>27,432</span></p>
                   <div style={blueDotWrapperStyle}></div>
-                  <p style={followersTextStyle}><span style={statsBoldStyle}>1,298</span> Friends</p>
+                  <p style={statsTextStyle}>H-index: <span style={analyticsBoldStyle}>4.0</span></p>
+                  <div style={blueDotWrapperStyle}></div>
+                  <p style={statsTextStyle}>PACR Score: <span style={analyticsBoldStyle}>78.2</span></p>
+                  <div style={blueDotWrapperStyle}></div>
+                  <p style={statsTextStyle}>Citations: <span style={analyticsBoldStyle}>32</span></p>
                 </div>
               </div>
               <a href='#' style={analyticsButtonStyle}><img src='Analytics Icon.svg' alt='Analytics Icon' /> Analytics</a>
@@ -137,12 +144,9 @@ const Profile = () => {
               {/* Right Column (This is where the posting box will appear in the Profile tab) */}
               <div style={rightColumnStyle}>
                 <PostBox/>
+                <Post />
 
-                {/* Featured Section */}
-                <div style={featuredPostStyle}>
-                  <h3>Featured</h3>
-                  <p>Excited to share that I will be joining the research at Harvard...</p>
-                </div>
+              
               </div>
             </div>
           </div>
@@ -167,7 +171,11 @@ const profileMainWrapper = {
 
 const headerStyle = {
   width: '100%',
-  height: '524px',
+  height: '100%',
+  maxHeight: '32.75rem',
+  position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
 };
 
 const backgroundImageStyle = {
@@ -191,6 +199,7 @@ const userImageWrapperStyle = {
   padding: '10px',
   borderRadius: '16px',
   backgroundColor: '#fff',
+  position: 'relative',
 };
 
 const profileImageStyle = {
@@ -198,6 +207,7 @@ const profileImageStyle = {
   height: '230px',
   borderRadius: '12px',
   objectFit: 'cover',
+  
 };
 
 const userNameHeading = {
@@ -226,6 +236,13 @@ const locationWrapperStyle = {
   alignItems: 'center',
 };
 
+const userLocationStyle = {
+  fontSize: '12px',
+  fontWeight: '400',
+  lineHeight: '16.8px',
+  color: '#939393',
+};
+
 const userContactWrapStyle = {
   display: 'flex',
   alignItems: 'center',
@@ -236,6 +253,13 @@ const dotWrapperStyle = {
   width: '4px',
   height: '4px',
   backgroundColor: '#313131',
+  borderRadius: '50%',
+};
+
+const greyDotWrapperStyle = {
+  width: '4px',
+  height: '4px',
+  backgroundColor: '#939393',
   borderRadius: '50%',
 };
 
@@ -272,12 +296,17 @@ const statsBoldStyle = {
   fontWeight: '600',
 };
 
+const analyticsBoldStyle = {
+  color: '#36C8F4',
+  fontWeight: '600',
+};
+
 const followersTextStyle = {
   fontSize: '12px',
   lineHeight: '14.84px',
   fontWeight: '400',
   textTransform: 'uppercase',
-  color: '#36c8f4',
+  color: '#939393',
 };
 
 const mainInnerWrapperStyle = {
@@ -485,5 +514,24 @@ const postBoxButtonStyle = {
   backgroundColor: 'transparent',
 };
 
+const coverEditImageWrap = {
+  width: '100%',
+  maxWidth: '1320px',
+  position: 'absolute',
+  bottom: '20px',
+  display: 'flex',
+  justifyContent: 'flex-end',
+};
+
+const coverEditImage = {
+  width: 'auto',
+};
+
+const profileEditImageWrap = {
+  position: 'absolute',
+  right: '20px',
+  bottom: '20px',
+  display: 'flex',
+};
 
 export default Profile;

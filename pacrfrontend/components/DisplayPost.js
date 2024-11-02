@@ -2,20 +2,82 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 
+// MediaSlider Component
+const MediaSlider = ({ media }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const handleNext = () => {
+        setCurrentIndex((prevIndex) =>
+            prevIndex === media.length - 1 ? 0 : prevIndex + 1
+        );
+    };
+
+    const handlePrev = () => {
+        setCurrentIndex((prevIndex) =>
+            prevIndex === 0 ? media.length - 1 : prevIndex - 1
+        );
+    };
+
+    return (
+        <div style={styles.sliderContainer}>
+            <div style={styles.sliderWrapper}>
+                {media.map((item, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            ...styles.slide,
+                            transform: `translateX(-${currentIndex * 100}%)`,
+                        }}
+                    >
+                        <img
+                            src={item.file}
+                            alt={`Post Media ${index + 1}`}
+                            style={styles.postImage}
+                        />
+                    </div>
+                ))}
+            </div>
+
+            {media.length > 1 && (
+                <>
+                    <button style={styles.prevButton} onClick={handlePrev}>
+                        &#8249;
+                    </button>
+                    <button style={styles.nextButton} onClick={handleNext}>
+                        &#8250;
+                    </button>
+
+                    <div style={styles.dotsContainer}>
+                        {media.map((_, index) => (
+                            <span
+                                key={index}
+                                style={{
+                                    ...styles.dot,
+                                    backgroundColor:
+                                        index === currentIndex ? '#007bff' : '#ccc',
+                                }}
+                            ></span>
+                        ))}
+                    </div>
+                </>
+            )}
+        </div>
+    );
+};
+
+// DisplayPost Component
 const DisplayPost = () => {
     const [posts, setPosts] = useState([]);
     const [newComment, setNewComment] = useState({});
     const [newReply, setNewReply] = useState({});
     const { user, token } = useUser();
-    const [replyingTo, setReplyingTo] = useState(null); // Track which comment is being replied to
 
-    // Fetch posts from the API when the component mounts
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/posts/', {
                     headers: {
-                        Authorization: `Bearer ${token}`, // Pass the token in headers
+                        Authorization: `Bearer ${token}`,
                     },
                 });
                 setPosts(response.data);
@@ -26,7 +88,6 @@ const DisplayPost = () => {
         fetchPosts();
     }, [token]);
 
-    // Handle liking a post
     const handleLikePost = async (postId) => {
         try {
             await axios.post(
@@ -38,7 +99,6 @@ const DisplayPost = () => {
                     },
                 }
             );
-            // Optimistically update the UI
             const updatedPosts = posts.map((post) =>
                 post.id === postId ? { ...post, likes_count: post.likes_count + 1 } : post
             );
@@ -48,7 +108,6 @@ const DisplayPost = () => {
         }
     };
 
-    // Handle adding a new comment to a post
     const handleAddComment = async (postId) => {
         if (newComment[postId]?.trim()) {
             try {
@@ -61,7 +120,6 @@ const DisplayPost = () => {
                         },
                     }
                 );
-                // Update the comments for the post
                 const updatedPosts = posts.map((post) =>
                     post.id === postId
                         ? { ...post, comments: [...post.comments, response.data], comments_count: post.comments_count + 1 }
@@ -75,7 +133,6 @@ const DisplayPost = () => {
         }
     };
 
-    // Handle replying to a comment
     const handleAddReply = async (commentId, postId) => {
         if (newReply[commentId]?.trim()) {
             try {
@@ -88,7 +145,6 @@ const DisplayPost = () => {
                         },
                     }
                 );
-                // Update the comments for the post with the new reply
                 const updatedPosts = posts.map((post) =>
                     post.id === postId
                         ? {
@@ -109,70 +165,6 @@ const DisplayPost = () => {
             }
         }
     };
-    
-    const MediaSlider = ({ media }) => {
-        const [currentIndex, setCurrentIndex] = useState(0);
-    
-        const handleNext = () => {
-            setCurrentIndex((prevIndex) =>
-                prevIndex === media.length - 1 ? 0 : prevIndex + 1
-            );
-        };
-    
-        const handlePrev = () => {
-            setCurrentIndex((prevIndex) =>
-                prevIndex === 0 ? media.length - 1 : prevIndex - 1
-            );
-        };
-    
-        return (
-            <div style={styles.sliderContainer}>
-                <div style={styles.sliderWrapper}>
-                    {media.map((item, index) => (
-                        <div
-                            key={index}
-                            style={{
-                                ...styles.slide,
-                                transform: `translateX(-${currentIndex * 100}%)`,
-                            }}
-                        >
-                            <img
-                                src={item.file}
-                                alt={`Post Media ${index + 1}`}
-                                style={styles.postImage}
-                            />
-                        </div>
-                    ))}
-                </div>
-    
-                {media.length > 1 && (
-                    <>
-                        <button style={styles.prevButton} onClick={handlePrev}>
-                            &#8249;
-                        </button>
-                        <button style={styles.nextButton} onClick={handleNext}>
-                            &#8250;
-                        </button>
-    
-                        <div style={styles.dotsContainer}>
-                            {media.map((_, index) => (
-                                <span
-                                    key={index}
-                                    style={{
-                                        ...styles.dot,
-                                        backgroundColor:
-                                            index === currentIndex ? '#007bff' : '#ccc',
-                                    }}
-                                ></span>
-                            ))}
-                        </div>
-                    </>
-                )}
-            </div>
-        );
-    };
-    
-    
 
     return (
         <div style={styles.postContainer}>
@@ -181,13 +173,13 @@ const DisplayPost = () => {
                     <div style={styles.postHeaderWrap}>
                         <div style={styles.postHeader}>
                             <img
-                                src={post.author.profile_picture || "/dummy-man.png"} // Display profile picture or fallback
+                                src={post.author.profile_picture || "/dummy-man.png"}
                                 alt="User Profile"
                                 style={styles.profileImage}
                             />
                             <div>
                                 <div style={styles.userName}>
-                                    {post.author.first_name} {post.author.last_name} {/* Display first and last name */}
+                                    {post.author.first_name} {post.author.last_name}
                                 </div>
                                 <div style={styles.tagline}>Post Tagline</div>
                                 <div style={styles.postTime}>2 mins ago</div>
@@ -198,16 +190,7 @@ const DisplayPost = () => {
                     <div style={styles.postContent}>
                         <p style={styles.postText}>{post.content}</p>
                         {post.media && post.media.length > 0 && (
-                            <div style={styles.mediaContainer}>
-                                {post.media.map((mediaItem, index) => (
-                                    <img
-                                        key={index}
-                                        src={mediaItem.file}
-                                        alt={`Post Media ${index + 1}`}
-                                        style={styles.postImage}
-                                    />
-                                ))}
-                            </div>
+                            <MediaSlider media={post.media} />
                         )}
                     </div>
 
@@ -235,33 +218,39 @@ const DisplayPost = () => {
                         </button>
                     </div>
 
-                    {/* Display comments */}
+                    {/* Comments */}
                     <div style={styles.commentsList}>
                         {post.comments.map((comment) => (
                             <div key={comment.id} style={styles.commentBox}>
                                 <div style={styles.commentHeader}>
                                     <div style={styles.commentInfo}>
                                         <img
-                                            src={comment.author.profile_picture || "/dummy-man.png"} // Display profile picture
+                                            src={comment.author.profile_picture || "/dummy-man.png"}
                                             alt="Commenter Profile"
                                             style={styles.commentProfileImage}
                                         />
-                                        <div>
-                                            <div style={styles.commentUsername}>
-                                                {comment.author.first_name} {comment.author.last_name} {/* Display name */}
+                                        <div style={styles.commentUserWrap}>
+                                            <div>
+                                                <div style={styles.commentUsername}>
+                                                    {comment.author.first_name} {comment.author.last_name}
+                                                </div>
+                                                <div style={styles.commentTagline}>{comment.author.tagline}</div>
                                             </div>
-                                            <div style={styles.commentTagline}>{comment.author.tagline}</div>
                                             <div style={styles.commentContent}>{comment.content}</div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Show "Reply" button */}
-                                <div style={styles.commentActions}>
-                                    <button
-                                        style={styles.replyButton}
-                                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)} // Toggle reply input
-                                    >
+                                {/* Reply Section */}
+                                <div style={styles.replySection}>
+                                    <input
+                                        type="text"
+                                        placeholder="Reply to this comment..."
+                                        value={newReply[comment.id] || ''}
+                                        onChange={(e) => setNewReply({ ...newReply, [comment.id]: e.target.value })}
+                                        style={styles.replyInput}
+                                    />
+                                    <button onClick={() => handleAddReply(comment.id, post.id)} style={styles.replyButton}>
                                         Reply
                                     </button>
                                 </div>
@@ -490,6 +479,12 @@ const styles = {
         objectFit: 'cover',  // Ensures image covers the entire slide area
     },
     prevButton: {
+        width: '32px',
+        height: '32px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: '24px',
         position: 'absolute',
         top: '50%',
         left: '10px',
@@ -498,11 +493,17 @@ const styles = {
         color: '#fff',
         border: 'none',
         borderRadius: '50%',
-        padding: '10px',
+        paddingBottom: '4px',
         cursor: 'pointer',
         zIndex: 1,
     },
     nextButton: {
+        width: '32px',
+        height: '32px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: '24px',
         position: 'absolute',
         top: '50%',
         right: '10px',
@@ -511,7 +512,7 @@ const styles = {
         color: '#fff',
         border: 'none',
         borderRadius: '50%',
-        padding: '10px',
+        paddingBottom: '4px',
         cursor: 'pointer',
         zIndex: 1,
     },

@@ -2,7 +2,8 @@ import Head from 'next/head';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Recommendations from '../components/Recommendations';
-import ResearchPost from '../components/ResearchPost'; // Import Post component
+import Post from '../components/Post';
+import ResearchPost from '../components/ResearchPost';
 import "../app/globals.css";
 import PostBox from '@/components/PostBox';
 import DisplayPost from '@/components/DisplayPost';
@@ -24,8 +25,9 @@ const Dashboard = () => {
             <main style={{ display: 'flex', flexDirection: 'column' }}>
               <PostBox/>
               <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
-                <ResearchPost/>
-                <DisplayPost /> {/* Rendering a single Post */}
+                <Post />
+                <DisplayPost />
+                <ResearchPost />
               </div>
             </main>
             <Recommendations />
@@ -37,7 +39,7 @@ const Dashboard = () => {
 
 const mainContainer = {
   width: '100%',
-  backgroundColor: '#F4F2EE',
+  backgroundColor: '#fff',
   display: 'flex',
   justifyContent: 'center',
   paddingTop: '130px',
