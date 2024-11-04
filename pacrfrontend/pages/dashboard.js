@@ -4,10 +4,10 @@ import Sidebar from '../components/Sidebar';
 import Recommendations from '../components/Recommendations';
 import Post from '../components/Post';
 import ResearchPost from '../components/ResearchPost';
+import Footer from '../components/Footer';
 import "../app/globals.css";
 import PostBox from '@/components/PostBox';
 import DisplayPost from '@/components/DisplayPost';
-
 
 const Dashboard = () => {
   return (
@@ -33,6 +33,7 @@ const Dashboard = () => {
           <Recommendations />
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
@@ -42,7 +43,7 @@ const mainContainer = {
   backgroundColor: '#fff',
   display: 'flex',
   justifyContent: 'center',
-  paddingTop: '130px',
+  padding: '130px 0 80px',
 };
 
 const mainInnerContainer = {
