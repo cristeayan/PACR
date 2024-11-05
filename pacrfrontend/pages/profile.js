@@ -6,6 +6,7 @@ import { useUser } from '../context/UserContext';
 import PostBox from '@/components/PostBox';
 import ResearchPost from '../components/ResearchPost';
 import Post from '../components/Post';
+import Footer from '../components/Footer';
 
 
 const Profile = () => {
@@ -151,6 +152,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
+        <Footer />
     </div>
   );
 };
@@ -160,6 +162,7 @@ const Profile = () => {
 const profilePageStyle = {
   width: '100%',
   backgroundColor: '#fff',
+  paddingBottom: '80px',
 };
 
 const profileMainWrapper = {

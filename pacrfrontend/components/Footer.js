@@ -9,26 +9,47 @@ const Footer = () => {
                         <img src='/PACR Footer Logo.svg' alt='Footer Logo' />
                     </div>
                     <div style={styles.linksWrap}>
-                        <div style={styles.column}>
-                            <a href="#" style={styles.link}>Home</a>
-                            <a href="#" style={styles.link}>Research</a>
-                            <a href="#" style={styles.link}>Communities</a>
+                        <div style={styles.quickLinksWrap}>
+                            <div style={styles.column}>
+                                <a href="#" style={styles.link}>Home</a>
+                                <a href="#" style={styles.link}>Research</a>
+                                <a href="#" style={styles.link}>Communities</a>
+                            </div>
+                            <div style={styles.column}>
+                                <a href="#" style={styles.link}>Statistics</a>
+                                <a href="#" style={styles.link}>Notifications</a>
+                                <a href="#" style={styles.link}>Messages</a>
+                            </div>
                         </div>
-                        <div style={styles.column}>
-                            <a href="#" style={styles.link}>Statistics</a>
-                            <a href="#" style={styles.link}>Notifications</a>
-                            <a href="#" style={styles.link}>Messages</a>
-                        </div>
-                        <div style={styles.column}>
-                            <a href="#" style={styles.link}><span style={styles.icon}>❓</span> Questions?</a>
-                            <a href="#" style={styles.link}><span style={styles.icon}>🔒</span> Manage Your Account And Privacy</a>
-                            <a href="#" style={styles.link}><span style={styles.icon}>👁️</span> Recommendation Transparency</a>
+                        <div style={styles.otherLinksColumn}>
+                            <div style={styles.otheLinkMainWrap}>
+                                <img src='/Circle_Help.svg' alt='Question Icon' />
+                                <div style={styles.otherLinkTextWrap}>
+                                    <p style={styles.otherLinkHeading}>Questions?</p>
+                                    <a href="#" style={styles.otherLink}>Visit our Help Center.</a>
+                                </div>
+                            </div>
+                            <div style={styles.otheLinkMainWrap}>
+                                <img src='/Settings_Future.svg' alt='Privacy Icon' />
+                                <div style={styles.otherLinkTextWrap}>
+                                    <p style={styles.otherLinkHeading}>Manage your<br /> account and privacy</p>
+                                    <a href="#" style={styles.otherLink}>Go to your Settings.</a>
+                                </div>
+                            </div>
+                            <div style={styles.otheLinkMainWrap}>
+                                <img src='/Swicht_Left.svg' alt='Recommendation Icon' />
+                                <div style={styles.otherLinkTextWrap}>
+                                    <p style={styles.otherLinkHeading}>Recommendation transparency</p>
+                                    <a href="#" style={styles.otherLink}>Learn more about Recommended Content.</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div style={styles.languageSelector}>
                     <label htmlFor="language" style={styles.label}>Select Your Language</label>
+                    <img src='/Language_Dropdown_Icon.png' alt='Dropdown Icon' style={styles.dropdownIcon} />
                     <select id="language" style={styles.languageDropdown}>
                         <option value="en-US">English (US)</option>
                         <option value="en-GB">English (UK)</option>
@@ -68,9 +89,9 @@ const Footer = () => {
                     </select>
                 </div>
 
-                <div style={styles.bottomText}>
-                    <p>Pacr Corporation © 2024</p>
-                    <div style={styles.termsLinks}>
+                <div style={styles.bottomTextWrapper}>
+                    <p style={styles.copyrightText}>Pacr Corporation © 2024</p>
+                    <div style={styles.termsLinkWrapper}>
                         <a href="#" style={styles.termsLink}>Terms And Conditions</a>
                         <a href="#" style={styles.termsLink}>Privacy Policy</a>
                     </div>
@@ -90,7 +111,7 @@ const styles = {
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         rowGap: '54px',
     },
     footerUpperWrapper: {
@@ -106,49 +127,104 @@ const styles = {
         justifyContent: 'space-between',
         columnGap: '100px',
     },
+    quickLinksWrap: {
+        width: '100%',
+        maxWidth: '17.875rem',
+        display: 'flex',
+        columnGap: '80px',
+    },
     languageSelector: {
-        marginBottom: '30px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: '16px',
+        position: 'relative',
     },
     label: {
         fontSize: '16px',
-        color: '#333',
-        marginBottom: '10px',
+        lineHeight: '18px',
+        fontWeight: '400',
+        color: '#313131',
     },
     languageDropdown: {
-        padding: '10px 15px',
-        borderRadius: '25px',
-        border: '1px solid #ccc',
+        padding: '18px 28px',
+        borderRadius: '48px',
+        border: '1px solid #ADADAD',
         fontSize: '14px',
+        lineHeight: '18px',
+        fontWeight: '400',
+        color: '#CACACA',
+        width: '20rem',
+        appearance: 'none',
+    },
+    dropdownIcon: {
+        position: 'absolute',
+        bottom: '24px',
+        right: '28px',
     },
     column: {
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px',
+        gap: '40px',
     },
-    link: {
-        color: '#333',
-        textDecoration: 'none',
-        fontSize: '15px',
-    },
-    icon: {
-        marginRight: '5px',
-    },
-    bottomText: {
+    otherLinksColumn: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        color: '#666',
-        fontSize: '14px',
-        marginTop: '20px',
+        gap: '28px',
     },
-    termsLinks: {
+    otheLinkMainWrap: {
         display: 'flex',
-        gap: '20px',
-        marginTop: '10px',
+        gap: '12px',
+        alignItems: 'flex-start',
+    },
+    otherLinkTextWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+    },
+    otherLinkHeading: {
+        color: '#313131',
+        textTransform: 'capitalize',
+        fontSize: '16px',
+        lineHeight: '18px',
+        fontWeight: '400',
+    },
+    otherLink: {
+        fontSize: '14px',
+        lineHeight: '16px',
+        fontWeight: '400',
+        color: '#ADADAD',
+        textDecoration: 'none',
+    },
+    link: {
+        color: '#313131',
+        textDecoration: 'none',
+        fontSize: '16px',
+        lineHeight: '18px',
+        fontWeight: '400',
+    },
+    bottomTextWrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    copyrightText: {
+        fontSize: '16px',
+        lineHeight: '18px',
+        fontWeight: '400',
+        color: '#ADADAD',
+    },
+    termsLinkWrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '48px',
     },
     termsLink: {
-        color: '#666',
-        textDecoration: 'none',
+        fontSize: '16px',
+        lineHeight: '18px',
+        fontWeight: '600',
+        color: '#ADADAD',
     },
 };
 
