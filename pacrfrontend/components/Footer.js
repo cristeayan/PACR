@@ -6,7 +6,7 @@ const Footer = () => {
             <div style={styles.container}>
                 <div style={styles.footerUpperWrapper}>
                     <div style={styles.footerLogoWrap}>
-                        <img src='/PACR Footer Logo.svg' alt='Footer Logo' />
+                        <img src='/PACR_Footer_Logo.svg' alt='Footer Logo' />
                     </div>
                     <div style={styles.linksWrap}>
                         <div style={styles.quickLinksWrap}>
@@ -103,7 +103,7 @@ const Footer = () => {
 
 const styles = {
     footer: {
-        backgroundColor: 'rgb(238 238 238)',
+        backgroundColor: '#A2E1FA',
         padding: '54px 20px 48px',
     },
     container: {
@@ -193,7 +193,7 @@ const styles = {
         fontSize: '14px',
         lineHeight: '16px',
         fontWeight: '400',
-        color: '#ADADAD',
+        color: '#ffffff',
         textDecoration: 'none',
     },
     link: {
@@ -213,7 +213,7 @@ const styles = {
         fontSize: '16px',
         lineHeight: '18px',
         fontWeight: '400',
-        color: '#ADADAD',
+        color: '#ffffff',
     },
     termsLinkWrapper: {
         display: 'flex',
@@ -224,7 +224,7 @@ const styles = {
         fontSize: '16px',
         lineHeight: '18px',
         fontWeight: '600',
-        color: '#ADADAD',
+        color: '#ffffff',
     },
 };
 

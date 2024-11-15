@@ -12,9 +12,9 @@ const Header = () => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '12px 32px',
+    padding: '12px 60px',
     backgroundColor: headerBgColor,
-    boxShadow: 'rgba(0, 0, 0, 0.3) 5px 7px 16px 0px',
+    // boxShadow: 'rgba(0, 0, 0, 0.3) 5px 7px 16px 0px',
     position: 'fixed',
     top: '20px',
     alignSelf: 'center',
@@ -54,7 +54,7 @@ const Header = () => {
   const searchInputStyle = {
     width: '100%',
     padding: '10px 10px 10px 50px',
-    border: '1px solid #ffffff',
+    border: '0.5px solid #313131',
     borderRadius: '10px',
     fontSize: '14px',
     fontWeight: '400',
@@ -67,9 +67,10 @@ const Header = () => {
   };
 
   const searchIconStyle = {
+    width: '24px',
     position: 'absolute',
     top: '12px',
-    left: '12px'
+    left: '16px'
   };
 
   const navIconsStyle = {
@@ -288,13 +289,13 @@ const Header = () => {
           <div style={iconCircleStyle}>
             <img style={iconStyle} src="Stats Black Icon.svg" alt="bookmark-ribbon"/>
           </div>
-          <span style={navTextStyle}>Library</span>
+          <span style={navTextStyle}>Statistics</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
             <img style={iconStyle} src="Notifications Black Icon.svg" alt="notification-bell"/>
           </div>
-          <span style={navTextStyle}>Alerts</span>
+          <span style={navTextStyle}>Notifications</span>
         </div>
         <div style={navButtonStyle}>
           <div style={iconCircleStyle}>
