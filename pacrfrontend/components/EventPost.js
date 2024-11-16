@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Post = () => {
+const EventPost = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [editingCommentIndex, setEditingCommentIndex] = useState(null);
@@ -103,11 +103,11 @@ const Post = () => {
           <div style={styles.userDetailWrap}>
             <div style={styles.userName}
               onMouseOver={handleMouseEnter}
-              onMouseOut={handleMouseLeave}><a style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }} href='#'>Dr. Matthew Antony</a></div>
+              onMouseOut={handleMouseLeave}><a style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }} href='#'>Dr. Jacob O Liley | MD </a></div>
             <div style={styles.tagline}>
-              Post Doctoral Research Fellow at Beth Israel Deaconess...
+            Endocrinologist at Chay Healthcare Group...
             </div>
-            <div style={styles.postTime}>2 mins ago</div>
+            <div style={styles.postTime}>1 Hour Ago</div>
           </div>
         </div>
         <div style={styles.postFunctionsWrap}>
@@ -119,69 +119,18 @@ const Post = () => {
         </div>
       </div>
 
-      <div style={styles.researchPostMainWrap}>
-      <div style={styles.postContent}>
-        <div style={styles.postContentleft}>
-          <div style={styles.researchTagsWrapper}>
-            <a href='#' style={styles.researchTags}>Case Report</a>
-            <a href='#' style={styles.researchTags}>Open Medical Case Reports</a>
-            <a href='#' style={styles.researchTags}>PDF Available</a>
-          </div>
-          <div style={styles.researchHeadingWrap}>
-            <span style={styles.researchHeading}>An unusual case report of bee sting toxicity as a result of 500 bee stings</span>
-            <div style={styles.researchLinksWrap}>
-              <span style={styles.researchLinkHeading}>Link To Article : <a href='https://medicolegaljournal.com/issue23/volue124' target='_blank' style={styles.researchLink}>https://medicolegaljournal.com/issue23/volue124</a></span>
-              <span style={styles.researchLinkHeading}>Scopus : <a href='https://scopus.com/article328396' target='_blank' style={styles.researchLink}>https://scopus.com/article328396</a></span>
-              <span style={styles.researchLinkHeading}>PMID : <span style={styles.researchLink}>32476</span></span>
-            </div>
-            <div style={styles.postTagsWrapper}>
-              <a href='#' style={styles.postTags}>#Toxicology</a>
-              <a href='#' style={styles.postTags}>#Case - Report</a>
-              <a href='#' style={styles.postTags}>#Anatomy</a>
-              <a href='#' style={styles.postTags}>#Complication</a>
-            </div>
-          </div>
-        </div>
-        <div style={styles.postContentRight}>
-          <div style={styles.researchButtonWrapper}>
-            <button style={styles.researchButton}>Download PDF</button>
-            <button style={styles.researchButton}>Summarize</button>
-          </div>
-        </div>
-      </div>
       <div style={styles.abstractTextWrap}>
-        <div style={styles.abstractInner}>
-        <span style={styles.abstractHeading}>Abstract</span>
         <p style={styles.abstractText}>
-        Bee stings are reported all over the world but bee sting attacks approximatey being reported with a prevelance of 54% in tropical countries. Toxicity can therefore lead to a variety of issues such as contact dermatitis, asphyix..
+        I will be attending <span><a href='#' style={styles.linkText}>the DWD Endocrinology 2024 conference</a></span> which will be held in Charlestown, Chicago. Would love to network with other consultants that are attending. 
         </p>
+        <div style={styles.postTagsWrapper}>
+              <a href='#' style={styles.postTags}>#️Endocrinology</a>
         </div>
-        <span style={styles.moreText}>...See More</span>
         </div>
-      </div>
 
-      <div style={styles.postMediaWrapper}>
-        <img src="Placeholder Cover.jpg" alt="Post" style={styles.postImage} />
-      </div>
-
-      <div style={styles.researchPostInsights}>
-        <div style={styles.postSingleInsight}>
-          <img src='/Calendar_Icon.svg' alt='Calender Icon' />
-          <span style={styles.insightText}>12th Jan 2024; <span>12:40 PM</span></span>
+        <div style={styles.ViewEventButtonWrap}>
+        <a href='#' style={styles.viewEventButton}>View Event Details</a>
         </div>
-        <div style={styles.postSingleInsight}>
-          <img src='/Book_Open.svg' alt='Book Open Icon' />
-          <span style={styles.insightText}>627</span>
-        </div>
-        <div style={styles.postSingleInsight}>
-          <img src='/Double_Quotes_Icon.svg' alt='Book Open Icon' />
-          <span style={styles.insightText}>627</span>
-        </div>
-        <div style={styles.postSingleInsight}>
-          <img src='Arrow_Circle_Down.svg' alt='Book Open Icon' />
-          <span style={styles.insightText}>627</span>
-        </div>
-      </div>
 
       <div style={styles.postActions}>
         <div style={styles.reactionDataWrap}>
@@ -467,12 +416,6 @@ const styles = {
     fontSize: '10px',
     lineHeight: '14px',
   },
-  researchPostMainWrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    marginBottom: '16px',
-  },
   postContent: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -540,7 +483,7 @@ const styles = {
     textAlign: 'center',
     fontSize: '14px',
     lineHeight: '18px',
-    color: '#ADADAD',
+    color: '#4FCFF5',
   },
   postContentRight: {
     display: 'flex',
@@ -569,7 +512,7 @@ const styles = {
   abstractTextWrap: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
+    gap: '10px',
   },
   abstractInner: {
     display: 'flex',
@@ -589,40 +532,24 @@ const styles = {
     maxWidth: '48rem',
     textTransform: 'capitalize',
   },
-  moreText: {
-    fontSize: '14px',
-    lineHeight: '20px',
-    fontWeight: '500',
-    color: '#4FCFF5',
-    textAlign: 'end',
+  linkText: {
+    color: '#313131',
+    fontWeight: '600',
   },
-  postMediaWrapper: {
-    width: 'auto',
-  },
-  postImage: {
-    width: '100%',
-    borderRadius: '10px',
-  },
-  researchPostInsights: {
+  ViewEventButtonWrap: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
-    width: '100%',
-    maxWidth: '30.5rem',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginTop: '20px',
+  },
+  viewEventButton: {
+    padding: '16px 44px',
     borderRadius: '200px',
     border: '1px solid #313131',
-    padding: '8px 36px',
-    margin: '20px 0 14px',
-  },
-  postSingleInsight: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-  },
-  insightText: {
-    fontSize: '14px',
+    fontSize: '16px',
     lineHeight: '18px',
-    fontWeight: '400',
+    fontWeight: '500',
+    textDecoration: 'none',
     color: '#313131',
   },
   postActions: {
@@ -917,7 +844,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: '8px',
+    marginBottom: '24px',
   },
   postFollowButton: {
     fontSize: '16px',
@@ -944,4 +871,4 @@ const styles = {
   },
 };
 
-export default Post;
+export default EventPost;

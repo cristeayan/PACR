@@ -4,10 +4,13 @@ import Sidebar from '../components/Sidebar';
 import Recommendations from '../components/Recommendations';
 import Post from '../components/Post';
 import ResearchPost from '../components/ResearchPost';
+import RecommendedPost from '../components/RecommendedPost';
+import EventPost from '../components/EventPost';
 import Footer from '../components/Footer';
 import "../app/globals.css";
 import PostBox from '@/components/PostBox';
 import DisplayPost from '@/components/DisplayPost';
+import CongratsBanner from '../components/CongratsBanner';
 
 const Dashboard = () => {
   return (
@@ -26,8 +29,11 @@ const Dashboard = () => {
             <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>
               <PostBox />
               <Post />
-              <DisplayPost />
+              {/* <DisplayPost /> */}
+              <CongratsBanner />
               <ResearchPost />
+              <EventPost />
+              <RecommendedPost />
             </div>
           </main>
           <Recommendations />
@@ -50,7 +56,7 @@ const mainInnerContainer = {
   width: '100%',
   maxWidth: '1320px',
   display: 'grid',
-  gridTemplateColumns: '0.5fr 1fr 0.5fr',
+  gridTemplateColumns: '0.3fr 1fr 0.30fr',
   gridTemplateRows: '1fr',
   gridColumnGap: '20px',
   gridRowGap: '20px',
