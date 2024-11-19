@@ -10,6 +10,11 @@ const RecommendedPost = () => {
     const [optionsOpen, setOptionsOpen] = useState(null);
     const [replyOptionsOpen, setReplyOptionsOpen] = useState(null);
     const [isHovered, setIsHovered] = useState(false);
+    const [isMediaVisible, setIsMediaVisible] = useState(false);
+
+    const toggleMediaVisibility = () => {
+        setIsMediaVisible(!isMediaVisible);
+    };
 
     // Temporary state to hold the current text while editing
     const [tempCommentText, setTempCommentText] = useState('');
@@ -159,11 +164,18 @@ const RecommendedPost = () => {
                             Bee stings are reported all over the world but bee sting attacks approximatey being reported with a prevelance of 54% in tropical countries. Toxicity can therefore lead to a variety of issues such as contact dermatitis, asphyix..
                         </p>
                     </div>
-                    <span style={styles.moreText}>...See More</span>
+                    <a onClick={toggleMediaVisibility} style={styles.moreText}>
+                        {isMediaVisible ? '...See Less' : '...See More'}
+                    </a>
                 </div>
             </div>
 
-            <div style={styles.postMediaWrapper}>
+            <div style={{
+                    ...styles.postMediaWrapper,
+                    maxHeight: isMediaVisible ? '1000px' : '0',
+                    overflow: 'hidden',
+                    transition: 'max-height 0.5s ease-in-out',
+                }}>
                 <img src="Placeholder Cover.jpg" alt="Post" style={styles.postImage} />
             </div>
 
@@ -514,7 +526,7 @@ const styles = {
         backgroundColor: '#fff',
         borderRadius: '200px',
         border: '1px solid #4FCFF5',
-        padding: '8px 20px',
+        padding: '8px 16px',
         fontSize: '14px',
         lineHeight: '18px',
         color: '#4FCFF5',
@@ -614,9 +626,13 @@ const styles = {
         fontWeight: '500',
         color: '#4FCFF5',
         textAlign: 'end',
+        textDecoration: 'none',
+        cursor: 'pointer',
     },
     postMediaWrapper: {
         width: 'auto',
+        overflow: 'hidden',
+        maxHeight: '0',
     },
     postImage: {
         width: '100%',

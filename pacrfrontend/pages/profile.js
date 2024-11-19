@@ -7,11 +7,57 @@ import PostBox from '@/components/PostBox';
 import ResearchPost from '../components/ResearchPost';
 import Post from '../components/Post';
 import Footer from '../components/Footer';
+import ReactModal from 'react-modal';
 
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('Profile'); // State to handle active tab
   const { user } = useUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(''); // 'profile' or 'cover'
+  const [previewImage, setPreviewImage] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState({
+    profile: 'dummy-man.png',
+    cover: '/Monitor Image.png',
+  });
+
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+
+  // Open Modal (Edit or Preview)
+  const openModal = (type, preview = false) => {
+    setModalType(type);
+    setIsPreviewMode(preview);
+    setIsModalOpen(true);
+    if (preview) {
+      setPreviewImage(uploadedImage[type]); // Show uploaded image in preview mode
+    }
+  };
+
+  // Close Modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setPreviewImage(null);
+    setIsPreviewMode(false);
+  };
+
+  // Handle Image Upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreviewImage(URL.createObjectURL(file));
+    }
+  };
+
+  // Save Uploaded Image
+  const saveImage = () => {
+    if (previewImage) {
+      setUploadedImage({
+        ...uploadedImage,
+        [modalType]: previewImage,
+      });
+      closeModal();
+    }
+  };
 
   // Function to render content based on active tab
   const renderTabContent = () => {
@@ -301,13 +347,89 @@ const Profile = () => {
       {/* Header */}
       <Header />
 
+      
+      {/* Modal for Preview and Upload */}
+      <ReactModal 
+        isOpen={isModalOpen} 
+        onRequestClose={closeModal} 
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.6)', // Background blur
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'fixed',
+            top: '0',
+            bottom: '0',
+            left: '0',
+            right: '0',
+            zIndex: '9999',
+          },
+          content: {
+            position: 'static',
+            maxWidth: '768px',
+            width: '100%',
+            height: '100%',
+            maxHeight: '550px',
+            borderRadius: '10px', // Rounded corners
+            padding: '20px',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)', // Subtle shadow
+            border: 'none',
+            textAlign: 'center',
+            overflow: 'auto',
+          },
+        }}
+      >
+        {isPreviewMode ? (
+          <>
+            <h2>Preview {modalType === 'profile' ? 'Profile' : 'Cover'} Image</h2>
+            <img
+              src={previewImage}
+              alt="Preview"
+              style={{ width: '100%', marginBottom: '20px', borderRadius: modalType === 'profile' ? '50%' : '0' }}
+            />
+            <button onClick={closeModal} style={{ marginTop: '20px' }}>
+              Close
+            </button>
+          </>
+        ) : (
+          <>
+            <h2>Edit {modalType === 'profile' ? 'Profile' : 'Cover'} Image</h2>
+            {previewImage ? (
+              <img
+                src={previewImage}
+                alt="Preview"
+                style={{ width: '100%', marginBottom: '20px', borderRadius: modalType === 'profile' ? '50%' : '0' }}
+              />
+            ) : (
+              <p>No image selected</p>
+            )}
+            <input type="file" accept="image/*" onChange={handleImageUpload} />
+            <div style={{ marginTop: '20px' }}>
+              <button onClick={saveImage} style={{ marginRight: '10px' }}>
+                Save
+              </button>
+              <button onClick={closeModal}>Cancel</button>
+            </div>
+          </>
+        )}
+      </ReactModal>
+
       {/* Profile Main Content */}
       <div style={profilePageStyle}>
         {/* Header Section with Background Image */}
         <div style={headerStyle}>
-          <img src="/Monitor Image.png" alt="Profile Background" style={backgroundImageStyle} />
+          {/* <img src="/Monitor Image.png" alt="Profile Background" style={backgroundImageStyle} />
           <div style={coverEditImageWrap}>
-            <img src='Cover Edit Icon.svg' alt='Edit Icon' style={coverEditImage} />
+            <img src='Cover Edit Icon.svg' alt='Edit Icon' style={coverEditImage} /> */}
+            <img
+          src={uploadedImage.cover}
+          alt="Cover"
+          style={backgroundImageStyle}
+          onClick={() => openModal('cover', true)} // Open Preview Modal
+        />
+          <div style={coverEditImageWrap} onClick={() => openModal('cover')}>
+            <img src='Cover Edit Icon.svg' alt='Edit Icon' />
           </div>
         </div>
 
@@ -315,10 +437,16 @@ const Profile = () => {
         <div style={profileMainWrapper}>
           <div style={profileInfoWrapperStyle}>
             <div style={userImageWrapperStyle}>
-              <img src={/*user ? user.profile_picture :*/ 'dummy-man.png'} alt="Profile" style={profileImageStyle} />
-              <div style={profileEditImageWrap}>
-                <img src='Profile Editable Icon.svg' alt='Edit Icon' style={coverEditImage} />
-              </div>
+              {/* <img src={user ? user.profile_picture : 'dummy-man.png'} alt="Profile" style={profileImageStyle} /> */}
+              <img
+          src={uploadedImage.profile}
+          alt="Profile"
+          style={profileImageStyle}
+          onClick={() => openModal('profile', true)} // Open Preview Modal
+        />
+              <div style={profileEditImageWrap} onClick={() => openModal('profile')}>
+          <img src="Profile Editable Icon.svg" alt="Edit Icon" />
+        </div>
             </div>
             <div style={userInfoStyle}>
               <h1 style={userNameHeading}>{user ? user.first_name + ' ' + user.last_name : "why"}</h1>

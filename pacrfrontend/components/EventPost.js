@@ -542,7 +542,7 @@ const styles = {
     alignItems: 'flex-start',
     marginTop: '20px',
   },
-  viewEventButton: {
+  viewEventButton: { 
     padding: '16px 44px',
     borderRadius: '200px',
     border: '1px solid #313131',
