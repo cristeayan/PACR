@@ -25,7 +25,7 @@ const Profile = () => {
 
   // Open Modal (Edit or Preview)
   const openModal = (type, preview = false) => {
-    setModalType(type);
+    setModalType(type); // Ensure `modalType` is correctly set
     setIsPreviewMode(preview);
     setIsModalOpen(true);
     if (preview) {
@@ -53,7 +53,7 @@ const Profile = () => {
     if (previewImage) {
       setUploadedImage({
         ...uploadedImage,
-        [modalType]: previewImage,
+        [modalType]: previewImage, // Save based on `modalType`
       });
       closeModal();
     }
@@ -302,7 +302,7 @@ const Profile = () => {
                       <p style={experienceLocation}>Issued Mar 2024</p>
                     </div>
                     <div>
-                    <p style={experienceTitle}><span style={boldText}>Skills:</span> Human Subjects Research</p>
+                      <p style={experienceTitle}><span style={boldText}>Skills:</span> Human Subjects Research</p>
                     </div>
                   </div>
                 </div>
@@ -317,7 +317,7 @@ const Profile = () => {
                       <p style={experienceLocation}>Issued Feb 2024</p>
                     </div>
                     <div>
-                    <p style={experienceTitle}><span style={boldText}>Skills:</span> Human Subjects Research</p>
+                      <p style={experienceTitle}><span style={boldText}>Skills:</span> Human Subjects Research</p>
                     </div>
                   </div>
                 </div>
@@ -347,73 +347,65 @@ const Profile = () => {
       {/* Header */}
       <Header />
 
-      
-      {/* Modal for Preview and Upload */}
-      <ReactModal 
-        isOpen={isModalOpen} 
-        onRequestClose={closeModal} 
-        style={{
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.6)', // Background blur
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'fixed',
-            top: '0',
-            bottom: '0',
-            left: '0',
-            right: '0',
-            zIndex: '9999',
-          },
-          content: {
-            position: 'static',
-            maxWidth: '768px',
-            width: '100%',
-            height: '100%',
-            maxHeight: '550px',
-            borderRadius: '10px', // Rounded corners
-            padding: '20px',
-            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)', // Subtle shadow
-            border: 'none',
-            textAlign: 'center',
-            overflow: 'auto',
-          },
-        }}
-      >
-        {isPreviewMode ? (
-          <>
-            <h2>Preview {modalType === 'profile' ? 'Profile' : 'Cover'} Image</h2>
-            <img
-              src={previewImage}
-              alt="Preview"
-              style={{ width: '100%', marginBottom: '20px', borderRadius: modalType === 'profile' ? '50%' : '0' }}
-            />
-            <button onClick={closeModal} style={{ marginTop: '20px' }}>
-              Close
-            </button>
-          </>
-        ) : (
-          <>
-            <h2>Edit {modalType === 'profile' ? 'Profile' : 'Cover'} Image</h2>
-            {previewImage ? (
+      {/* Modal */}
+      {isModalOpen && (
+        <ReactModal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          style={{
+            overlay: styles.modalOverlay,
+            content: styles.modalContent,
+          }}
+        >
+          {/* Cross Icon */}
+          <button style={styles.closeButton} onClick={closeModal}>
+            ×
+          </button>
+
+          {isPreviewMode ? (
+            <>
+              {/* Heading for Profile Photo Preview */}
+              {modalType === 'profile' && <h2 style={styles.modalHeading}>Profile Photo</h2>}
+
+              {/* Preview Image */}
               <img
                 src={previewImage}
                 alt="Preview"
-                style={{ width: '100%', marginBottom: '20px', borderRadius: modalType === 'profile' ? '50%' : '0' }}
+                style={modalType === 'profile' ? styles.profileImagePreview : styles.coverImagePreview}
               />
-            ) : (
-              <p>No image selected</p>
-            )}
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
-            <div style={{ marginTop: '20px' }}>
-              <button onClick={saveImage} style={{ marginRight: '10px' }}>
-                Save
-              </button>
-              <button onClick={closeModal}>Cancel</button>
-            </div>
-          </>
-        )}
-      </ReactModal>
+            </>
+          ) : (
+            <>
+              {/* Edit Modal Heading */}
+              <h2 style={styles.modalHeading}>Edit {modalType === 'profile' ? 'Profile' : 'Cover'} Image</h2>
+
+              {/* Current Image Preview */}
+              <img
+                src={previewImage || uploadedImage[modalType]}
+                alt="Edit Preview"
+                style={modalType === 'profile' ? styles.profileEditPreview : styles.coverEditPreview}
+              />
+
+              {/* Buttons at the Bottom Right */}
+              <div style={styles.modalActions}>
+                <div style={styles.choosePhotoButton}>
+                  Choose Photo
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={styles.fileInput}
+                    onChange={handleImageUpload}
+                  />
+                </div>
+                <button style={styles.saveButton} onClick={saveImage}>
+                  Save
+                </button>
+              </div>
+            </>
+          )}
+        </ReactModal>
+      )}
+
 
       {/* Profile Main Content */}
       <div style={profilePageStyle}>
@@ -422,12 +414,12 @@ const Profile = () => {
           {/* <img src="/Monitor Image.png" alt="Profile Background" style={backgroundImageStyle} />
           <div style={coverEditImageWrap}>
             <img src='Cover Edit Icon.svg' alt='Edit Icon' style={coverEditImage} /> */}
-            <img
-          src={uploadedImage.cover}
-          alt="Cover"
-          style={backgroundImageStyle}
-          onClick={() => openModal('cover', true)} // Open Preview Modal
-        />
+          <img
+            src={uploadedImage.cover}
+            alt="Cover"
+            style={backgroundImageStyle}
+            onClick={() => openModal('cover', true)} // Open Preview Modal
+          />
           <div style={coverEditImageWrap} onClick={() => openModal('cover')}>
             <img src='Cover Edit Icon.svg' alt='Edit Icon' />
           </div>
@@ -439,14 +431,14 @@ const Profile = () => {
             <div style={userImageWrapperStyle}>
               {/* <img src={user ? user.profile_picture : 'dummy-man.png'} alt="Profile" style={profileImageStyle} /> */}
               <img
-          src={uploadedImage.profile}
-          alt="Profile"
-          style={profileImageStyle}
-          onClick={() => openModal('profile', true)} // Open Preview Modal
-        />
+                src={uploadedImage.profile}
+                alt="Profile"
+                style={profileImageStyle}
+                onClick={() => openModal('profile', true)} // Open Preview Modal
+              />
               <div style={profileEditImageWrap} onClick={() => openModal('profile')}>
-          <img src="Profile Editable Icon.svg" alt="Edit Icon" />
-        </div>
+                <img src="Profile Editable Icon.svg" alt="Edit Icon" />
+              </div>
             </div>
             <div style={userInfoStyle}>
               <h1 style={userNameHeading}>{user ? user.first_name + ' ' + user.last_name : "why"}</h1>
@@ -1111,6 +1103,126 @@ const backgroundAimsWrap = {
 
 const boldText = {
   fontWeight: '600',
+};
+
+const styles = {
+  modalOverlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    position: 'relative',
+    background: '#fff',
+    borderRadius: '10px',
+    // maxWidth: modalType === 'profile' ? '400px' : '800px',
+    width: '100%',
+    maxWidth: '992px',
+    padding: '20px',
+    textAlign: 'center',
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+    overflow: 'hidden',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    background: 'transparent',
+    border: 'none',
+    fontSize: '24px',
+    cursor: 'pointer',
+    color: '#000',
+  },
+  profileImage: {
+    width: '150px',
+    height: '150px',
+    objectFit: 'cover',
+    borderRadius: '12px',
+    margin: '20px auto',
+  },
+  coverImage: {
+    width: '100%',
+    height: '450px',
+    objectFit: 'cover',
+    borderRadius: '8px',
+  },
+  modalActions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '15px',
+    marginTop: '20px',
+  },
+  button: {
+    padding: '10px 20px',
+    background: '#0073b1',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
+  choosePhotoButton: {
+    fontSize: '16px',
+    lineHeight: '18px',
+    fontWeight: '500',
+    color: '#4FCFF5',
+    textDecoration: 'none',
+    padding: '16px 40px',
+    borderRadius: '200px',
+    textAlign: 'center',
+    border: '1px solid #4FCFF5',
+    position: 'relative',
+  },
+  fileInput: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    opacity: '0',
+    cursor: 'pointer',
+  },
+  saveButton: {
+    backgroundColor: '#70d4fc',
+    borderRadius: '200px',
+    padding: '16px 40px',
+    fontSize: '16px',
+    lineHeight: '18px',
+    fontWeight: '500',
+    border: 'none',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  profileImagePreview: {
+    margin: '20px 0 0',
+    width: '260px',
+    height: '260px',
+    objectFit: 'cover',
+    objectPosition: 'center',
+    borderRadius: '16px',
+  },
+  coverImagePreview: {
+    width: '100%',
+    maxHeight: '340px',
+    objectFit: 'cover',
+    margin: '20px 0 0',
+  },
+  profileEditPreview: {
+    width: '260px',
+    height: '260px',
+    objectFit: 'cover',
+    margin: '20px 0 0',
+    borderRadius: '16px',
+  },
+  coverEditPreview: {
+    width: '100%',
+    maxHeight: '340px',
+    objectFit: 'cover',
+    margin: '20px 0 0',
+  },
+  modalHeading: {
+    textAlign: 'start',
+  },
 };
 
 export default Profile;
