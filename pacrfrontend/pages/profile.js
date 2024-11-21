@@ -59,6 +59,14 @@ const Profile = () => {
     }
   };
 
+  const deleteImage = (type) => {
+    setUploadedImage((prev) => ({
+      ...prev,
+      [type]: null, // Clear the image
+    }));
+    setPreviewImage(null); // Clear preview as well
+  };
+
   // Function to render content based on active tab
   const renderTabContent = () => {
     switch (activeTab) {
@@ -380,26 +388,36 @@ const Profile = () => {
               <h2 style={styles.modalHeading}>Edit {modalType === 'profile' ? 'Profile' : 'Cover'} Image</h2>
 
               {/* Current Image Preview */}
-              <img
-                src={previewImage || uploadedImage[modalType]}
-                alt="Edit Preview"
-                style={modalType === 'profile' ? styles.profileEditPreview : styles.coverEditPreview}
-              />
+              {previewImage || uploadedImage[modalType] ? (
+                <img
+                  src={previewImage || uploadedImage[modalType]}
+                  alt="Edit Preview"
+                  style={modalType === 'profile' ? styles.profileEditPreview : styles.coverEditPreview}
+                />
+              ) : (
+                <p style={styles.addPhotoPlaceholder}>Add Photo Here</p>
+              )}
 
-              {/* Buttons at the Bottom Right */}
+              {/* Buttons*/}
               <div style={styles.modalActions}>
-                <div style={styles.choosePhotoButton}>
-                  Choose Photo
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={styles.fileInput}
-                    onChange={handleImageUpload}
-                  />
-                </div>
-                <button style={styles.saveButton} onClick={saveImage}>
-                  Save
+                {/* Delete Button */}
+                <button style={styles.deleteButton} onClick={() => deleteImage(modalType)}>
+                  Delete
                 </button>
+                <div style={styles.modalActionsInner}>
+                  <div style={styles.choosePhotoButton}>
+                    Choose Photo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={styles.fileInput}
+                      onChange={handleImageUpload}
+                    />
+                  </div>
+                  <button style={styles.saveButton} onClick={saveImage}>
+                    Save
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -1149,9 +1167,14 @@ const styles = {
   },
   modalActions: {
     display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '15px',
+    justifyContent: 'space-between',
+    gap: '16px',
     marginTop: '20px',
+  },
+  modalActionsInner: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
   },
   button: {
     padding: '10px 20px',
@@ -1222,6 +1245,24 @@ const styles = {
   },
   modalHeading: {
     textAlign: 'start',
+  },
+  deleteButton: {
+    backgroundColor: '#70d4fc',
+    borderRadius: '200px',
+    padding: '16px 40px',
+    fontSize: '16px',
+    lineHeight: '18px',
+    fontWeight: '500',
+    border: 'none',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  addPhotoPlaceholder: {
+    color: '#313131',
+    fontSize: '18px',
+    fontWeight: '500',
+    textAlign: 'center',
+    marginTop: '40px',
   },
 };
 
