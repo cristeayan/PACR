@@ -85,7 +85,7 @@ const Profile = () => {
           <div style={profileMainWrapper}>
             <div style={profileInfoWrapperStyle}>
               <div style={userImageWrapperStyle}>
-                <img src={/*user ? user.profile_picture :*/ 'dummy-man.png'} alt="Profile" style={profileImageStyle} />
+                <img src={user ? user.profile_picture : 'dummy-man.png'} alt="Profile" style={profileImageStyle} />
                 <div style={profileEditImageWrap}>
                   <img src='Profile Editable Icon.svg' alt='Edit Icon' style={coverEditImage} />
                 </div>

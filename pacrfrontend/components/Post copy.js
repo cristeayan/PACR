@@ -10,6 +10,7 @@ const   Post = () => {
   const [optionsOpen, setOptionsOpen] = useState(null);
   const [replyOptionsOpen, setReplyOptionsOpen] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
+  
 
   // Temporary state to hold the current text while editing
   const [tempCommentText, setTempCommentText] = useState('');

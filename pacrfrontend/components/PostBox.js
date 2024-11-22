@@ -89,7 +89,7 @@ const PostBox = () => {
     <>
       <div style={postBoxWrapperStyle}>
         <img
-          src={/*user ? user.profile_picture :*/ '/dummy-man.png'}
+          src={user ? user.profile_picture : '/dummy-man.png'}
           alt="Profile"
           style={postBoxProfilePicStyle}
         />
