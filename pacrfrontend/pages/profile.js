@@ -20,12 +20,18 @@ const Profile = () => {
     profile: 'dummy-man.png',
     cover: '/Monitor Image.png',
   });
+  const [isIntroModalOpen, setIsIntroModalOpen] = useState(false);
 
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+
+    // Functions to handle Intro Modal
+    const openIntroModal = () => setIsIntroModalOpen(true);
+    const closeIntroModal = () => setIsIntroModalOpen(false);
 
   // Open Modal (Edit or Preview)
   const openModal = (type, preview = false) => {
-    setModalType(type); // Ensure `modalType` is correctly set
+    setModalType(type);
     setIsPreviewMode(preview);
     setIsModalOpen(true);
     if (preview) {
@@ -38,6 +44,27 @@ const Profile = () => {
     setIsModalOpen(false);
     setPreviewImage(null);
     setIsPreviewMode(false);
+  };
+
+  // Open Delete Confirmation Modal
+  const openDeleteConfirmation = () => {
+    setDeleteConfirmationOpen(true);
+  };
+
+  // Close Delete Confirmation Modal
+  const closeDeleteConfirmation = () => {
+    setDeleteConfirmationOpen(false);
+  };
+
+  // Handle Delete Image
+  const handleDeleteImage = () => {
+    setUploadedImage({
+      ...uploadedImage,
+      [modalType]: null, // Remove image
+    });
+    setPreviewImage(null); // Clear preview
+    closeDeleteConfirmation(); // Close confirmation popup
+    //closeModal();
   };
 
   // Handle Image Upload
@@ -53,19 +80,52 @@ const Profile = () => {
     if (previewImage) {
       setUploadedImage({
         ...uploadedImage,
-        [modalType]: previewImage, // Save based on `modalType`
+        [modalType]: previewImage,
       });
       closeModal();
     }
   };
 
-  const deleteImage = (type) => {
-    setUploadedImage((prev) => ({
-      ...prev,
-      [type]: null, // Clear the image
-    }));
-    setPreviewImage(null); // Clear preview as well
+  const [formData, setFormData] = useState({
+    firstName: user?.first_name || '',
+    lastName: user?.last_name || '',
+    headline: user?.headline || 'Your headline goes here...',
+    location: user?.location || 'Your location goes here...',
+    contact: {
+      phone: user?.contact?.phone || 'Your phone number...',
+      email: user?.contact?.email || 'Your email address...',
+      website: user?.contact?.website || 'Your website...',
+    },
+  });
+
+   // Function to handle input changes for both simple and nested fields
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name in formData) {
+      // If it's a top-level field (firstName, lastName, headline, location)
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    } else if (name in formData.contact) {
+      // If it's a nested field (phone, email, website)
+      setFormData((prevData) => ({
+        ...prevData,
+        contact: {
+          ...prevData.contact,
+          [name]: value,
+        },
+      }));
+    }
   };
+
+ // Save the updated data (you can adjust this to save to your backend or state)
+ const handleSave = () => {
+  // Implement save logic here
+  console.log('Saved data:', formData);
+  closeIntroModal();
+};
 
   // Function to render content based on active tab
   const renderTabContent = () => {
@@ -401,7 +461,10 @@ const Profile = () => {
               {/* Buttons*/}
               <div style={styles.modalActions}>
                 {/* Delete Button */}
-                <button style={styles.deleteButton} onClick={() => deleteImage(modalType)}>
+                <button
+                  style={styles.deleteButton}
+                  onClick={() => setDeleteConfirmationOpen(true)} // Open confirmation popup
+                >
                   Delete
                 </button>
                 <div style={styles.modalActionsInner}>
@@ -424,6 +487,46 @@ const Profile = () => {
         </ReactModal>
       )}
 
+      {/* Delete Confirmation Modal */}
+      {isDeleteConfirmationOpen && (
+        <ReactModal
+          isOpen={isDeleteConfirmationOpen}
+          onRequestClose={closeDeleteConfirmation}
+          style={{
+            overlay: styles.modalOverlay,
+            content: styles.modalDeleteContent,
+          }}
+        >
+          {/* Cross Button */}
+          <button style={styles.closeButton} onClick={closeDeleteConfirmation}>
+            ×
+          </button>
+          {/* Modal Content */}
+          <h2 style={styles.deleteModalHeading}>
+            Delete {modalType === 'profile' ? 'Profile' : 'Cover'} Photo?
+          </h2>
+          <p>
+            {modalType === 'profile'
+              ? 'Are you sure? Having a profile picture helps others recognize you.'
+              : 'Delete photo? A background image is a great way to help your profile stand out.'}
+          </p>
+          {/* Buttons */}
+          <div style={styles.modalDeleteActions}>
+            <button style={styles.cancelButton} onClick={closeDeleteConfirmation}>
+              Cancel
+            </button>
+            <button
+              style={styles.deleteModalButton}
+              onClick={() => {
+                handleDeleteImage(); // Perform delete action
+                closeDeleteConfirmation(); // Only close confirmation popup
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </ReactModal>
+      )}
 
       {/* Profile Main Content */}
       <div style={profilePageStyle}>
@@ -446,27 +549,33 @@ const Profile = () => {
         {/* User Information */}
         <div style={profileMainWrapper}>
           <div style={profileInfoWrapperStyle}>
-            <div style={userImageWrapperStyle}>
-              {/* <img src={user ? user.profile_picture : 'dummy-man.png'} alt="Profile" style={profileImageStyle} /> */}
-              <img
-                src={uploadedImage.profile}
-                alt="Profile"
-                style={profileImageStyle}
-                onClick={() => openModal('profile', true)} // Open Preview Modal
-              />
-              <div style={profileEditImageWrap} onClick={() => openModal('profile')}>
-                <img src="Profile Editable Icon.svg" alt="Edit Icon" />
+            <div style={profilePicMainWrap}>
+              <div style={userImageWrapperStyle}>
+                {/* <img src={user ? user.profile_picture : 'dummy-man.png'} alt="Profile" style={profileImageStyle} /> */}
+                <img
+                  src={uploadedImage.profile}
+                  alt="Profile"
+                  style={profileImageStyle}
+                  onClick={() => openModal('profile', true)} // Open Preview Modal
+                />
+                <div style={profileEditImageWrap} onClick={() => openModal('profile')}>
+                  <img src="Profile Editable Icon.svg" alt="Edit Icon" />
+                </div>
+              </div>
+              <div style={introEditIconWrap}>
+                <img src='Edit Icon.svg' alt='Edit Icon' style={introEditIcon}  onClick={openIntroModal}/>
               </div>
             </div>
             <div style={userInfoStyle}>
-              <h1 style={userNameHeading}>{user ? user.first_name + ' ' + user.last_name : "why"}</h1>
-              <p style={userProfileTagline}>Postdoctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard University | MBBS | Graduate of Kasturba Medical College, Mangalore, Manipal Academy of Higher Education</p>
+              {/* <h1 style={userNameHeading}>{user ? user.first_name + ' ' + user.last_name : "why"}</h1> */}
+              <h1 style={userNameHeading}>{user?.first_name + ' ' + user?.last_name || 'Your Name'}</h1>
+              <p style={userProfileTagline}>{formData.headline || 'Your headline or tagline goes here.'}</p>
             </div>
           </div>
 
           {/* User Location Information */}
           <div style={locationWrapperStyle}>
-            <p style={userLocationStyle}>Boston, Massachusetts, United States</p>
+            <p style={userLocationStyle}>{formData.location}</p>
             <div style={dotWrapperStyle}></div>
             <div style={userContactWrapStyle}>
               <img src='Profile Phone Icon.svg' alt='Phone Icon' />
@@ -474,6 +583,111 @@ const Profile = () => {
               <img src='Profile Globe Icon.svg' alt='Globe Icon' />
             </div>
           </div>
+
+          <ReactModal
+        isOpen={isIntroModalOpen}
+        onRequestClose={closeIntroModal}
+        style={{
+          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+          content: { maxWidth: '500px', margin: 'auto', padding: '20px' },
+        }}
+      >
+        <button onClick={closeIntroModal} style={{ float: 'right' }}>×</button>
+        <h2>Edit Intro</h2>
+        <form>
+          {/* Name Fields */}
+          <label>
+            First Name:
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              style={{ display: 'block', marginBottom: '10px' }}
+            />
+          </label>
+          <label>
+            Last Name:
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              style={{ display: 'block', marginBottom: '10px' }}
+            />
+          </label>
+
+          {/* Headline Field */}
+          <label>
+            Headline:
+            <input
+              type="text"
+              name="headline"
+              value={formData.headline}
+              onChange={handleInputChange}
+              style={{ display: 'block', marginBottom: '10px' }}
+            />
+          </label>
+
+          {/* Location Field */}
+          <label>
+            Location:
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              style={{ display: 'block', marginBottom: '10px' }}
+            />
+          </label>
+
+          {/* Contact Fields */}
+          <label>
+            Phone:
+            <input
+              type="text"
+              name="phone"
+              value={formData.contact.phone}
+              onChange={handleInputChange}
+              style={{ display: 'block', marginBottom: '10px' }}
+            />
+          </label>
+          <label>
+            Email:
+            <input
+              type="email"
+              name="email"
+              value={formData.contact.email}
+              onChange={handleInputChange}
+              style={{ display: 'block', marginBottom: '10px' }}
+            />
+          </label>
+          <label>
+            Website:
+            <input
+              type="url"
+              name="website"
+              value={formData.contact.website}
+              onChange={handleInputChange}
+              style={{ display: 'block', marginBottom: '10px' }}
+            />
+          </label>
+
+          {/* Save Button */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <button type="button" onClick={closeIntroModal} style={{ padding: '5px 10px' }}>
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              style={{ padding: '5px 10px', backgroundColor: '#0073b1', color: '#fff' }}
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </ReactModal>
 
           {/* Stats Section */}
           <div style={mainStatsWrapperStyle}>
@@ -564,6 +778,13 @@ const profileInfoWrapperStyle = {
   gap: '10px',
   padding: '0 0 24px',
   marginTop: '-8.25rem',
+};
+
+const profilePicMainWrap = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-end',
+  width: '100%',
 };
 
 const userImageWrapperStyle = {
@@ -929,6 +1150,15 @@ const profileEditImageWrap = {
   display: 'flex',
 };
 
+const introEditIconWrap = {
+  width: 'auto',
+  cursor: 'pointer',
+};
+
+const introEditIcon = {
+  width: '26px',
+};
+
 // Experience Box Styling
 
 const experienceContainer = {
@@ -1134,7 +1364,6 @@ const styles = {
     position: 'relative',
     background: '#fff',
     borderRadius: '10px',
-    // maxWidth: modalType === 'profile' ? '400px' : '800px',
     width: '100%',
     maxWidth: '992px',
     padding: '20px',
@@ -1142,13 +1371,27 @@ const styles = {
     boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
     overflow: 'hidden',
   },
+  modalDeleteContent: {
+    position: 'relative',
+    background: '#fff',
+    borderRadius: '10px',
+    width: '100%',
+    maxWidth: '450px',
+    padding: '20px',
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '32px',
+  },
   closeButton: {
     position: 'absolute',
     top: '10px',
     right: '10px',
     background: 'transparent',
     border: 'none',
-    fontSize: '24px',
+    fontSize: '30px',
+    lineHeight: '22px',
     cursor: 'pointer',
     color: '#000',
   },
@@ -1170,6 +1413,11 @@ const styles = {
     justifyContent: 'space-between',
     gap: '16px',
     marginTop: '20px',
+  },
+  modalDeleteActions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '12px',
   },
   modalActionsInner: {
     display: 'flex',
@@ -1256,6 +1504,33 @@ const styles = {
     border: 'none',
     color: '#fff',
     cursor: 'pointer',
+  },
+  cancelButton: {
+    fontSize: '16px',
+    lineHeight: '18px',
+    fontWeight: '500',
+    backgroundColor: '#fff',
+    color: '#4FCFF5',
+    textDecoration: 'none',
+    padding: '12px 20px',
+    borderRadius: '200px',
+    textAlign: 'center',
+    border: '1px solid #4FCFF5',
+    cursor: 'pointer',
+  },
+  deleteModalButton: {
+    backgroundColor: '#70d4fc',
+    borderRadius: '200px',
+    padding: '12px 20px',
+    fontSize: '16px',
+    lineHeight: '18px',
+    fontWeight: '500',
+    border: 'none',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  deleteModalHeading: {
+    fontSize: '20px',
   },
   addPhotoPlaceholder: {
     color: '#313131',
