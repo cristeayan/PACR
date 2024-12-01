@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useUser } from '../context/UserContext';
 
-const   Post = () => {
+const Postcopy = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [editingCommentIndex, setEditingCommentIndex] = useState(null);
@@ -10,11 +11,32 @@ const   Post = () => {
   const [optionsOpen, setOptionsOpen] = useState(null);
   const [replyOptionsOpen, setReplyOptionsOpen] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
-  
+  const { user, token, setUserAndToken } = useUser();
+  const [posts, setPosts] = useState([]);
 
   // Temporary state to hold the current text while editing
   const [tempCommentText, setTempCommentText] = useState('');
   const [tempReplyText, setTempReplyText] = useState('');
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  // Fetch posts from API
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/posts/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setPosts(data);
+      console.log(data)
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -97,276 +119,282 @@ const   Post = () => {
   };
 
   return (
-    <div style={styles.postContainer}>
-      <div style={styles.postHeaderWrap}>
-        <div style={styles.postHeader}>
-          <img src="/dummy-man.png" alt="User Profile" style={styles.profileImage} />
-          <div style={styles.userDetailWrap}>
-            <div style={styles.userName}
-              onMouseOver={handleMouseEnter}
-              onMouseOut={handleMouseLeave}><a style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }} href='#'>Dr. Matthew Antony</a></div>
-            <div style={styles.tagline}>
-              Post Doctoral Research Fellow at Beth Israel Deaconess...
-            </div>
-            <div style={styles.postTime}>2 mins ago</div>
-          </div>
-        </div>
-        <div style={styles.postFunctionsWrap}>
-          <a style={styles.postFollowButton} href='#'>Boost Post</a>
-          <div style={styles.postfunctions}>
-            <img src='/Post Globe Icon.svg' alt='Globe Icon' />
-            <img src='/Hamburger Icon.svg' alt='Menu Icon' />
-          </div>
-        </div>
-      </div>
-
-      <div style={styles.postContent}>
-        <p style={styles.postText}>
-          I had the honor of graduating from my medical school. It was a long journey and road of rocks. But all fun things must come to an end.<br /><br />Having my parents and grandparents at the event made it even more special, fulfilling a wish of my grandparents to see their grandchild graduate. My Dad was an alumni of KMC Mangalore and I was lucky to have done my undergraduate in the same place where he learnt to become the Doctor he is today.
-        </p>
-        <span style={styles.tagsMainSpan}>
-          <span style={styles.tagStyle}>#️Gradutation</span>
-          <span style={styles.tagStyle}>#️️MedicalSchool</span>
-          <span style={styles.tagStyle}>#️2024</span>
-        </span>
-      </div>
-      <div style={styles.postMediaWrapper}>
-        <img src="Placeholder Cover.jpg" alt="Post" style={styles.postImage} />
-      </div>
-
-      <div style={styles.postActions}>
-        <div style={styles.reactionDataWrap}>
-          <div style={styles.awardsStyle}>29 Reactions/Awards</div>
-          <div style={styles.postReactionsWrap}>
-            <a style={styles.actionButton} href='#'>
-              <span style={styles.reactionNumber}>22</span>
-              <img src='/Thumbs Up.svg' alt='Thumbs Icon' />
-            </a>
-            <a style={styles.actionButton} href='#'>
-              <span style={styles.reactionNumber}>13</span>
-              <img src='/Chat.svg' alt='Chat Icon' />
-            </a>
-            <a style={styles.actionButton} href='#'>
-              <span style={styles.reactionNumber}>28</span>
-              <img src='/Paper_Plane.svg' alt='Paper Clip Icon' />
-            </a>
-          </div>
-        </div>
-        <div style={styles.postActionsDivider}></div>
-        <div style={styles.reactionActionWrap}>
-          <a href='#' style={styles.reactionAction}>
-            <img src='/Thumbs Up.svg' alt='Thumbs Icon' />
-            <span style={styles.actionText}>Like</span>
-          </a>
-          <a href='#' style={styles.reactionAction}>
-            <img src='/Chat.svg' alt='Chat Icon' />
-            <span style={styles.actionText}>Comment</span>
-          </a>
-          <a href='#' style={styles.reactionAction}>
-            <img src='/Arrows_Reload_Icon.svg' alt='Chat Icon' />
-            <span style={styles.actionText}>Repost</span>
-          </a>
-          <a href='#' style={styles.reactionAction}>
-            <img src='/Paper_Plane.svg' alt='Paper Clip Icon' />
-            <span style={styles.actionText}>Share</span>
-          </a>
-        </div>
-      </div>
-
-      <div style={styles.commentSectionMainWrapper}>
-      <div style={styles.commentSection}>
-        <img
-          src="/dummy-man.png"
-          alt="User Profile"
-          style={styles.commentProfileImage}
-        />
-        <input
-          type="text"
-          placeholder="Say Congratulations..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          style={styles.commentInput}
-        />
-        {newComment.trim() && (
-          <button style={styles.commentButton} onClick={handleAddComment}>
-            Comment
-          </button>
-        )}
-        
-      </div>
-
-      <div style={styles.commentsList}>
-        {comments.map((comment, index) => (
-          <div key={index} style={styles.commentBox}>
-            <div style={styles.singleCommentWrapper}>
-              <div style={styles.commentImageWrapper}>
-                <img
-                  src="/dummy-man.png"
-                  alt="Commenter Profile"
-                  style={styles.commentProfileImage}
-                />
-              </div>
-              <div style={styles.commentInfoMainWrapper}>
-                <div style={styles.commentInfo}>
-                  <div style={styles.commentUserDetails}>
-                    <div style={styles.commentUsername}>{comment.username}</div>
-                    <div style={styles.commentTagline}>{comment.tagline}</div>
-                  </div>
-                  <div style={styles.commentOptionsWrapper}>
-                    <span style={styles.commentPostTiming}>30 mins. ago</span>
-                    <div style={styles.commentOptions}>
-                      <button
-                        style={styles.optionsButton}
-                        onClick={() =>
-                          setOptionsOpen(optionsOpen === index ? null : index)
-                        }
-                      >
-                        <img src='/More_Vertical.svg' alt='Options Icon' />
-                      </button>
-                      {optionsOpen === index && (
-                        <div style={styles.optionsDropdown}>
-                          <button
-                            onClick={() => handleEditComment(index)}
-                            style={styles.editButton}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteComment(index)}
-                            style={styles.deleteButton}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+    <>
+      {posts.map((post) => (
+        <div style={styles.postContainer}>
+          <div style={styles.postHeaderWrap}>
+            <div style={styles.postHeader}>
+              <img src={post.author.profile_picture || "/dummy-man.png"} alt="User Profile" style={styles.profileImage} />
+              <div style={styles.userDetailWrap}>
+                <div style={styles.userName}
+                  onMouseOver={handleMouseEnter}
+                  onMouseOut={handleMouseLeave}><a style={{ textDecoration: isHovered ? "underline" : "none", color: '#313131' }} href='#'>{`${post.author.first_name} ${post.author.last_name}`}</a></div>
+                <div style={styles.tagline}>
+                  Post Doctoral Research Fellow at Beth Israel Deaconess...
                 </div>
-
-                {editingCommentIndex === index ? (
-                  <>
-                    <div style={styles.commentInputEditWrap}>
-                      <input
-                        type="text"
-                        value={tempCommentText}
-                        onChange={(e) => setTempCommentText(e.target.value)}
-                        style={styles.editCommentInput}
-                      />
-                      <button
-                        onClick={() => saveEditedComment(index)}
-                        style={styles.saveButton}
-                      >
-                        Save Changes
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <div style={styles.commentContent}>{comment.text}</div>
-                )}
-
-                <div style={styles.commentActions}>
-                  <button style={styles.likeButton}><img src='/Thumbs Up.svg' alt='Thumbs Icon' />Like</button>
-                  <div style={styles.commentActionsDivider}></div>
-                  <button style={styles.replyButton} onClick={() => setReplyingTo(index)}>
-                    <img src='/Arrow_Reply.svg' alt='Reply Icon' />Reply
-                  </button>
-                </div>
+                <div style={styles.postTime}>{new Date(post.created_at).toLocaleString()}</div>
               </div>
             </div>
+            <div style={styles.postFunctionsWrap}>
+              <a style={styles.postFollowButton} href='#'>Boost Post</a>
+              <div style={styles.postfunctions}>
+                <img src='/Post Globe Icon.svg' alt='Globe Icon' />
+                <img src='/Hamburger Icon.svg' alt='Menu Icon' />
+              </div>
+            </div>
+          </div>
 
-            {replyingTo === index && (
-              <div style={styles.replySection}>
-                <input
-                  type="text"
-                  placeholder="Write a reply..."
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  style={styles.replyInput}
-                />
-                <button onClick={() => handleReply(index)} style={styles.replyButton}>
-                  Reply
+          <div style={styles.postContent}>
+            <p style={styles.postText}>{post.content}</p>
+
+          </div>
+          <div style={styles.postMediaWrapper}>
+            {post.media.map((media) => (
+              <img
+                key={media.id}
+                src={media.file}
+                alt="Post Media"
+                style={styles.postImage}
+              />
+            ))}
+          </div>
+
+          <div style={styles.postActions}>
+            <div style={styles.reactionDataWrap}>
+              <div style={styles.awardsStyle}>29 Reactions/Awards</div>
+              <div style={styles.postReactionsWrap}>
+                <a style={styles.actionButton} href='#'>
+                  <span style={styles.reactionNumber}>22</span>
+                  <img src='/Thumbs Up.svg' alt='Thumbs Icon' />
+                </a>
+                <a style={styles.actionButton} href='#'>
+                  <span style={styles.reactionNumber}>13</span>
+                  <img src='/Chat.svg' alt='Chat Icon' />
+                </a>
+                <a style={styles.actionButton} href='#'>
+                  <span style={styles.reactionNumber}>28</span>
+                  <img src='/Paper_Plane.svg' alt='Paper Clip Icon' />
+                </a>
+              </div>
+            </div>
+            <div style={styles.postActionsDivider}></div>
+            <div style={styles.reactionActionWrap}>
+              <a href='#' style={styles.reactionAction}>
+                <img src='/Thumbs Up.svg' alt='Thumbs Icon' />
+                <span style={styles.actionText}>Like</span>
+              </a>
+              <a href='#' style={styles.reactionAction}>
+                <img src='/Chat.svg' alt='Chat Icon' />
+                <span style={styles.actionText}>Comment</span>
+              </a>
+              <a href='#' style={styles.reactionAction}>
+                <img src='/Arrows_Reload_Icon.svg' alt='Chat Icon' />
+                <span style={styles.actionText}>Repost</span>
+              </a>
+              <a href='#' style={styles.reactionAction}>
+                <img src='/Paper_Plane.svg' alt='Paper Clip Icon' />
+                <span style={styles.actionText}>Share</span>
+              </a>
+            </div>
+          </div>
+
+          <div style={styles.commentSectionMainWrapper}>
+            <div style={styles.commentSection}>
+              <img
+                src="/dummy-man.png"
+                alt="User Profile"
+                style={styles.commentProfileImage}
+              />
+              <input
+                type="text"
+                placeholder="Say Congratulations..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                style={styles.commentInput}
+              />
+              {newComment.trim() && (
+                <button style={styles.commentButton} onClick={handleAddComment}>
+                  Comment
                 </button>
-              </div>
-            )}
+              )}
 
-            {comment.replies.length > 0 && (
-              <div style={styles.replies}>
-                {comment.replies.map((reply, replyIndex) => (
-                  <div key={replyIndex} style={styles.replyBox}>
-                    <div style={styles.replyHeader}>
+            </div>
+
+            <div style={styles.commentsList}>
+              {post.comments.map((comment,index) => (
+                <div key={index} style={styles.commentBox}>
+                  <div style={styles.singleCommentWrapper}>
+                    <div style={styles.commentImageWrapper}>
                       <img
-                        src="/Dummy Profile.png"
-                        alt="Replier Profile"
+                        src={comment.author.profile_picture||"/dummy-man.png"}
+                        alt="Commenter Profile"
                         style={styles.commentProfileImage}
                       />
-                      <div>
-                        <div style={styles.commentUsername}>{reply.username}</div>
-                        <div style={styles.commentTagline}>{reply.tagline}</div>
-                      </div>
-                      <div style={styles.commentOptions}>
-                        <button
-                          style={styles.optionsButton}
-                          onClick={() =>
-                            setReplyOptionsOpen(
-                              replyOptionsOpen === replyIndex ? null : replyIndex
-                            )
-                          }
-                        >
-                          ...
-                        </button>
-                        {replyOptionsOpen === replyIndex && (
-                          <div style={styles.optionsDropdown}>
+                    </div>
+                    <div style={styles.commentInfoMainWrapper}>
+                      <div style={styles.commentInfo}>
+                        <div style={styles.commentUserDetails}>
+                          <div style={styles.commentUsername}>{comment.author.first_name} {comment.author.last_name}</div>
+                          <div style={styles.commentTagline}>{comment.tagline}</div>
+                        </div>
+                        <div style={styles.commentOptionsWrapper}>
+                          <span style={styles.commentPostTiming}>{new Date(comment.created_at).toLocaleString()}</span>
+                          <div style={styles.commentOptions}>
                             <button
+                              style={styles.optionsButton}
                               onClick={() =>
-                                handleEditReply(index, replyIndex)
+                                setOptionsOpen(optionsOpen === index ? null : index)
                               }
-                              style={styles.editButton}
                             >
-                              Edit
+                              <img src='/More_Vertical.svg' alt='Options Icon' />
                             </button>
+                            {optionsOpen === index && (
+                              <div style={styles.optionsDropdown}>
+                                <button
+                                  onClick={() => handleEditComment(index)}
+                                  style={styles.editButton}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteComment(index)}
+                                  style={styles.deleteButton}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {editingCommentIndex === index ? (
+                        <>
+                          <div style={styles.commentInputEditWrap}>
+                            <input
+                              type="text"
+                              value={tempCommentText}
+                              onChange={(e) => setTempCommentText(e.target.value)}
+                              style={styles.editCommentInput}
+                            />
                             <button
-                              onClick={() =>
-                                handleDeleteReply(index, replyIndex)
-                              }
-                              style={styles.deleteButton}
+                              onClick={() => saveEditedComment(index)}
+                              style={styles.saveButton}
                             >
-                              Delete
+                              Save Changes
                             </button>
                           </div>
-                        )}
+                        </>
+                      ) : (
+                        <div style={styles.commentContent}>{comment.content}</div>
+                      )}
+
+                      <div style={styles.commentActions}>
+                        <button style={styles.likeButton}><img src='/Thumbs Up.svg' alt='Thumbs Icon' />Like</button>
+                        <div style={styles.commentActionsDivider}></div>
+                        <button style={styles.replyButton} onClick={() => setReplyingTo(index)}>
+                          <img src='/Arrow_Reply.svg' alt='Reply Icon' />Reply
+                        </button>
                       </div>
                     </div>
-
-                    {editingReplyIndex?.commentIndex === index &&
-                      editingReplyIndex?.replyIndex === replyIndex ? (
-                      <>
-                        <input
-                          type="text"
-                          value={tempReplyText}
-                          onChange={(e) => setTempReplyText(e.target.value)}
-                          style={styles.editCommentInput}
-                        />
-                        <button
-                          onClick={() =>
-                            saveEditedReply(index, replyIndex)
-                          }
-                          style={styles.saveButton}
-                        >
-                          Save
-                        </button>
-                      </>
-                    ) : (
-                      <div style={styles.commentContent}>{reply.text}</div>
-                    )}
                   </div>
-                ))}
-              </div>
-            )}
+
+                  {replyingTo === index && (
+                    <div style={styles.replySection}>
+                      <input
+                        type="text"
+                        placeholder="Write a reply..."
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        style={styles.replyInput}
+                      />
+                      <button onClick={() => handleReply(index)} style={styles.replyButton}>
+                        Reply
+                      </button>
+                    </div>
+                  )}
+
+                  {comment.replies.length > 0 && (
+                    <div style={styles.replies}>
+                      {comment.replies.map((reply, replyIndex) => (
+                        <div key={replyIndex} style={styles.replyBox}>
+                          <div style={styles.replyHeader}>
+                            <img
+                              src={reply.author.profile_picture||"/dummy-man.png"}
+                              alt="Replier Profile"
+                              style={styles.commentProfileImage}
+                            />
+                            <div>
+                              <div style={styles.commentUsername}>{reply.author.first_name} {reply.author.last_name}</div>
+                              <div style={styles.commentTagline}>{reply.tagline}</div>
+                            </div>
+                            <div style={styles.commentOptions}>
+                              <button
+                                style={styles.optionsButton}
+                                onClick={() =>
+                                  setReplyOptionsOpen(
+                                    replyOptionsOpen === replyIndex ? null : replyIndex
+                                  )
+                                }
+                              >
+                                ...
+                              </button>
+                              {replyOptionsOpen === replyIndex && (
+                                <div style={styles.optionsDropdown}>
+                                  <button
+                                    onClick={() =>
+                                      handleEditReply(index, replyIndex)
+                                    }
+                                    style={styles.editButton}
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteReply(index, replyIndex)
+                                    }
+                                    style={styles.deleteButton}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {editingReplyIndex?.commentIndex === index &&
+                            editingReplyIndex?.replyIndex === replyIndex ? (
+                            <>
+                              <input
+                                type="text"
+                                value={tempReplyText}
+                                onChange={(e) => setTempReplyText(e.target.value)}
+                                style={styles.editCommentInput}
+                              />
+                              <button
+                                onClick={() =>
+                                  saveEditedReply(index, replyIndex)
+                                }
+                                style={styles.saveButton}
+                              >
+                                Save
+                              </button>
+                            </>
+                          ) : (
+                            <div style={styles.commentContent}>{reply.content}</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-      </div>
-    </div>
+        </div>
+      ))}
+
+    </>
   );
 };
 
@@ -766,4 +794,4 @@ const styles = {
   },
 };
 
-export default Post;
+export default Postcopy;

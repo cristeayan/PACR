@@ -9,8 +9,8 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import User, Post, Comment, Like, Discipline, Media, Journal
-from .serializers import UserSerializer, PostSerializer, CommentSerializer, LikeSerializer, DisciplineSerializer, MediaSerializer, JournalSerializer
+from .models import User, Post, Comment, Like, Media, Journal ,School, Company, Education, JobExperience, JobExperienceMedia
+from .serializers import UserSerializer, PostSerializer, CommentSerializer, LikeSerializer, JournalSerializer ,SchoolSerializer,CompanySerializer,EducationSerializer,JobExperienceSerializer,JobExperienceMediaSerializer
 
 # Signup View
 class SignupView(APIView):
@@ -87,6 +87,30 @@ class UserViewSet(viewsets.ModelViewSet):
         user_to_unfollow = self.get_object()
         request.user.followers.remove(user_to_unfollow)
         return Response({"detail": f"You have unfollowed {user_to_unfollow.email}"}, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def add_friend(self, request, pk=None):
+        """Add a user as a friend."""
+        user_to_add = self.get_object()
+        if user_to_add == request.user:
+            return Response({"detail": "You cannot add yourself as a friend."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if user_to_add in request.user.friends.all():
+            return Response({"detail": "This user is already your friend."}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.friends.add(user_to_add)
+        return Response({"detail": f"{user_to_add.email} has been added as a friend."}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def remove_friend(self, request, pk=None):
+        """Remove a user from friends."""
+        user_to_remove = self.get_object()
+
+        if user_to_remove not in request.user.friends.all():
+            return Response({"detail": "This user is not your friend."}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.friends.remove(user_to_remove)
+        return Response({"detail": f"{user_to_remove.email} has been removed from your friends."}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def me(self, request):
@@ -184,3 +208,62 @@ class LikeViewSet(viewsets.ModelViewSet):
         serializer.save(user=user)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def unlike(self, request, pk=None):
+        """Remove a like from a post."""
+        post = Post.objects.get(pk=pk)
+        like = Like.objects.filter(post=post, user=request.user).first()
+
+        if not like:
+            return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+
+        like.delete()
+        return Response({"detail": "You have unliked this post."}, status=status.HTTP_200_OK)
+
+
+
+class SchoolViewSet(viewsets.ModelViewSet):
+    queryset = School.objects.all()
+    serializer_class = SchoolSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    permission_classes = [IsAuthenticated]
+
+
+class EducationViewSet(viewsets.ModelViewSet):
+    serializer_class = EducationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Education.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class JobExperienceViewSet(viewsets.ModelViewSet):
+    serializer_class = JobExperienceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return JobExperience.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class JobExperienceMediaViewSet(viewsets.ModelViewSet):
+    serializer_class = JobExperienceMediaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return JobExperienceMedia.objects.filter(job_experience__user=self.request.user)
+
+    def perform_create(self, serializer):
+        job_experience = JobExperience.objects.get(id=self.request.data['job_experience'])
+        serializer.save(job_experience=job_experience)
