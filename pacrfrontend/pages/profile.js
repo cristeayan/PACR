@@ -13,7 +13,7 @@ import Postcopy from '@/components/Post copy';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('Profile'); // State to handle active tab
-  const { user ,token , setUserAndToken } =   useUser();
+  const { user, token, setUserAndToken } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(''); // 'profile' or 'cover'
   const [previewImage, setPreviewImage] = useState(null);
@@ -23,6 +23,21 @@ const Profile = () => {
   });
   const [uploadedImageFile, setUploadedImageFile] = useState(null);
 
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = async () => {
+    const response = await fetch("http://127.0.0.1:8000/api/posts/my_posts/", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    setPosts(data);
+  };
+
+  useEffect(() => {
+    if (token){
+      fetchPosts();
+    }
+  }, [token]);
 
   useEffect(() => {
     if (user) {
@@ -60,14 +75,14 @@ const Profile = () => {
       setUploadedImageFile(file); // Store the file object for uploading
     }
   };
-  
+
 
   // Save Uploaded Image
   const saveImage = async () => {
     if (previewImage) {
       const formData = new FormData();
       formData.append(modalType === 'profile' ? 'profile_picture' : 'cover_picture', uploadedImageFile);
-  
+
       try {
         const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
           method: 'PATCH',
@@ -76,7 +91,7 @@ const Profile = () => {
           },
           body: formData,
         });
-  
+
         if (response.ok) {
           // Fetch the updated user data
           const userResponse = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
@@ -84,7 +99,7 @@ const Profile = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-  
+
           if (userResponse.ok) {
             const updatedUser = await userResponse.json();
             setUserAndToken(updatedUser, token); // Update the context with new user data
@@ -101,7 +116,7 @@ const Profile = () => {
       }
     }
   };
-  
+
 
   const deleteImage = async (type) => {
     try {
@@ -115,7 +130,7 @@ const Profile = () => {
           [type === 'profile' ? 'profile_picture' : 'cover_picture']: null, // Set the field to null
         }),
       });
-  
+
       if (response.ok) {
         // Fetch the updated user data
         const userResponse = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
@@ -123,7 +138,7 @@ const Profile = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         if (userResponse.ok) {
           const updatedUser = await userResponse.json();
           setUserAndToken(updatedUser, token); // Update the context with new user data
@@ -139,7 +154,7 @@ const Profile = () => {
       alert('Failed to delete the image. Please try again.');
     }
   };
-  
+
 
   // Function to render content based on active tab
   const renderTabContent = () => {
@@ -588,7 +603,11 @@ const Profile = () => {
             {/* Right Column (This is where the posting box will appear in the Profile tab) */}
             <div style={rightColumnStyle}>
               <PostBox />
-              <Postcopy />
+              <div>
+                {posts.map((post) => (
+                  <Postcopy key={post.id} post={post} token={token} onPostUpdate={fetchPosts} />
+                ))}
+              </div>
               <ResearchPost />
             </div>
           </div>

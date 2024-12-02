@@ -36,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
 
     followers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
-    friends = models.ManyToManyField('self', symmetrical=False, related_name='friends', blank=True)
+    friends = models.ManyToManyField('self', symmetrical=False, related_name='friends_set', blank=True)
     disciplines_followed = models.ManyToManyField('Discipline', related_name='discipline', blank=True)
 
     objects = UserManager()

@@ -166,6 +166,13 @@ class PostViewSet(viewsets.ModelViewSet):
 
         serializer = PostSerializer(combined_posts, many=True, context={'request': self.request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def my_posts(self, request):
+        """Retrieve only posts created by the authenticated user."""
+        user_posts = Post.objects.filter(author=request.user).order_by('-created_at')
+        serializer = self.get_serializer(user_posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # Comment ViewSet
 class CommentViewSet(viewsets.ModelViewSet):
