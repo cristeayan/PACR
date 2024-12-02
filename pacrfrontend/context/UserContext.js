@@ -13,17 +13,29 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem('token', userToken);
   };
 
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  };
+
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem('user'));
-    const savedToken = localStorage.getItem('token');
-    if (savedUser && savedToken) {
-      setUser(savedUser);
-      setToken(savedToken);
+    try {
+      const savedUser = JSON.parse(localStorage.getItem('user'));
+      const savedToken = localStorage.getItem('token');
+      if (savedUser && savedToken) {
+        setUser(savedUser);
+        setToken(savedToken);
+        console.log("User and token loaded from localStorage");
+      }
+    } catch (error) {
+      console.error("Error loading user or token from localStorage:", error);
     }
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, token, setUserAndToken }}>
+    <UserContext.Provider value={{ user, token, setUserAndToken, logout }}>
       {children}
     </UserContext.Provider>
   );

@@ -191,9 +191,7 @@ const   Post = () => {
             Comment
           </button>
         )}
-        {/* <button onClick={handleAddComment} style={styles.commentButton}>
-          Post
-        </button> */}
+        
       </div>
 
       <div style={styles.commentsList}>
