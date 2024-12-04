@@ -31,12 +31,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     location = models.CharField(max_length=100)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     cover_picture = models.ImageField(upload_to='cover_pictures/', blank=True, null=True)
-
+    tagline=models.CharField(max_length=100,null=True,blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     followers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
-    disciplines_followed = models.ManyToManyField('Discipline', related_name='followers', blank=True)
+    friends = models.ManyToManyField('self', symmetrical=False, related_name='friends_set', blank=True)
+    disciplines_followed = models.ManyToManyField('Discipline', related_name='discipline', blank=True)
 
     objects = UserManager()
 
@@ -134,3 +135,56 @@ class Like(models.Model):
 
     def __str__(self):
         return f"Like by {self.user} on {self.post}"
+
+
+class School(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    established_year = models.PositiveIntegerField(blank=True, null=True)
+    logo = models.ImageField(upload_to='school_logos/', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+class Company(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    industry = models.CharField(max_length=255, blank=True, null=True)
+    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+class Education(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='education')
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='students')
+    degree = models.CharField(max_length=255)
+    field_of_study = models.CharField(max_length=255, blank=True, null=True)
+    start_year = models.PositiveIntegerField(blank=True, null=True)
+    end_year = models.PositiveIntegerField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.degree} at {self.school.name} ({self.start_year} - {self.end_year})"
+
+class JobExperience(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='job_experiences')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees')
+    position = models.CharField(max_length=255)
+    department = models.CharField(max_length=255, blank=True, null=True)
+    start_year = models.PositiveIntegerField()
+    end_year = models.PositiveIntegerField(blank=True, null=True)
+    is_current = models.BooleanField(default=False)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.position} at {self.company.name} ({self.start_year} - {self.end_year if self.end_year else 'Present'})"
+
+class JobExperienceMedia(models.Model):
+    job_experience = models.ForeignKey(JobExperience, on_delete=models.CASCADE, related_name='media')
+    file = models.FileField(upload_to='job_experience_media/')
+    description = models.TextField(blank=True, null=True)  # Optional description for the media file
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Media for {self.job_experience.position} at {self.job_experience.company.name}"

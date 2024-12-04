@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Post = () => {
+const   Post = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [editingCommentIndex, setEditingCommentIndex] = useState(null);
@@ -191,9 +191,7 @@ const Post = () => {
             Comment
           </button>
         )}
-        {/* <button onClick={handleAddComment} style={styles.commentButton}>
-          Post
-        </button> */}
+        
       </div>
 
       <div style={styles.commentsList}>

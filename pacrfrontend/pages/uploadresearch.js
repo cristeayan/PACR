@@ -64,10 +64,7 @@ const UploadResearch = () => {
     }
   };
 
-  // const handleRemoveAuthor = (index) => {
-  //   const updatedAuthors = formData.authors.filter((_, i) => i !== index);
-  //   setFormData({ ...formData, authors: updatedAuthors });
-  // };
+ 
 
   // Function to remove an author by index
   const handleRemoveAuthor = (indexToRemove) => {
@@ -106,7 +103,7 @@ const UploadResearch = () => {
 
         // Append files to the form data
         files.forEach((file) => {
-          submissionData.append('files', file);
+          submissionData.append('uploaded_files', file);
         });
 
         const response = await fetch('http://127.0.0.1:8000/api/journals/', {
@@ -178,36 +175,7 @@ const UploadResearch = () => {
           {errors.article_type && <span style={styles.error}>{errors.article_type}</span>}
         </div>
 
-        {/* Authors Field */}
-        <div style={styles.formGroup}>
-          <label htmlFor="authors" style={styles.label}>Authors</label>
-          <div style={styles.authorsField}>
-            <input
-              type="text"
-              value={newAuthor}
-              onChange={(e) => setNewAuthor(e.target.value)}
-              placeholder="Add a new author"
-              style={styles.input}
-            />
-            {/* <button type="button" onClick={handleAddAuthor} style={styles.addButton}>
-              Add Author
-            </button> */}
-          </div>
-          <ul style={styles.authorsList}>
-            {formData.authors.map((author, index) => (
-              <li key={index} style={styles.authorItem}>
-                {author}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveAuthor(index)}
-                  style={styles.removeButton}
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        
 
         {/* Title Field */}
         <div style={styles.formGroup}>

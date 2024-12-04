@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Post, Comment, Like, Discipline, Media, Journal
+from .models import User, Post, Comment, Like, Discipline, Media, Journal, School, Company, Education, JobExperience, JobExperienceMedia
 
 # Serializer for user summary
 class UserSummarySerializer(serializers.ModelSerializer):
@@ -11,8 +11,10 @@ class UserSummarySerializer(serializers.ModelSerializer):
 
     def get_profile_picture(self, obj):
         request = self.context.get('request')
-        if obj.profile_picture:
+        if request and obj.profile_picture:
             return request.build_absolute_uri(obj.profile_picture.url)
+        elif obj.profile_picture:
+            return obj.profile_picture.url
         return None
 
 class DisciplineSerializer(serializers.ModelSerializer):
@@ -26,15 +28,15 @@ class UserSerializer(serializers.ModelSerializer):
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
     disciplines_followed = DisciplineSerializer(many=True, read_only=True)
-    profile_picture = serializers.ImageField(required=False)
-    cover_picture = serializers.ImageField(required=False)
+    profile_picture = serializers.ImageField(required=False,allow_null=True)
+    cover_picture = serializers.ImageField(required=False,allow_null=True)
 
     class Meta:
         model = User
         fields = [
             "id", "first_name", "last_name", "email", "phone_number", "date_of_birth",
             "user_type", "location", "profile_picture", "cover_picture", "password",
-            "followers_count", "following_count", "disciplines_followed",
+            "followers_count", "following_count", "disciplines_followed","tagline",
         ]
 
     def get_followers_count(self, obj):
@@ -87,7 +89,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_replies(self, obj):
         replies = Comment.objects.filter(parent=obj)
-        return CommentSerializer(replies, many=True).data
+        return CommentSerializer(replies, many=True, context=self.context).data
 
 # Post Serializer with media, author, and journal
 class PostSerializer(serializers.ModelSerializer):
@@ -116,4 +118,72 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comments(self, obj):
         top_level_comments = Comment.objects.filter(post=obj, parent=None)
-        return CommentSerializer(top_level_comments, many=True).data
+        return CommentSerializer(top_level_comments, many=True, context=self.context).data
+
+
+
+class SchoolSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = School
+        fields = ['id', 'name', 'location', 'established_year', 'logo']
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = ['id', 'name', 'location', 'industry', 'logo']
+
+
+class EducationSerializer(serializers.ModelSerializer):
+    school = SchoolSerializer()
+
+    class Meta:
+        model = Education
+        fields = [
+            'id',
+            'user',
+            'school',
+            'degree',
+            'field_of_study',
+            'start_year',
+            'end_year',
+            'description',
+        ]
+
+    def create(self, validated_data):
+        school_data = validated_data.pop('school')
+        school, _ = School.objects.get_or_create(name=school_data['name'], defaults=school_data)
+        education = Education.objects.create(school=school, **validated_data)
+        return education
+
+
+class JobExperienceMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobExperienceMedia
+        fields = ['id', 'job_experience', 'file', 'description', 'uploaded_at']
+
+
+class JobExperienceSerializer(serializers.ModelSerializer):
+    company = CompanySerializer()
+    media = JobExperienceMediaSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = JobExperience
+        fields = [
+            'id',
+            'user',
+            'company',
+            'position',
+            'department',
+            'start_year',
+            'end_year',
+            'is_current',
+            'description',
+            'media',
+        ]
+
+    def create(self, validated_data):
+        company_data = validated_data.pop('company')
+        company, _ = Company.objects.get_or_create(name=company_data['name'], defaults=company_data)
+        job_experience = JobExperience.objects.create(company=company, **validated_data)
+        return job_experience

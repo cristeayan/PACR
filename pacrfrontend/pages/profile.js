@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Header from '../components/Header';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import "../app/globals.css";
 import { useUser } from '../context/UserContext';
 import PostBox from '@/components/PostBox';
@@ -8,11 +8,12 @@ import ResearchPost from '../components/ResearchPost';
 import Post from '../components/Post';
 import Footer from '../components/Footer';
 import ReactModal from 'react-modal';
+import Postcopy from '@/components/Post copy';
 
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('Profile'); // State to handle active tab
-  const { user } = useUser();
+  const { user, token, setUserAndToken } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(''); // 'profile' or 'cover'
   const [previewImage, setPreviewImage] = useState(null);
@@ -20,6 +21,32 @@ const Profile = () => {
     profile: 'dummy-man.png',
     cover: '/Monitor Image.png',
   });
+  const [uploadedImageFile, setUploadedImageFile] = useState(null);
+
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = async () => {
+    const response = await fetch("http://127.0.0.1:8000/api/posts/my_posts/", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    setPosts(data);
+  };
+
+  useEffect(() => {
+    if (token){
+      fetchPosts();
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (user) {
+      setUploadedImage({
+        profile: user.profile_picture || 'dummy-man.png',
+        cover: user.cover_picture || '/Monitor Image.png',
+      });
+    }
+  }, [user]);
   const [isIntroModalOpen, setIsIntroModalOpen] = useState(false);
 
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -69,63 +96,92 @@ const Profile = () => {
 
   // Handle Image Upload
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]; // Get the file object
     if (file) {
-      setPreviewImage(URL.createObjectURL(file));
+      setPreviewImage(URL.createObjectURL(file)); // For local preview
+      setUploadedImageFile(file); // Store the file object for uploading
     }
   };
+
 
   // Save Uploaded Image
-  const saveImage = () => {
+  const saveImage = async () => {
     if (previewImage) {
-      setUploadedImage({
-        ...uploadedImage,
-        [modalType]: previewImage,
-      });
-      closeModal();
+      const formData = new FormData();
+      formData.append(modalType === 'profile' ? 'profile_picture' : 'cover_picture', uploadedImageFile);
+
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (response.ok) {
+          // Fetch the updated user data
+          const userResponse = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (userResponse.ok) {
+            const updatedUser = await userResponse.json();
+            setUserAndToken(updatedUser, token); // Update the context with new user data
+            closeModal();
+          } else {
+            throw new Error('Failed to fetch updated user data');
+          }
+        } else {
+          throw new Error(`Failed to save image: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error saving image:', error);
+        alert('Failed to save the image. Please try again.');
+      }
     }
   };
 
-  const [formData, setFormData] = useState({
-    firstName: user?.first_name || '',
-    lastName: user?.last_name || '',
-    headline: user?.headline || 'Your headline goes here...',
-    location: user?.location || 'Your location goes here...',
-    contact: {
-      phone: user?.contact?.phone || 'Your phone number...',
-      email: user?.contact?.email || 'Your email address...',
-      website: user?.contact?.website || 'Your website...',
-    },
-  });
 
-   // Function to handle input changes for both simple and nested fields
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name in formData) {
-      // If it's a top-level field (firstName, lastName, headline, location)
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    } else if (name in formData.contact) {
-      // If it's a nested field (phone, email, website)
-      setFormData((prevData) => ({
-        ...prevData,
-        contact: {
-          ...prevData.contact,
-          [name]: value,
+  const deleteImage = async (type) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-      }));
+        body: JSON.stringify({
+          [type === 'profile' ? 'profile_picture' : 'cover_picture']: null, // Set the field to null
+        }),
+      });
+
+      if (response.ok) {
+        // Fetch the updated user data
+        const userResponse = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (userResponse.ok) {
+          const updatedUser = await userResponse.json();
+          setUserAndToken(updatedUser, token); // Update the context with new user data
+          setPreviewImage(null); // Clear the preview image
+        } else {
+          throw new Error('Failed to fetch updated user data');
+        }
+      } else {
+        throw new Error(`Failed to delete image: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Failed to delete the image. Please try again.');
     }
   };
 
- // Save the updated data (you can adjust this to save to your backend or state)
- const handleSave = () => {
-  // Implement save logic here
-  console.log('Saved data:', formData);
-  closeIntroModal();
-};
 
   // Function to render content based on active tab
   const renderTabContent = () => {
@@ -482,6 +538,7 @@ const Profile = () => {
                   </button>
                 </div>
               </div>
+
             </>
           )}
         </ReactModal>
@@ -728,7 +785,11 @@ const Profile = () => {
             {/* Right Column (This is where the posting box will appear in the Profile tab) */}
             <div style={rightColumnStyle}>
               <PostBox />
-              <Post />
+              <div>
+                {posts.map((post) => (
+                  <Postcopy key={post.id} post={post} token={token} onPostUpdate={fetchPosts} />
+                ))}
+              </div>
               <ResearchPost />
             </div>
           </div>
