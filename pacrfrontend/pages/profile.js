@@ -103,6 +103,85 @@ const Profile = () => {
     }
   };
 
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    headline: '',
+    location: '',
+    contact: {
+      phone: '',
+      email: '',
+      website: '',
+    },
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+  
+    // If the input is nested (e.g., contact details)
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [parent]: {
+          ...prevFormData[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      // For top-level fields
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
+  };
+  
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.first_name || '',
+        lastName: user.last_name || '',
+        headline: user.headline || '',
+        location: user.location || '',
+        contact: {
+          phone: user.contact?.phone || '',
+          email: user.contact?.email || '',
+          website: user.contact?.website || '',
+        },
+      });
+    }
+  }, [user]);
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (response.ok) {
+        const updatedData = await response.json();
+        console.log("Updated data:", updatedData);
+  
+        setUserAndToken(updatedData, token);
+  
+        closeIntroModal();
+      } else {
+        console.error("Failed to save:", response.statusText);
+        alert("Failed to save changes. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+  
+  
 
   // Save Uploaded Image
   const saveImage = async () => {
@@ -785,11 +864,12 @@ const Profile = () => {
             {/* Right Column (This is where the posting box will appear in the Profile tab) */}
             <div style={rightColumnStyle}>
               <PostBox />
-              <div>
+              <Post />
+              {/* <div>
                 {posts.map((post) => (
                   <Postcopy key={post.id} post={post} token={token} onPostUpdate={fetchPosts} />
                 ))}
-              </div>
+              </div> */}
               <ResearchPost />
             </div>
           </div>

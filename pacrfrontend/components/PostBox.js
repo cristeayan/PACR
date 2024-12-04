@@ -56,7 +56,7 @@ const PostBox = () => {
     });
 
     try {
-        const res = await fetch('http://localhost:8000/api/posts/', {
+        const res = await fetch('http://localhost:3000/api/posts/', {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,  // Include the JWT token for authentication
