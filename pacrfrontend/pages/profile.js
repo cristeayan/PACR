@@ -433,9 +433,8 @@ const Profile = () => {
             </div>
             <div style={userInfoStyle}>
               {/* <h1 style={userNameHeading}>{user ? user.first_name + ' ' + user.last_name : "why"}</h1> */}
-              {/* <h1 style={userNameHeading}>{user?.first_name + ' ' + user?.last_name || 'Your Name'}</h1> */}
-              <h1 style={userNameHeading}>{`${formData.firstName} ${formData.lastName}`}</h1>
-              {/* <p style={userProfileTagline}>{formData.headline || 'Your headline or tagline goes here.'}</p> */}
+              <h1 style={userNameHeading}>{user?.first_name + ' ' + user?.last_name || 'Your Name'}</h1>
+              {/* <h1 style={userNameHeading}>{`${formData.firstName} ${formData.lastName}`}</h1> */}
               <p style={userProfileTagline}>{formData.headline || 'Your headline or tagline goes here.'}</p>
             </div>
           </div>
@@ -449,7 +448,7 @@ const Profile = () => {
 
           {/* User Location Information */}
           <div style={locationWrapperStyle}>
-            <p style={userLocationStyle}>{formData.location}</p>
+            <p style={userLocationStyle}>{formData.location || 'Add your location here'}</p>
             <div style={dotWrapperStyle}></div>
             <div style={userContactWrapStyle}>
               <img src='Profile Phone Icon.svg' alt='Phone Icon' />

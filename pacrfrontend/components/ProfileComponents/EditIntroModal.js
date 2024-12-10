@@ -1,15 +1,69 @@
 import React, { useState, useEffect } from 'react';
 import ReactModal from 'react-modal';
+import Select from 'react-select';
 
 const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
     const [formData, setFormData] = useState({
         firstName: user?.first_name || '',
         lastName: user?.last_name || '',
         headline: user?.headline || '',
-        country: user?.location?.split(', ')[1] || '', // Extract Country
-        city: user?.location?.split(', ')[0] || '', // Extract City
+        // country: user?.location?.split(', ')[1] || '', // Extract Country
+        // city: user?.location?.split(', ')[0] || '', // Extract City
+        country: '',
+        city: '',
         contact: user?.contact || { phone: '', email: '', website: '' },
     });
+
+    const [countries, setCountries] = useState([]); // List of countries
+    const [cities, setCities] = useState([]); // List of cities for the selected country
+
+    useEffect(() => {
+        fetch('https://restcountries.com/v3.1/all')
+            .then((response) => response.json())
+            .then((data) => {
+                const countryList = data.map((country) => ({
+                    label: country.name.common,
+                    value: country.name.common,
+                }));
+                setCountries(countryList);
+            });
+    }, []);
+
+    const handleCountryChange = (selectedOption) => {
+        setFormData({ ...formData, country: selectedOption.value, city: '' });
+
+        // Fetch cities for the selected country
+        fetch(`https://countriesnow.space/api/v0.1/countries/cities`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ country: selectedOption.value }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.error) {
+                    console.error('Error fetching cities:', data.error);
+                    setCities([]);
+                } else if (data.data) {
+                    const cityList = data.data.map((city) => ({
+                        label: city,
+                        value: city,
+                    }));
+                    setCities(cityList);
+                }
+            })
+            .catch((error) => {
+                console.error('Failed to fetch cities:', error);
+                setCities([]);
+            });
+    };
+
+    const handleCityChange = (selectedOption) => {
+        setFormData({ ...formData, city: selectedOption.value });
+    };
+
+    if (cities.length === 0 && formData.country) {
+        console.warn('No cities available for the selected country.');
+    }
 
     useEffect(() => {
         if (user) {
@@ -48,7 +102,6 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
     };
 
     const handleSave = () => {
-        // Combine Country and City into a single location string
         const updatedData = {
             ...formData,
             location: `${formData.city}, ${formData.country}`,
@@ -77,98 +130,101 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
             {/* Body */}
             <div style={styles.body}>
                 <div style={styles.introInfo}>
-                <div style={styles.field}>
-                    <label style={styles.label}>First Name</label>
-                    <input
-                        style={styles.input}
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                    />
-                </div>
-                <div style={styles.field}>
-                    <label style={styles.label}>Last Name</label>
-                    <input
-                        style={styles.input}
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                    />
-                </div>
-                <div style={styles.field}>
-                    <label style={styles.label}>Headline</label>
-                    <input
-                        style={styles.input}
-                        type="text"
-                        name="headline"
-                        value={formData.headline}
-                        onChange={handleInputChange}
-                    />
-                </div>
+                    <div style={styles.field}>
+                        <label style={styles.label}>Headline</label>
+                        <input
+                            style={styles.input}
+                            type="text"
+                            name="headline"
+                            value={formData.headline}
+                            onChange={handleInputChange}
+                        />
+                    </div>
                 </div>
                 {/* Location Fields */}
                 <div style={styles.mainWrap}>
                     <h3 style={styles.sectionHeading}>Location</h3>
                     <div style={styles.introInfo}>
-                    <div style={styles.field}>
-                        <label style={styles.label}>Country/Region</label>
-                        <input
-                            style={styles.input}
-                            type="text"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div style={styles.field}>
-                        <label style={styles.label}>City</label>
-                        <input
-                            style={styles.input}
-                            type="text"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleInputChange}
-                        />
-                    </div>
+                        <div style={styles.field}>
+                            <label style={styles.label}>Country/Region</label>
+                            <Select
+                                options={countries}
+                                value={countries.find((c) => c.value === formData.country)}
+                                onChange={handleCountryChange}
+                                placeholder="Type to search country"
+                                styles={customStyles}
+                            />
+                        </div>
+                        <div style={styles.field}>
+                            <label style={styles.label}>City</label>
+                            {formData.country ? (
+                                cities.length > 0 ? (
+                                    // If cities are available, show the dropdown
+                                    <Select
+                                        options={cities}
+                                        value={cities.find((c) => c.value === formData.city)}
+                                        onChange={(selectedOption) => setFormData({ ...formData, city: selectedOption.value })}
+                                        placeholder="Type to search city"
+                                        styles={customStyles}
+                                    />
+                                ) : (
+                                    // If no cities are available, show a manual input
+                                    <input
+                                        type="text"
+                                        value={formData.city}
+                                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                        placeholder="Enter city manually"
+                                        style={styles.input}
+                                    />
+                                )
+                            ) : (
+                                <Select
+                                    options={[]}
+                                    placeholder="Select country first"
+                                    isDisabled={true}
+                                    styles={customStyles}
+                                />
+                            )}
+
+                        </div>
                     </div>
                 </div>
+
 
                 {/* Contact Info Fields */}
                 <div style={styles.mainWrap}>
                     <h3 style={styles.sectionHeading}>Contact Info</h3>
                     <div style={styles.introInfo}>
-                    <div style={styles.field}>
-                        <label style={styles.label}>Phone</label>
-                        <input
-                            style={styles.input}
-                            type="text"
-                            name="phone"
-                            value={formData.contact.phone}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div style={styles.field}>
-                        <label style={styles.label}>Email</label>
-                        <input
-                            style={styles.input}
-                            type="email"
-                            name="email"
-                            value={formData.contact.email}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div style={styles.field}>
-                        <label style={styles.label}>Website</label>
-                        <input
-                            style={styles.input}
-                            type="url"
-                            name="website"
-                            value={formData.contact.website}
-                            onChange={handleInputChange}
-                        />
-                    </div>
+                        <div style={styles.field}>
+                            <label style={styles.label}>Phone</label>
+                            <input
+                                style={styles.input}
+                                type="text"
+                                name="phone"
+                                value={formData.contact.phone}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div style={styles.field}>
+                            <label style={styles.label}>Email</label>
+                            <input
+                                style={styles.input}
+                                type="email"
+                                name="email"
+                                value={formData.contact.email}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div style={styles.field}>
+                            <label style={styles.label}>Website</label>
+                            <input
+                                style={styles.input}
+                                type="url"
+                                name="website"
+                                value={formData.contact.website}
+                                onChange={handleInputChange}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -293,5 +349,31 @@ const styles = {
     },
 };
 
+const customStyles = {
+    control: (provided) => ({
+        ...provided,
+        width: '100%',
+        height: '48px',
+        borderRadius: '200px',
+        border: '0.5px solid #ccc',
+        backgroundColor: '#f2f2f2',
+        padding: '0 24px', // Adjust padding to maintain alignment
+        fontSize: '14px',
+        fontWeight: '400',
+        lineHeight: '13.2px',
+        letterSpacing: '2%',
+        color: '#313131',
+        boxShadow: 'none', // Remove default focus shadow
+        '&:hover': { borderColor: '#aaa' }, // Hover effect
+    }),
+    singleValue: (provided) => ({
+        ...provided,
+        color: '#313131',
+    }),
+    placeholder: (provided) => ({
+        ...provided,
+        color: '#aaa',
+    }),
+};
 
 export default EditIntroModal;
