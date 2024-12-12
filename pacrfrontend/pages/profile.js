@@ -20,6 +20,7 @@ import Postcopy from '@/components/Post copy';
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('Profile'); // State to handle active tab
   const { user, token, setUserAndToken } = useUser();
+  const [tooltip, setTooltip] = useState({ type: '', visible: false });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(''); // 'profile' or 'cover'
   const [previewImage, setPreviewImage] = useState(null);
@@ -451,9 +452,64 @@ const Profile = () => {
             <p style={userLocationStyle}>{formData.location || 'Add your location here'}</p>
             <div style={dotWrapperStyle}></div>
             <div style={userContactWrapStyle}>
-              <img src='Profile Phone Icon.svg' alt='Phone Icon' />
-              <img src='Profile Message Icon.svg' alt='Message Icon' />
-              <img src='Profile Globe Icon.svg' alt='Globe Icon' />
+              {!(formData.contact.showPhone || formData.contact.showEmail || formData.contact.showWebsite) ? (
+                <p style={{ fontSize: '14px', color: '#939393' }}>
+                  Your contact details will be shown here.
+                </p>
+              ) : (
+                <>
+                  {formData.contact.showPhone && (
+                    <a
+                      href={`tel:${formData.contact.phone}`}
+                      style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
+                    >
+                      <img
+                        src="Profile Phone Icon.svg"
+                        alt="Phone Icon"
+                        onMouseEnter={() => setTooltip({ type: 'phone', visible: true })}
+                        onMouseLeave={() => setTooltip({ type: '', visible: false })}
+                      />
+                      {tooltip.visible && tooltip.type === 'phone' && (
+                        <div style={tooltipStyles}>{formData.contact.phone}</div>
+                      )}
+                    </a>
+                  )}
+                  {formData.contact.showEmail && (
+                    <a
+                      href={`mailto:${formData.contact.email}`}
+                      style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
+                    >
+                      <img
+                        src="Profile Message Icon.svg"
+                        alt="Email Icon"
+                        onMouseEnter={() => setTooltip({ type: 'email', visible: true })}
+                        onMouseLeave={() => setTooltip({ type: '', visible: false })}
+                      />
+                      {tooltip.visible && tooltip.type === 'email' && (
+                        <div style={tooltipStyles}>{formData.contact.email}</div>
+                      )}
+                    </a>
+                  )}
+                  {formData.contact.showWebsite && (
+                    <a
+                      href={formData.contact.website.startsWith('http') ? formData.contact.website : `https://${formData.contact.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
+                    >
+                      <img
+                        src="Profile Globe Icon.svg"
+                        alt="Website Icon"
+                        onMouseEnter={() => setTooltip({ type: 'website', visible: true })}
+                        onMouseLeave={() => setTooltip({ type: '', visible: false })}
+                      />
+                      {tooltip.visible && tooltip.type === 'website' && (
+                        <div style={tooltipStyles}>{formData.contact.website}</div>
+                      )}
+                    </a>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
@@ -604,9 +660,9 @@ const locationWrapperStyle = {
 };
 
 const userLocationStyle = {
-  fontSize: '12px',
+  fontSize: '14px',
   fontWeight: '400',
-  lineHeight: '16.8px',
+  lineHeight: '16px',
   color: '#939393',
 };
 
@@ -858,6 +914,20 @@ const introEditIconWrap = {
 
 const introEditIcon = {
   width: '26px',
+};
+
+const tooltipStyles = {
+  position: 'absolute',
+  top: '-34px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  backgroundColor: '#70D4FC',
+  color: '#fff',
+  padding: '6px 8px',
+  borderRadius: '4px',
+  fontSize: '14px',
+  whiteSpace: 'nowrap',
+  zIndex: 10,
 };
 
 const styles = {

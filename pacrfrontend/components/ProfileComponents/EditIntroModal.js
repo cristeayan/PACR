@@ -11,11 +11,33 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
         // city: user?.location?.split(', ')[0] || '', // Extract City
         country: '',
         city: '',
-        contact: user?.contact || { phone: '', email: '', website: '' },
+        contact: {
+            phone: '',
+            showPhone: false,
+            email: user?.email || '', // Fetch from user or default to empty
+            showEmail: false, // Default to hidden if not explicitly enabled
+            website: '',
+            showWebsite: false,
+        },
     });
 
     const [countries, setCountries] = useState([]); // List of countries
     const [cities, setCities] = useState([]); // List of cities for the selected country
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                contact: {
+                    phone: '',
+                    showPhone: false,
+                    email: user.email || '', // Dynamically populate or leave empty
+                    showEmail: false,
+                    website: '',
+                    showWebsite: false,
+                },
+            });
+        }
+    }, [user]);
 
     useEffect(() => {
         fetch('https://restcountries.com/v3.1/all')
@@ -195,35 +217,87 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
                 <div style={styles.mainWrap}>
                     <h3 style={styles.sectionHeading}>Contact Info</h3>
                     <div style={styles.introInfo}>
+
+                        <div style={styles.field}>
+                        <p style={styles.label}>Email</p>
+                            {formData.contact.email ? (
+                                <>
+                                    <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
+                                        {formData.contact.email}
+                                    </p>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="contact.showEmail"
+                                            checked={formData.contact.showEmail}
+                                            onChange={(e) => {
+                                                const { name, checked } = e.target;
+                                                const [parent, child] = name.split('.');
+                                                setFormData((prevFormData) => ({
+                                                    ...prevFormData,
+                                                    [parent]: {
+                                                        ...prevFormData[parent],
+                                                        [child]: checked,
+                                                    },
+                                                }));
+                                            }}
+                                        />
+                                        Show Email
+                                    </label>
+                                </>
+                            ) : (
+                                <p style={{ fontSize: '14px', color: '#777' }}>No email found.</p>
+                            )}
+                        </div>
+
                         <div style={styles.field}>
                             <label style={styles.label}>Phone</label>
                             <input
                                 style={styles.input}
                                 type="text"
-                                name="phone"
+                                name="contact.phone"
                                 value={formData.contact.phone}
                                 onChange={handleInputChange}
                             />
+                            <label style={styles.checklabel}>
+                                <input
+                                    type="checkbox"
+                                    name="showPhone"
+                                    checked={formData.contact.showPhone}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            contact: { ...formData.contact, showPhone: e.target.checked },
+                                        })
+                                    }
+                                />
+                                Show phone number
+                            </label>
                         </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Email</label>
-                            <input
-                                style={styles.input}
-                                type="email"
-                                name="email"
-                                value={formData.contact.email}
-                                onChange={handleInputChange}
-                            />
-                        </div>
+
                         <div style={styles.field}>
                             <label style={styles.label}>Website</label>
                             <input
                                 style={styles.input}
                                 type="url"
-                                name="website"
+                                name="contact.website"
                                 value={formData.contact.website}
                                 onChange={handleInputChange}
                             />
+                            <label style={styles.checklabel}>
+                                <input
+                                    type="checkbox"
+                                    name="showWebsite"
+                                    checked={formData.contact.showWebsite}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            contact: { ...formData.contact, showWebsite: e.target.checked },
+                                        })
+                                    }
+                                />
+                                Show website link
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -267,7 +341,7 @@ const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '12px 20px',
+        padding: '14px 20px',
         borderBottom: '1px solid #e5e5e5',
         backgroundColor: '#fff',
         fontWeight: 'bold',
@@ -324,6 +398,15 @@ const styles = {
         letterSpacing: '2%',
         color: '#313131',
     },
+    checklabel: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '6px',
+        fontSize: '12px',
+        color: '#777',
+        marginTop: '10px',
+        cursor: 'pointer',
+    },
     sectionHeading: {
         fontWeight: 'bold',
         fontSize: '20px',
@@ -357,13 +440,13 @@ const customStyles = {
         borderRadius: '200px',
         border: '0.5px solid #ccc',
         backgroundColor: '#f2f2f2',
-        padding: '0 24px', // Adjust padding to maintain alignment
+        padding: '0 24px',
         fontSize: '14px',
         fontWeight: '400',
         lineHeight: '13.2px',
         letterSpacing: '2%',
         color: '#313131',
-        boxShadow: 'none', // Remove default focus shadow
+        boxShadow: 'none',
         '&:hover': { borderColor: '#aaa' }, // Hover effect
     }),
     singleValue: (provided) => ({
