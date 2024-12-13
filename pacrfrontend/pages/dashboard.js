@@ -62,6 +62,4 @@ const mainInnerContainer = {
   gridRowGap: '20px',
 };
 
-
-
 export default Dashboard;

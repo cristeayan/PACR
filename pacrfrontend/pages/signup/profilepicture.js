@@ -184,6 +184,11 @@ const styles = {
     borderRadius: '12px',
     objectFit: 'cover',
   },
+  uploadPlaceholderText: {
+    color: '#313131',
+    fontSize: '16px',
+    fontWeight: '400',
+  },
   spanUpload: {
     color: '#00b8ff',
     fontWeight: '500',
