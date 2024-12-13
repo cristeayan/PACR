@@ -1,11 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import EditAboutModal from './EditAboutModal';
 
-const ProfileAbout = () => {
+const ProfileAbout = ({ aboutText, onEdit }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentAbout, setCurrentAbout] = useState(aboutText);
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    useEffect(() => {
+        setCurrentAbout(aboutText);
+    }, [aboutText]);
+
+    const toggleExpanded = () => setIsExpanded(!isExpanded);
+
+    const renderAboutText = () => {
+        if (!currentAbout) {
+            return (
+                <p style={styles.placeholderText}>
+                    Write a summary to highlight your personality or work experience
+                </p>
+            );
+        }
+
+        if (currentAbout.length > 300) {
+            if (isExpanded) {
+                return (
+                    <>
+                        <p style={styles.aboutText}>{currentAbout}</p>
+                        <p style={styles.seeMoreText} onClick={toggleExpanded}>...See Less</p>
+                    </>
+                );
+            } else {
+                return (
+                    <>
+                        <p style={styles.aboutText}>{currentAbout.slice(0, 280)}...</p>
+                        <p style={styles.seeMoreText} onClick={toggleExpanded}>...See More</p>
+                    </>
+                );
+            }
+        }
+
+        return <p style={styles.aboutText}>{currentAbout}</p>;
+    };
+
+    const handleEdit = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleSave = (updatedText) => {
+        setCurrentAbout(updatedText);
+        setIsModalOpen(false); // Close modal after saving
+    };
+
+
     return (
         <div style={styles.postStyle}>
-            <h2 style={styles.aboutHeading}>About</h2>
-            <p style={styles.aboutText}>Passionate about transcending boundaries and igniting imaginations, I've embraced the digital canvas for my artistic journey. Specializing in graphic design, UX design, digital art, and architecture, my work aims to create meaningful experiences and evoke emotions, blending beauty with functionality.</p>
-            <p style={styles.seeMoreText}>...See More</p>
+            <div style={styles.aboutHeadingMainWrap}>
+                <h2 style={styles.aboutHeading}>About</h2>
+                <div style={styles.aboutEditIconWrap}>
+                    <img src='Edit Icon.svg' alt='Edit Icon' style={styles.aboutEditIcon} onClick={handleEdit} />
+                </div>
+            </div>
+            {/* About Text */}
+            <div style={styles.aboutTextHolder}>
+            {renderAboutText()}
+            </div>
+
+            <EditAboutModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                aboutText={currentAbout}
+                onSave={handleSave}
+            />
+
             <div style={styles.horizontalDivider}></div>
             <div style={styles.aboutDetailStyle}>
                 <div style={styles.aboutInnerWrap}>
@@ -62,6 +128,12 @@ const styles = {
         gap: '16px',
     },
 
+    aboutHeadingMainWrap: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+
     aboutHeading: {
         fontSize: '20px',
         color: '#313131',
@@ -70,11 +142,18 @@ const styles = {
         letterSpacing: '-2%',
     },
 
+    aboutTextHolder: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+    },
+
     aboutText: {
         fontSize: '14px',
         lineHeight: '18px',
         fontWeight: '400',
         color: '#313131',
+        whiteSpace: 'pre-wrap',
     },
 
     seeMoreText: {
@@ -84,6 +163,7 @@ const styles = {
         letterSpacing: '2%',
         color: '#4fcff5',
         textAlign: 'end',
+        cursor: 'pointer',
     },
 
     horizontalDivider: {
@@ -124,6 +204,21 @@ const styles = {
         lineHeight: '26px',
         fontWeight: '600',
         color: '#4FCFF5',
+    },
+
+    aboutEditIconWrap: {
+        width: 'auto',
+        height: '26px',
+        cursor: 'pointer',
+    },
+
+    aboutEditIcon: {
+        width: '26px',
+    },
+    placeholderText: {
+        fontSize: '14px',
+        color: '#adadad',
+        fontStyle: 'italic',
     },
 };
 
