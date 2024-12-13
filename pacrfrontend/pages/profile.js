@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import Header from '../components/Header';
 import { useState, useEffect } from 'react';
-import { useState, useEffect } from 'react';
 import "../app/globals.css";
 import { useUser } from '../context/UserContext';
 import PostBox from '@/components/PostBox';
