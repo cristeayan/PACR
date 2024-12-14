@@ -6,6 +6,12 @@ import { useUser } from '../context/UserContext';
 import PostBox from '@/components/PostBox';
 import ResearchPost from '../components/ResearchPost';
 import Post from '../components/Post';
+import ProfileAbout from '../components/ProfileComponents/ProfileAbout';
+import ProfileExperience from '../components/ProfileComponents/ProfileExperience';
+import ProfileEducation from '../components/ProfileComponents/ProfileEducation';
+import ProfilePublications from '../components/ProfileComponents/ProfilePublications';
+import ProfileCertifications from '../components/ProfileComponents/ProfileCertifications';
+import EditIntroModal from '../components/ProfileComponents/EditIntroModal';
 import Footer from '../components/Footer';
 import ReactModal from 'react-modal';
 import Postcopy from '@/components/Post copy';
@@ -14,14 +20,34 @@ import Postcopy from '@/components/Post copy';
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('Profile'); // State to handle active tab
   const { user, token, setUserAndToken } = useUser();
+  const [tooltip, setTooltip] = useState({ type: '', visible: false });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(''); // 'profile' or 'cover'
   const [previewImage, setPreviewImage] = useState(null);
+  const [isEditIntroModalOpen, setIsEditIntroModalOpen] = useState(false); // New state for the "Edit Intro" modal
   const [uploadedImage, setUploadedImage] = useState({
     profile: 'dummy-man.png',
     cover: '/Monitor Image.png',
   });
+
   const [uploadedImageFile, setUploadedImageFile] = useState(null);
+
+  const [formData, setFormData] = useState({
+    firstName: user?.first_name || '',
+    lastName: user?.last_name || '',
+    headline: user?.headline || '',
+    location: user?.location || '',
+    contact: user?.contact || { phone: '', email: '', website: '' },
+  });
+
+
+  const openEditIntroModal = () => setIsEditIntroModalOpen(true);
+  const closeEditIntroModal = () => setIsEditIntroModalOpen(false);
+
+  const handleSave = (updatedData) => {
+    setFormData(updatedData);
+    console.log('Saved data:', updatedData);
+  };
 
   const [posts, setPosts] = useState([]);
 
@@ -34,7 +60,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (token){
+    if (token) {
       fetchPosts();
     }
   }, [token]);
@@ -52,9 +78,9 @@ const Profile = () => {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
-    // Functions to handle Intro Modal
-    const openIntroModal = () => setIsIntroModalOpen(true);
-    const closeIntroModal = () => setIsIntroModalOpen(false);
+  // Functions to handle Intro Modal
+  const openIntroModal = () => setIsIntroModalOpen(true);
+  const closeIntroModal = () => setIsIntroModalOpen(false);
 
   // Open Modal (Edit or Preview)
   const openModal = (type, preview = false) => {
@@ -102,6 +128,43 @@ const Profile = () => {
       setUploadedImageFile(file); // Store the file object for uploading
     }
   };
+
+
+
+  // const handleSave = async () => {
+  //   try {
+  //     const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+  //       method: 'PATCH',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
+
+  //     if (response.ok) {
+  //       const updatedData = await response.json();
+  //       console.log("Updated data:", updatedData);
+
+  //       setUserAndToken(updatedData, token);
+
+  //       closeIntroModal();
+  //     } else {
+  //       console.error("Failed to save:", response.statusText);
+  //       alert("Failed to save changes. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving data:", error);
+  //     alert("An error occurred. Please try again.");
+  //   }
+  // };
+
+  //    const handleSave = () => {
+  //   // Implement save logic here
+  //   console.log('Saved data:', formData);
+  //   closeIntroModal();
+  // };
+
 
 
   // Save Uploaded Image
@@ -190,263 +253,11 @@ const Profile = () => {
         return (
           <div style={leftColumnStyle}>
             {/* Profile Tab Content */}
-            <div style={postStyle}>
-              <h2 style={aboutHeading}>About</h2>
-              <p style={aboutText}>Passionate about transcending boundaries and igniting imaginations, I've embraced the digital canvas for my artistic journey. Specializing in graphic design, UX design, digital art, and architecture, my work aims to create meaningful experiences and evoke emotions, blending beauty with functionality.</p>
-              <p style={seeMoreText}>...See More</p>
-              <div style={horizontalDivider}></div>
-              <div style={aboutDetailStyle}>
-                <div style={aboutInnerWrap}>
-                  <span style={aboutWorkplaceLabel}>Department</span>
-                  <span style={aboutDetailText}>:</span>
-                  <span style={aboutDetailText}>Gastroenterology</span>
-                </div>
-                <div style={aboutInnerWrap}>
-                  <span style={aboutWorkplaceLabel}>Industry</span>
-                  <span style={aboutDetailText}>:</span>
-                  <span style={aboutDetailText}>Medical</span>
-                </div>
-                <div style={aboutInnerWrap}>
-                  <span style={aboutWorkplaceLabel}>Workplace</span>
-                  <span style={aboutDetailText}>:</span>
-                  <span style={aboutDetailText}>Beth Israel</span>
-                </div>
-              </div>
-              <div style={horizontalDivider}></div>
-              <div style={aboutDetailStyle}>
-                <div style={aboutDetailwrap}>
-                  <img src='Profile Work Icon.svg'></img>
-                  <p style={aboutDetailText}>Works at Beth Israel Deaconess Medical Center</p>
-                </div>
-                <div style={aboutDetailwrap}>
-                  <img src='Profile Postdoc Icon.svg'></img>
-                  <p style={aboutDetailText}>Postdoc Research Fellow</p>
-                </div>
-                <div style={aboutDetailwrap}>
-                  <img src='Profile Studied Icon.svg'></img>
-                  <p style={aboutDetailText}>Studied at Kasturba Medical College, Mangalore</p>
-                </div>
-                <div style={aboutDetailwrap}>
-                  <img src='Profile Lives Icon.svg'></img>
-                  <p style={aboutDetailText}>Lives in Boston, MA</p>
-                </div>
-                <div style={aboutDetailwrap}>
-                  <img src='Profile Joined Icon.svg'></img>
-                  <p style={aboutDetailText}>Joined on August 1st, 2022</p>
-                </div>
-              </div>
-            </div>
-
-            <div style={experienceContainer}>
-              <h2 style={experienceHeading}>Experience</h2>
-
-              <div style={experienceInnerWrap}>
-                {/* Experience Item 1 */}
-                <div style={experienceItem}>
-                  <img src="firebase_icon.png" alt="Beth Israel Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>Beth Israel Deaconess Medical Center</p>
-                      <p style={experienceDetails}>Full Time · 8 Months</p>
-                    </div>
-                    <div>
-                      <p style={experienceLocation}>Boston, Massachusetts, United States Of America</p>
-                    </div>
-                    <div style={experienceRoles}>
-                      <div style={experienceInnerRoles}>
-                        <div style={rolesWrap}>
-                          <p style={roleTitle}>Clinical Observership</p>
-                          <p style={roleDetails}>March 2024 - Present · 8 Months</p>
-                        </div>
-                        <div style={rolesWrap}>
-                          <p style={roleTitle}>Postdoctoral Research Fellow</p>
-                          <p style={roleDetails}>March 2024 - Present · 8 Months · On-Site</p>
-                        </div>
-                      </div>
-                      <div style={rolesDescriptionWrap}>
-                        <p style={roleDescription}>Postdoctoral Research Fellow - Department Of Gastroenterology</p>
-                        <div style={experienceImages}>
-                          <img src="experience_dummy_1.png" alt="Experience Image 1" style={experienceImage} />
-                          <img src="experience_dummy_2.png" alt="Experience Image 2" style={experienceImage} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Experience Item 2 */}
-                <div style={experienceItem}>
-                  <img src="postdoctoral_icon.png" alt="International Research Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>Postdoctoral Research Fellow</p>
-                      <p>International Research Initiative · <span style={experienceDetails}>Full Time</span></p>
-                      <p style={experienceDetails}>March 2024 - Present · 8 Months</p>
-                    </div>
-                    <p style={experienceLocation}>Boston, Massachusetts, United States Of America · On-Site</p>
-                    <p style={roleDescription}>PostDoctoral Research Fellow - Class Of 2025</p>
-                  </div>
-                </div>
-
-                {/* Experience Item 3 */}
-                <div style={experienceItem}>
-                  <img src="hms_icon.png" alt="Harvard Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>Postdoctoral Research Fellow</p>
-                      <p>Harvard Medical School · <span style={experienceDetails}>Full Time</span></p>
-                      <p style={experienceDetails}>March 2024 - Present · 8 Months</p>
-                    </div>
-                    <p style={experienceLocation}>Boston, Massachusetts, United States Of America · On-Site</p>
-                    <p style={roleDescription}>Postdoctoral Research Fellow at Beth Israel Deaconess Medical Center, Harvard Medical School</p>
-                  </div>
-                </div>
-              </div>
-
-              <p style={seeMoreText}>...See More</p>
-            </div>
-
-            <div style={experienceContainer}>
-              <h2 style={experienceHeading}>Education</h2>
-
-              <div style={educationInnerWrap}>
-                {/* Education Item 1 */}
-                <div style={experienceItem}>
-                  <img src="Kasturba.png" alt="Kasturba Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>Kasturba Medical College, Mangalore</p>
-                      <p style={roleTitle}>Bachelor of Medicine, Bachelor of Surgery - MBBS, Medicine</p>
-                    </div>
-                    <div>
-                      <p style={experienceLocation}>2017 - 2022</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Education Item 2 */}
-                <div style={experienceItem}>
-                  <img src="postdoctoral_icon.png" alt="International Research Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>KE English School</p>
-                      <p style={roleTitle}>Higher Secondary Education</p>
-                    </div>
-                    <div>
-                      <p style={experienceLocation}>2017 - 2022</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Education Item 3 */}
-                <div style={experienceItem}>
-                  <img src="postdoctoral_icon.png" alt="International Research Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>Gems Education</p>
-                      <p style={roleTitle}>Middle School</p>
-                    </div>
-                    <div>
-                      <p style={experienceLocation}>2010 - 2015</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={experienceContainer}>
-              <h2 style={experienceHeading}>Publications</h2>
-
-              <div style={publicationsInnerWrap}>
-                {/* Publication Item 1 */}
-                <div style={experienceItem}>
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>Whole blood viscosity in type 2 diabetes mellitus and its association with the presence and severity of diabetic cochleopathy and other microangiopathie</p>
-                      <p style={experienceLocation}>Porto Biomedical Journal · <span>8 Months</span></p>
-                    </div>
-                    <a href='#' style={publicationButton}>Show Publication<img src='Publication Arrow.svg' alt='Publication Arrow' /></a>
-                    <div style={backgroundAimsWrap}>
-                      <span style={aimsText}>Background/Aims:</span>
-                      <span style={aimsText}>Although studies correlating idiopathic sensorineural hearing loss (SNHL) to whole blood viscosity (WBV) have been</span>
-                      <span style={boldSeeMore}>...See More</span>
-                    </div>
-                    <div style={otherAuthorWrap}>
-                      <span style={otherAuthor}>Other Authors</span>
-                      <a href='#'><img src='Other_Authors.png' alt='Other Authors Image' /></a>
-                    </div>
-                  </div>
-                </div>
-                {/* Publication Item 2 */}
-                <div style={horizontalDivider}></div>
-                <div style={experienceItem}>
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>Comparative Analysis of Supraglottic Airway vs. Infraglottic Airway in Endoscopic Retrograde Cholangiopancreatography: A Systematic Review and Meta-Analysis</p>
-                      <p style={experienceLocation}>Gastroenterology and Hepatology From Bed to Bench Journal · <span>Oct 5, 2024</span></p>
-                    </div>
-                    <a href='#' style={publicationButton}>Show Publication<img src='Publication Arrow.svg' alt='Publication Arrow' /></a>
-                    <div style={backgroundAimsWrap}>
-                      <span style={aimsText}>Background/Aims:</span>
-                      <span style={aimsText}>Although studies correlating idiopathic sensorineural hearing loss (SNHL) to whole blood viscosity (WBV) have been</span>
-                      <span style={boldSeeMore}>...See More</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            <div style={experienceContainer}>
-              <h2 style={experienceHeading}>Licenses / Certifications</h2>
-
-              <div style={educationInnerWrap}>
-                {/* Education Item 1 */}
-                <div style={experienceItem}>
-                  <img src="CITI.png" alt="CITI Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>CITI Certification</p>
-                      <p style={experienceTitle}>CITI Program</p>
-                      <p style={experienceLocation}>Issued Apr 2024</p>
-                    </div>
-                    <div>
-                      <p style={experienceTitle}><span style={boldText}>Skills:</span> Human Subjects Research</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Education Item 2 */}
-                <div style={experienceItem}>
-                  <img src="Avade.png" alt="Avade Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>AVADE Certificate</p>
-                      <p style={experienceTitle}>AVADE® Training</p>
-                      <p style={experienceLocation}>Issued Mar 2024</p>
-                    </div>
-                    <div>
-                      <p style={experienceTitle}><span style={boldText}>Skills:</span> Human Subjects Research</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Education Item 3 */}
-                <div style={experienceItem}>
-                  <img src="Asthma.png" alt="Asthma Logo" style={experienceIcon} />
-                  <div style={experienceDetailWrap}>
-                    <div style={experienceTitleWrap}>
-                      <p style={experienceTitle}>Asthma, Allergy and COPD Forum</p>
-                      <p style={experienceTitle}>Dubai Health Authority</p>
-                      <p style={experienceLocation}>Issued Feb 2024</p>
-                    </div>
-                    <div>
-                      <p style={experienceTitle}><span style={boldText}>Skills:</span> Human Subjects Research</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ProfileAbout />
+            <ProfileExperience />
+            <ProfileEducation />
+            <ProfilePublications />
+            <ProfileCertifications />
           </div>
         );
       case 'About':
@@ -620,131 +431,92 @@ const Profile = () => {
                 </div>
               </div>
               <div style={introEditIconWrap}>
-                <img src='Edit Icon.svg' alt='Edit Icon' style={introEditIcon}  onClick={openIntroModal}/>
+                <img src='Edit Icon.svg' alt='Edit Icon' style={introEditIcon} onClick={openEditIntroModal} />
               </div>
             </div>
             <div style={userInfoStyle}>
               {/* <h1 style={userNameHeading}>{user ? user.first_name + ' ' + user.last_name : "why"}</h1> */}
               <h1 style={userNameHeading}>{user?.first_name + ' ' + user?.last_name || 'Your Name'}</h1>
-              <p style={userProfileTagline}>{formData.headline || 'Your headline or tagline goes here.'}</p>
+              {/* <h1 style={userNameHeading}>{`${formData.firstName} ${formData.lastName}`}</h1> */}
+              <p style={userProfileTagline}>{user?.tagline || 'Your headline or tagline goes here.'}</p>
             </div>
           </div>
+
+          <EditIntroModal
+            isOpen={isEditIntroModalOpen}
+            onClose={closeEditIntroModal}
+            user={user}
+            token={token}
+            onSave={handleSave}
+          />
 
           {/* User Location Information */}
           <div style={locationWrapperStyle}>
-            <p style={userLocationStyle}>{formData.location}</p>
+            <p style={userLocationStyle}>{user?.location || 'Add your location here'}</p>
             <div style={dotWrapperStyle}></div>
             <div style={userContactWrapStyle}>
-              <img src='Profile Phone Icon.svg' alt='Phone Icon' />
-              <img src='Profile Message Icon.svg' alt='Message Icon' />
-              <img src='Profile Globe Icon.svg' alt='Globe Icon' />
+              {!(formData.contact.showPhone || formData.contact.showEmail || formData.contact.showWebsite) ? (
+                <p style={{ fontSize: '14px', color: '#939393' }}>
+                  Your contact details will be shown here.
+                </p>
+              ) : (
+                <>
+                  {formData.contact.showPhone && (
+                    <a
+                      href={`tel:${formData.contact.phone}`}
+                      style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
+                    >
+                      <img
+                        src="Profile Phone Icon.svg"
+                        alt="Phone Icon"
+                        onMouseEnter={() => setTooltip({ type: 'phone', visible: true })}
+                        onMouseLeave={() => setTooltip({ type: '', visible: false })}
+                      />
+                      {tooltip.visible && tooltip.type === 'phone' && (
+                        <div style={tooltipStyles}>{formData.contact.phone}</div>
+                      )}
+                    </a>
+                  )}
+                  {formData.contact.showEmail && (
+                    <a
+                      href={`mailto:${formData.contact.email}`}
+                      style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
+                    >
+                      <img
+                        src="Profile Message Icon.svg"
+                        alt="Email Icon"
+                        onMouseEnter={() => setTooltip({ type: 'email', visible: true })}
+                        onMouseLeave={() => setTooltip({ type: '', visible: false })}
+                      />
+                      {tooltip.visible && tooltip.type === 'email' && (
+                        <div style={tooltipStyles}>{formData.contact.email}</div>
+                      )}
+                    </a>
+                  )}
+                  {formData.contact.showWebsite && (
+                    <a
+                      href={formData.contact.website.startsWith('http') ? formData.contact.website : `https://${formData.contact.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
+                    >
+                      <img
+                        src="Profile Globe Icon.svg"
+                        alt="Website Icon"
+                        onMouseEnter={() => setTooltip({ type: 'website', visible: true })}
+                        onMouseLeave={() => setTooltip({ type: '', visible: false })}
+                      />
+                      {tooltip.visible && tooltip.type === 'website' && (
+                        <div style={tooltipStyles}>{formData.contact.website}</div>
+                      )}
+                    </a>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
-          <ReactModal
-        isOpen={isIntroModalOpen}
-        onRequestClose={closeIntroModal}
-        style={{
-          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-          content: { maxWidth: '500px', margin: 'auto', padding: '20px' },
-        }}
-      >
-        <button onClick={closeIntroModal} style={{ float: 'right' }}>×</button>
-        <h2>Edit Intro</h2>
-        <form>
-          {/* Name Fields */}
-          <label>
-            First Name:
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              style={{ display: 'block', marginBottom: '10px' }}
-            />
-          </label>
-          <label>
-            Last Name:
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              style={{ display: 'block', marginBottom: '10px' }}
-            />
-          </label>
 
-          {/* Headline Field */}
-          <label>
-            Headline:
-            <input
-              type="text"
-              name="headline"
-              value={formData.headline}
-              onChange={handleInputChange}
-              style={{ display: 'block', marginBottom: '10px' }}
-            />
-          </label>
-
-          {/* Location Field */}
-          <label>
-            Location:
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
-              style={{ display: 'block', marginBottom: '10px' }}
-            />
-          </label>
-
-          {/* Contact Fields */}
-          <label>
-            Phone:
-            <input
-              type="text"
-              name="phone"
-              value={formData.contact.phone}
-              onChange={handleInputChange}
-              style={{ display: 'block', marginBottom: '10px' }}
-            />
-          </label>
-          <label>
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={formData.contact.email}
-              onChange={handleInputChange}
-              style={{ display: 'block', marginBottom: '10px' }}
-            />
-          </label>
-          <label>
-            Website:
-            <input
-              type="url"
-              name="website"
-              value={formData.contact.website}
-              onChange={handleInputChange}
-              style={{ display: 'block', marginBottom: '10px' }}
-            />
-          </label>
-
-          {/* Save Button */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-            <button type="button" onClick={closeIntroModal} style={{ padding: '5px 10px' }}>
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              style={{ padding: '5px 10px', backgroundColor: '#0073b1', color: '#fff' }}
-            >
-              Save
-            </button>
-          </div>
-        </form>
-      </ReactModal>
 
           {/* Stats Section */}
           <div style={mainStatsWrapperStyle}>
@@ -785,11 +557,12 @@ const Profile = () => {
             {/* Right Column (This is where the posting box will appear in the Profile tab) */}
             <div style={rightColumnStyle}>
               <PostBox />
-              <div>
+              <Post />
+              {/* <div>
                 {posts.map((post) => (
                   <Postcopy key={post.id} post={post} token={token} onPostUpdate={fetchPosts} />
                 ))}
-              </div>
+              </div> */}
               <ResearchPost />
             </div>
           </div>
@@ -890,9 +663,9 @@ const locationWrapperStyle = {
 };
 
 const userLocationStyle = {
-  fontSize: '12px',
+  fontSize: '14px',
   fontWeight: '400',
-  lineHeight: '16.8px',
+  lineHeight: '16px',
   color: '#939393',
 };
 
@@ -1039,80 +812,6 @@ const rightColumnStyle = {
   gap: '20px',
 };
 
-const postStyle = {
-  padding: '24px 18px 30px 28px',
-  backgroundColor: '#ffffff',
-  borderRadius: '8px',
-  boxShadow: '5px 4px 16px 0px #0000001C',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
-};
-
-const aboutHeading = {
-  fontSize: '20px',
-  color: '#313131',
-  fontWeight: '600',
-  lineHeight: '28px',
-  letterSpacing: '-2%',
-};
-
-const aboutText = {
-  fontSize: '14px',
-  lineHeight: '18px',
-  fontWeight: '400',
-  color: '#313131',
-};
-
-const seeMoreText = {
-  fontSize: '12px',
-  lineHeight: '16.8px',
-  fontWeight: '500',
-  letterSpacing: '2%',
-  color: '#4fcff5',
-  textAlign: 'end',
-};
-
-const horizontalDivider = {
-  backgroundColor: '#ADADAD',
-  width: '100%',
-  height: '1px',
-};
-
-const aboutDetailStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px',
-};
-
-const aboutDetailwrap = {
-  display: 'flex',
-  flexDirection: 'row',
-  gap: '14px',
-  alignItems: 'center',
-};
-
-const aboutDetailText = {
-  fontSize: '14px',
-  fontWeight: '400',
-  lineHeight: '26px',
-  letterSpacing: '2%',
-};
-
-const aboutInnerWrap = {
-  display: 'grid',
-  gridTemplateColumns: '90px 10px auto',
-  alignItems: 'center',
-  gap: '24px',
-};
-
-const aboutWorkplaceLabel = {
-  fontSize: '14px',
-  lineHeight: '26px',
-  fontWeight: '600',
-  color: '#4FCFF5',
-};
-
 const photoGalleryStyle = {
   marginTop: '20px',
 };
@@ -1220,198 +919,18 @@ const introEditIcon = {
   width: '26px',
 };
 
-// Experience Box Styling
-
-const experienceContainer = {
-  padding: '24px 28px',
-  backgroundColor: '#ffffff',
-  borderRadius: '8px',
-  boxShadow: '5px 4px 16px 0px #0000001C',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '26px',
-};
-
-const experienceInnerWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '32px',
-};
-
-const educationInnerWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '26px',
-};
-
-const publicationsInnerWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '24px',
-};
-
-const experienceDetailWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  gap: '16px',
-};
-
-const experienceTitleWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '6px',
-};
-
-const experienceHeading = {
-  fontSize: '20px',
-  color: '#313131',
-  fontWeight: '600',
-  lineHeight: '28px',
-};
-
-const experienceItem = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: '16px',
-};
-
-const experienceIcon = {
-  width: 'auto',
-};
-
-const experienceTitle = {
-  fontWeight: '400',
-  fontSize: '16px',
-  lineHeight: '18px',
-  color: '#313131',
-  textTransform: 'capitalize',
-};
-
-const experienceDetails = {
-  color: '#ADADAD',
+const tooltipStyles = {
+  position: 'absolute',
+  top: '-34px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  backgroundColor: '#70D4FC',
+  color: '#fff',
+  padding: '6px 8px',
+  borderRadius: '4px',
   fontSize: '14px',
-  lineHeight: '16px',
-  fontWeight: '400',
-  textTransform: 'capitalize',
-};
-
-const experienceLocation = {
-  color: '#ADADAD',
-  fontSize: '14px',
-  lineHeight: '18px',
-  fontWeight: '400',
-  textTransform: 'capitalize',
-};
-
-const experienceRoles = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
-};
-
-const experienceInnerRoles = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-};
-
-const rolesWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '4px',
-};
-
-const roleTitle = {
-  fontWeight: '400',
-  fontSize: '16px',
-  lineHeight: '18px',
-  color: '#313131',
-};
-
-const roleDetails = {
-  color: '#ADADAD',
-  fontSize: '14px',
-  lineHeight: '16px',
-  fontWeight: '400',
-};
-
-const rolesDescriptionWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-};
-
-const roleDescription = {
-  fontSize: '16px',
-  lineHeight: '18px',
-  fontWeight: '400',
-  color: '#313131',
-};
-
-const experienceImages = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-};
-
-const experienceImage = {
-  width: 'auto',
-  height: 'auto',
-  borderRadius: '6px',
-  objectFit: 'cover',
-};
-
-const publicationButton = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  padding: '14px 28px',
-  border: '1px solid #313131',
-  borderRadius: '200px',
-  fontSize: '14px',
-  lineHeight: '16px',
-  fontWeight: '400',
-  color: '#313131',
-  textDecoration: 'none',
-};
-
-const aimsText = {
-  fontSize: '14px',
-  lineHeight: '16px',
-  fontWeight: '300',
-  color: '#313131',
-};
-
-const boldSeeMore = {
-  fontSize: '14px',
-  lineHeight: '16px',
-  fontWeight: '500',
-  color: '#313131',
-  textAlign: 'end',
-};
-
-const otherAuthorWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: '8px',
-};
-
-const otherAuthor = {
-  fontSize: '12px',
-  lineHeight: '14px',
-  fontWeight: '500',
-  color: '#313131',
-};
-
-const backgroundAimsWrap = {
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const boldText = {
-  fontWeight: '600',
+  whiteSpace: 'nowrap',
+  zIndex: 10,
 };
 
 const styles = {
@@ -1420,6 +939,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: '9999',
   },
   modalContent: {
     position: 'relative',
