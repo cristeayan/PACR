@@ -108,19 +108,12 @@ const EditIntroModal = ({ isOpen, onClose, user, token, onSave }) => {
         }
     };
 
-    // const handleSave = () => {
-    //     const updatedData = {
-    //         ...formData,
-    //         location: `${formData.city}, ${formData.country}`,
-    //     };
-    //     onSave(updatedData);
-    //     onClose();
-    // };
+
 
     const saveUserData = async (data) => {
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,

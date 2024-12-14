@@ -25,6 +25,13 @@ const Profile = () => {
   const [modalType, setModalType] = useState(''); // 'profile' or 'cover'
   const [previewImage, setPreviewImage] = useState(null);
   const [isEditIntroModalOpen, setIsEditIntroModalOpen] = useState(false); // New state for the "Edit Intro" modal
+  const [uploadedImage, setUploadedImage] = useState({
+    profile: 'dummy-man.png',
+    cover: '/Monitor Image.png',
+  });
+
+  const [uploadedImageFile, setUploadedImageFile] = useState(null);
+
   const [formData, setFormData] = useState({
     firstName: user?.first_name || '',
     lastName: user?.last_name || '',
@@ -32,12 +39,7 @@ const Profile = () => {
     location: user?.location || '',
     contact: user?.contact || { phone: '', email: '', website: '' },
   });
-  const [uploadedImage, setUploadedImage] = useState({
-    profile: 'dummy-man.png',
-    cover: '/Monitor Image.png',
-  });
 
-  const [uploadedImageFile, setUploadedImageFile] = useState(null);
 
   const openEditIntroModal = () => setIsEditIntroModalOpen(true);
   const closeEditIntroModal = () => setIsEditIntroModalOpen(false);
@@ -436,7 +438,7 @@ const Profile = () => {
               {/* <h1 style={userNameHeading}>{user ? user.first_name + ' ' + user.last_name : "why"}</h1> */}
               <h1 style={userNameHeading}>{user?.first_name + ' ' + user?.last_name || 'Your Name'}</h1>
               {/* <h1 style={userNameHeading}>{`${formData.firstName} ${formData.lastName}`}</h1> */}
-              <p style={userProfileTagline}>{formData.headline || 'Your headline or tagline goes here.'}</p>
+              <p style={userProfileTagline}>{user?.tagline || 'Your headline or tagline goes here.'}</p>
             </div>
           </div>
 
@@ -450,7 +452,7 @@ const Profile = () => {
 
           {/* User Location Information */}
           <div style={locationWrapperStyle}>
-            <p style={userLocationStyle}>{formData.location || 'Add your location here'}</p>
+            <p style={userLocationStyle}>{user?.location || 'Add your location here'}</p>
             <div style={dotWrapperStyle}></div>
             <div style={userContactWrapStyle}>
               {!(formData.contact.showPhone || formData.contact.showEmail || formData.contact.showWebsite) ? (
