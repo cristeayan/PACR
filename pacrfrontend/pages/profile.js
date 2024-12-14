@@ -19,7 +19,8 @@ import Postcopy from '@/components/Post copy';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('Profile'); // State to handle active tab
-  const { user } = useUser();
+  const { user, token, setUserAndToken } = useUser();
+  const [tooltip, setTooltip] = useState({ type: '', visible: false });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(''); // 'profile' or 'cover'
   const [previewImage, setPreviewImage] = useState(null);
@@ -35,6 +36,41 @@ const Profile = () => {
     profile: 'dummy-man.png',
     cover: '/Monitor Image.png',
   });
+
+  const [uploadedImageFile, setUploadedImageFile] = useState(null);
+
+  const openEditIntroModal = () => setIsEditIntroModalOpen(true);
+  const closeEditIntroModal = () => setIsEditIntroModalOpen(false);
+
+  const handleSave = (updatedData) => {
+    setFormData(updatedData);
+    console.log('Saved data:', updatedData);
+  };
+
+  const [posts, setPosts] = useState([]);
+
+  const fetchPosts = async () => {
+    const response = await fetch("http://127.0.0.1:8000/api/posts/my_posts/", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    setPosts(data);
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchPosts();
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (user) {
+      setUploadedImage({
+        profile: user.profile_picture || 'dummy-man.png',
+        cover: user.cover_picture || '/Monitor Image.png',
+      });
+    }
+  }, [user]);
   const [isIntroModalOpen, setIsIntroModalOpen] = useState(false);
 
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -90,6 +126,44 @@ const Profile = () => {
       setUploadedImageFile(file); // Store the file object for uploading
     }
   };
+
+
+
+  // const handleSave = async () => {
+  //   try {
+  //     const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+  //       method: 'PATCH',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
+
+  //     if (response.ok) {
+  //       const updatedData = await response.json();
+  //       console.log("Updated data:", updatedData);
+
+  //       setUserAndToken(updatedData, token);
+
+  //       closeIntroModal();
+  //     } else {
+  //       console.error("Failed to save:", response.statusText);
+  //       alert("Failed to save changes. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving data:", error);
+  //     alert("An error occurred. Please try again.");
+  //   }
+  // };
+
+  //    const handleSave = () => {
+  //   // Implement save logic here
+  //   console.log('Saved data:', formData);
+  //   closeIntroModal();
+  // };
+
+
 
   // Save Uploaded Image
   const saveImage = async () => {
