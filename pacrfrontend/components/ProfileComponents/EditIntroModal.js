@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import ReactModal from 'react-modal';
 import Select from 'react-select';
 
-const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
+const EditIntroModal = ({ isOpen, onClose, user, token, onSave }) => {
     const [formData, setFormData] = useState({
-        firstName: user?.first_name || '',
-        lastName: user?.last_name || '',
+        // firstName: user?.first_name || '',
+        // lastName: user?.last_name || '',
         headline: user?.headline || '',
         // country: user?.location?.split(', ')[1] || '', // Extract Country
         // city: user?.location?.split(', ')[0] || '', // Extract City
@@ -26,18 +26,19 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
 
     useEffect(() => {
         if (user) {
-            setFormData({
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                headline: user?.headline || prevFormData.headline,
                 contact: {
-                    phone: '',
-                    showPhone: false,
-                    email: user.email || '', // Dynamically populate or leave empty
-                    showEmail: false,
-                    website: '',
-                    showWebsite: false,
+                    ...prevFormData.contact,
+                    email: user?.email || prevFormData.contact.email,
+                    phone: user?.contact?.phone || prevFormData.contact.phone,
+                    website: user?.contact?.website || prevFormData.contact.website,
                 },
-            });
+            }));
         }
     }, [user]);
+    
 
     useEffect(() => {
         fetch('https://restcountries.com/v3.1/all')
@@ -87,22 +88,6 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
         console.warn('No cities available for the selected country.');
     }
 
-    useEffect(() => {
-        if (user) {
-            setFormData({
-                firstName: user.first_name || '',
-                lastName: user.last_name || '',
-                headline: user.headline || '',
-                location: user.location || '',
-                contact: {
-                    phone: user.contact?.phone || '',
-                    email: user.contact?.email || '',
-                    website: user.contact?.website || '',
-                },
-            });
-        }
-    }, [user]);
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
@@ -134,13 +119,13 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
 
     const saveUserData = async (data) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/user${user.id}`, {
+            const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: formData,
+                body: JSON.stringify(data),
             });
     
             if (!response.ok) {
@@ -264,10 +249,10 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
                         <p style={styles.label}>Email</p>
                             {formData.contact.email ? (
                                 <>
-                                    <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
+                                    <p style={styles.dynamicEmail}>
                                         {formData.contact.email}
                                     </p>
-                                    <label>
+                                    <label style={styles.checklabel}>
                                         <input
                                             type="checkbox"
                                             name="contact.showEmail"
@@ -439,6 +424,11 @@ const styles = {
         lineHeight: '13.2px',
         letterSpacing: '2%',
         color: '#313131',
+    },
+    dynamicEmail: {
+        color: '#70D4FC',
+        margin: '20px 0 16px',
+        fontWeight: '500',
     },
     checklabel: {
         display: 'flex',

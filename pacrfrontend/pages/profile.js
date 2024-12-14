@@ -444,6 +444,7 @@ const Profile = () => {
             isOpen={isEditIntroModalOpen}
             onClose={closeEditIntroModal}
             user={user}
+            token={token}
             onSave={handleSave}
           />
 
