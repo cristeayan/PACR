@@ -123,56 +123,56 @@ const EditIntroModal = ({ isOpen, onClose, user, onSave }) => {
         }
     };
 
-    const handleSave = () => {
-        const updatedData = {
-            ...formData,
-            location: `${formData.city}, ${formData.country}`,
-        };
-        onSave(updatedData);
-        onClose();
+    // const handleSave = () => {
+    //     const updatedData = {
+    //         ...formData,
+    //         location: `${formData.city}, ${formData.country}`,
+    //     };
+    //     onSave(updatedData);
+    //     onClose();
+    // };
+
+    const saveUserData = async (data) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/user${user.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to save user data.');
+            }
+    
+            const result = await response.json();
+            console.log('User data saved:', result);
+            return result;
+        } catch (error) {
+            console.error('Error saving user data:', error);
+            throw error;
+        }
     };
 
-    // const saveUserData = async (data) => {
-    //     try {
-    //         const response = await fetch(`http://127.0.0.1:8000/api/user${user.id}`, {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //             body: formData,
-    //         });
+    const handleSave = async () => {
+        const updatedData = {
+            id: user.id,
+            email: formData.contact.email,
+            phone_number: formData.contact.phone,
+            location: `${formData.city}, ${formData.country}`,
+            tagline: formData.headline,
+        };
     
-    //         if (!response.ok) {
-    //             throw new Error('Failed to save user data.');
-    //         }
-    
-    //         const result = await response.json();
-    //         console.log('User data saved:', result);
-    //         return result;
-    //     } catch (error) {
-    //         console.error('Error saving user data:', error);
-    //         throw error;
-    //     }
-    // };
-
-    // const handleSave = async () => {
-    //     const updatedData = {
-    //         id: user.id,
-    //         email: formData.contact.email,
-    //         phone_number: formData.contact.phone,
-    //         location: `${formData.city}, ${formData.country}`,
-    //         tagline: formData.headline,
-    //     };
-    
-    //     try {
-    //         const savedData = await saveUserData(updatedData);
-    //         console.log('Saved data:', savedData);
-    //         onClose();
-    //     } catch (error) {
-    //         alert('Failed to save user details. Please try again.');
-    //     }
-    // };
+        try {
+            const savedData = await saveUserData(updatedData);
+            console.log('Saved data:', savedData);
+            onClose();
+        } catch (error) {
+            alert('Failed to save user details. Please try again.');
+        }
+    };
 
     return (
         <ReactModal
