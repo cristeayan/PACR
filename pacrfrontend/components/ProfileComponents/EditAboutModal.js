@@ -9,9 +9,9 @@ const EditAboutModal = ({ isOpen, onClose, aboutText, onSave }) => {
         onClose();
     };
 
-    const handleChange = (e) => {
-        setSummary(e.target.value);
-    };
+    // const handleChange = (e) => {
+    //     setSummary(e.target.value);
+    // };
 
     return (
         <ReactModal
