@@ -25,6 +25,13 @@ const Profile = () => {
   const [modalType, setModalType] = useState(''); // 'profile' or 'cover'
   const [previewImage, setPreviewImage] = useState(null);
   const [isEditIntroModalOpen, setIsEditIntroModalOpen] = useState(false); // New state for the "Edit Intro" modal
+  const [uploadedImage, setUploadedImage] = useState({
+    profile: 'dummy-man.png',
+    cover: '/Monitor Image.png',
+  });
+
+  const [uploadedImageFile, setUploadedImageFile] = useState(null);
+
   const [formData, setFormData] = useState({
     firstName: user?.first_name || '',
     lastName: user?.last_name || '',
@@ -32,12 +39,7 @@ const Profile = () => {
     location: user?.location || '',
     contact: user?.contact || { phone: '', email: '', website: '' },
   });
-  const [uploadedImage, setUploadedImage] = useState({
-    profile: 'dummy-man.png',
-    cover: '/Monitor Image.png',
-  });
 
-  const [uploadedImageFile, setUploadedImageFile] = useState(null);
 
   const openEditIntroModal = () => setIsEditIntroModalOpen(true);
   const closeEditIntroModal = () => setIsEditIntroModalOpen(false);
@@ -436,7 +438,7 @@ const Profile = () => {
               {/* <h1 style={userNameHeading}>{user ? user.first_name + ' ' + user.last_name : "why"}</h1> */}
               <h1 style={userNameHeading}>{user?.first_name + ' ' + user?.last_name || 'Your Name'}</h1>
               {/* <h1 style={userNameHeading}>{`${formData.firstName} ${formData.lastName}`}</h1> */}
-              <p style={userProfileTagline}>{formData.headline || 'Your headline or tagline goes here.'}</p>
+              <p style={userProfileTagline}>{user?.tagline || 'Your headline or tagline goes here.'}</p>
             </div>
           </div>
 
@@ -445,23 +447,25 @@ const Profile = () => {
             onClose={closeEditIntroModal}
             user={user}
             token={token}
+            setUserAndToken={setUserAndToken}
             onSave={handleSave}
           />
 
           {/* User Location Information */}
           <div style={locationWrapperStyle}>
-            <p style={userLocationStyle}>{formData.location || 'Add your location here'}</p>
+            <p style={userLocationStyle}>{user?.location || 'Add your location here'}</p>
             <div style={dotWrapperStyle}></div>
             <div style={userContactWrapStyle}>
-              {!(formData.contact.showPhone || formData.contact.showEmail || formData.contact.showWebsite) ? (
+              {!(user?.phone_vis || user?.email_vis || user?.website_vis) ? (
                 <p style={{ fontSize: '14px', color: '#939393' }}>
                   Your contact details will be shown here.
                 </p>
               ) : (
                 <>
-                  {formData.contact.showPhone && (
+                  {/* Phone Number */}
+                  {user?.phone_vis && (
                     <a
-                      href={`tel:${formData.contact.phone}`}
+                      href={`tel:${user?.phone_number}`}
                       style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
                     >
                       <img
@@ -471,13 +475,15 @@ const Profile = () => {
                         onMouseLeave={() => setTooltip({ type: '', visible: false })}
                       />
                       {tooltip.visible && tooltip.type === 'phone' && (
-                        <div style={tooltipStyles}>{formData.contact.phone}</div>
+                        <div style={tooltipStyles}>{user?.phone_number}</div>
                       )}
                     </a>
                   )}
-                  {formData.contact.showEmail && (
+
+                  {/* Email */}
+                  {user?.email_vis && (
                     <a
-                      href={`mailto:${formData.contact.email}`}
+                      href={`mailto:${user?.email}`}
                       style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
                     >
                       <img
@@ -487,13 +493,15 @@ const Profile = () => {
                         onMouseLeave={() => setTooltip({ type: '', visible: false })}
                       />
                       {tooltip.visible && tooltip.type === 'email' && (
-                        <div style={tooltipStyles}>{formData.contact.email}</div>
+                        <div style={tooltipStyles}>{user?.email}</div>
                       )}
                     </a>
                   )}
-                  {formData.contact.showWebsite && (
+
+                  {/* Website */}
+                  {user?.website_vis && (
                     <a
-                      href={formData.contact.website.startsWith('http') ? formData.contact.website : `https://${formData.contact.website}`}
+                      href={user?.website.startsWith('http') ? user?.website : `https://${user?.website}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
@@ -505,7 +513,7 @@ const Profile = () => {
                         onMouseLeave={() => setTooltip({ type: '', visible: false })}
                       />
                       {tooltip.visible && tooltip.type === 'website' && (
-                        <div style={tooltipStyles}>{formData.contact.website}</div>
+                        <div style={tooltipStyles}>{user?.website}</div>
                       )}
                     </a>
                   )}

@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactModal from 'react-modal';
 
-const EditAboutModal = ({ isOpen, onClose, aboutText, onSave }) => {
-    const [summary, setSummary] = useState(aboutText || '');
+const EditAboutModal = ({ isOpen, onClose, aboutText, onSave, user, token,setUserAndToken }) => {
+    const [summary, setSummary] = useState(aboutText);
+
+    useEffect(() => {
+        if (aboutText) {
+            setSummary(aboutText);
+        }
+    }, [aboutText]);
 
     const handleSave = () => {
         onSave(summary);
         onClose();
     };
 
-    // const handleChange = (e) => {
-    //     setSummary(e.target.value);
-    // };
+    const handleChange = (e) => {
+        setSummary(e.target.value);
+    };
 
     return (
         <ReactModal
@@ -52,99 +58,98 @@ const EditAboutModal = ({ isOpen, onClose, aboutText, onSave }) => {
         </ReactModal>
     );
 };
+    const styles = {
+        overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            zIndex: '9999',
+        },
+        modal: {
+            position: 'relative',
+            maxWidth: '46.5rem',
+            maxHeight: 'calc(100vh - 100px)',
+            margin: 'auto',
+            padding: '0',
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
+        },
+        modalHeading: {
+            fontSize: '20px',
+            color: '#313131',
+            fontWeight: '700',
+        },
+        header: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '14px 20px',
+            borderBottom: '1px solid #e5e5e5',
+            backgroundColor: '#fff',
+            fontWeight: 'bold',
+            fontSize: '18px',
+            color: '#333',
+        },
+        closeButton: {
+            background: 'none',
+            border: 'none',
+            fontSize: '30px',
+            lineHeight: '22px',
+            cursor: 'pointer',
+            color: '#000',
+        },
+        body: {
+            flex: 1,
+            overflowY: 'auto',
+            padding: '26px 24px',
+            backgroundColor: '#fff',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '32px',
+        },
+        field: {
+            width: '100%',
+        },
+        label: {
+            display: 'block',
+            marginBottom: '8px',
+            fontWeight: '500',
+            fontSize: '14px',
+            color: '#000000bf',
+        },
+        textarea: {
+            width: '100%',
+            height: '150px',
+            borderRadius: '12px',
+            border: '1px solid #ccc',
+            padding: '10px',
+            fontSize: '14px',
+            fontWeight: '400',
+            lineHeight: '1.5',
+            color: '#313131',
+            resize: 'vertical',
+        },
+        footer: {
+            padding: '12px 20px',
+            borderTop: '1px solid #e5e5e5',
+            backgroundColor: '#fff',
+            display: 'flex',
+            justifyContent: 'flex-end',
+        },
+        saveButton: {
+            backgroundColor: '#70d4fc',
+            borderRadius: '200px',
+            padding: '16px 40px',
+            fontSize: '16px',
+            lineHeight: '18px',
+            fontWeight: '500',
+            border: 'none',
+            color: '#fff',
+            cursor: 'pointer',
+        },
+    };
 
-const styles = {
-    overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        zIndex: '9999',
-    },
-    modal: {
-        position: 'relative',
-        maxWidth: '46.5rem',
-        maxHeight: 'calc(100vh - 100px)',
-        margin: 'auto',
-        padding: '0',
-        backgroundColor: '#fff',
-        borderRadius: '12px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-    },
-    modalHeading: {
-        fontSize: '20px',
-        color: '#313131',
-        fontWeight: '700',
-    },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '14px 20px',
-        borderBottom: '1px solid #e5e5e5',
-        backgroundColor: '#fff',
-        fontWeight: 'bold',
-        fontSize: '18px',
-        color: '#333',
-    },
-    closeButton: {
-        background: 'none',
-        border: 'none',
-        fontSize: '30px',
-        lineHeight: '22px',
-        cursor: 'pointer',
-        color: '#000',
-    },
-    body: {
-        flex: 1,
-        overflowY: 'auto',
-        padding: '26px 24px',
-        backgroundColor: '#fff',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '32px',
-    },
-    field: {
-        width: '100%',
-    },
-    label: {
-        display: 'block',
-        marginBottom: '8px',
-        fontWeight: '500',
-        fontSize: '14px',
-        color: '#000000bf',
-    },
-    textarea: {
-        width: '100%',
-        height: '150px',
-        borderRadius: '12px',
-        border: '1px solid #ccc',
-        padding: '10px',
-        fontSize: '14px',
-        fontWeight: '400',
-        lineHeight: '1.5',
-        color: '#313131',
-        resize: 'vertical',
-    },
-    footer: {
-        padding: '12px 20px',
-        borderTop: '1px solid #e5e5e5',
-        backgroundColor: '#fff',
-        display: 'flex',
-        justifyContent: 'flex-end',
-    },
-    saveButton: {
-        backgroundColor: '#70d4fc',
-        borderRadius: '200px',
-        padding: '16px 40px',
-        fontSize: '16px',
-        lineHeight: '18px',
-        fontWeight: '500',
-        border: 'none',
-        color: '#fff',
-        cursor: 'pointer',
-    },
-};
-
-export default EditAboutModal;
+    export default EditAboutModal;

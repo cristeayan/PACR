@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import EditAboutModal from './EditAboutModal';
+import { useUser } from '../../context/UserContext';
 
-const ProfileAbout = ({ aboutText, onEdit }) => {
+
+const ProfileAbout = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentAbout, setCurrentAbout] = useState(aboutText);
+    const [currentAbout, setCurrentAbout] = useState('');
     const [isExpanded, setIsExpanded] = useState(false);
+    const { user ,token ,setUserAndToken} = useUser();
 
     useEffect(() => {
-        setCurrentAbout(aboutText);
-    }, [aboutText]);
+        if (user){
+            if (user.summary==null){
+                setCurrentAbout("Write a summary to highlight your personality or work experience");
+            }else{
+                setCurrentAbout(user.summary);
+            }
+        }
+    }, [user]);
 
     const toggleExpanded = () => setIsExpanded(!isExpanded);
 
@@ -16,7 +25,7 @@ const ProfileAbout = ({ aboutText, onEdit }) => {
         if (!currentAbout) {
             return (
                 <p style={styles.placeholderText}>
-                    Write a summary to highlight your personality or work experience
+                    {currentAbout}
                 </p>
             );
         }
@@ -48,7 +57,9 @@ const ProfileAbout = ({ aboutText, onEdit }) => {
 
     const handleSave = (updatedText) => {
         setCurrentAbout(updatedText);
-        setIsModalOpen(false); // Close modal after saving
+        setIsModalOpen(false); // Close modal after savin
+
+
     };
 
 
@@ -70,6 +81,9 @@ const ProfileAbout = ({ aboutText, onEdit }) => {
                 onClose={() => setIsModalOpen(false)}
                 aboutText={currentAbout}
                 onSave={handleSave}
+                user={user}
+                token={token}
+                setUserAndToken={setUserAndToken}
             />
 
             <div style={styles.horizontalDivider}></div>

@@ -26,14 +26,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True)
+    website = models.CharField(max_length=500, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     user_type = models.CharField(max_length=50)
     location = models.CharField(max_length=100)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     cover_picture = models.ImageField(upload_to='cover_pictures/', blank=True, null=True)
-    tagline=models.CharField(max_length=100,null=True,blank=True)
+    tagline=models.CharField(max_length=200,null=True,blank=True)
+    summary = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    email_vis=models.BooleanField(default=False)
+    phone_vis=models.BooleanField(default=False)
+    email_vis=models.BooleanField(default=False)
+    website_vis=models.BooleanField(default=False)
 
     followers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
     friends = models.ManyToManyField('self', symmetrical=False, related_name='friends_set', blank=True)
@@ -88,12 +94,19 @@ class Post(models.Model):
         ('journal', 'Journal'),
     ]
 
+    POST_VISIBILITY_CHOICES = [
+        ('hidden', 'Hidden'),
+        ('private', 'Private'),
+        ('public', 'Public'),
+    ]
+
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
     disciplines = models.ManyToManyField('Discipline', blank=True, related_name='posts')
     content = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     repost_of = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='reposts')
     post_type = models.CharField(max_length=20, choices=POST_TYPE_CHOICES, default='post')
+    visibility_type = models.CharField(max_length=20, choices=POST_VISIBILITY_CHOICES, default='public')
     journal = models.ForeignKey(Journal, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
 
     def __str__(self):
