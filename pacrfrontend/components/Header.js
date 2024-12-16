@@ -265,11 +265,11 @@ const Header = () => {
       </div>
       <div style={navMenuWrapStyle}>
       <div style={navIconsStyle}>
-        <div style={navButtonStyle}>
-          <div style={iconCircleStyle}>
-            <img style={iconStyle} src="Home Black Icon.svg" alt="home" onClick={()=>{
+        <div style={navButtonStyle} onClick={()=>{
               router.push('/dashboard')
-            }}/>
+            }}>
+          <div style={iconCircleStyle} >
+            <img style={iconStyle} src="Home Black Icon.svg" alt="home" />
           </div>
           <span style={navTextStyle}>Home</span>
         </div>

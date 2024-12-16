@@ -2,44 +2,54 @@ import React, { useState, useEffect } from 'react';
 import ReactModal from 'react-modal';
 import Select from 'react-select';
 
-const EditIntroModal = ({ isOpen, onClose, user, token, onSave }) => {
+const EditIntroModal = ({ isOpen, onClose, user, token, onSave, setUserAndToken }) => {
     const [formData, setFormData] = useState({
-        // firstName: user?.first_name || '',
-        // lastName: user?.last_name || '',
-        headline: user?.headline || '',
-        // country: user?.location?.split(', ')[1] || '', // Extract Country
-        // city: user?.location?.split(', ')[0] || '', // Extract City
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone_number: '',
+        date_of_birth: '',
         country: '',
         city: '',
-        contact: {
-            phone: '',
-            showPhone: false,
-            email: user?.email || '', // Fetch from user or default to empty
-            showEmail: false, // Default to hidden if not explicitly enabled
-            website: '',
-            showWebsite: false,
-        },
+        tagline: '',
+        website: '',
+        email_vis: false,
+        phone_vis: false,
+        website_vis: false,
     });
 
-    const [countries, setCountries] = useState([]); // List of countries
-    const [cities, setCities] = useState([]); // List of cities for the selected country
+    const [countries, setCountries] = useState([]);
+    const [cities, setCities] = useState([]);
 
+    // Populate formData with user information
     useEffect(() => {
         if (user) {
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                headline: user?.headline || prevFormData.headline,
-                contact: {
-                    ...prevFormData.contact,
-                    email: user?.email || prevFormData.contact.email,
-                    phone: user?.contact?.phone || prevFormData.contact.phone,
-                    website: user?.contact?.website || prevFormData.contact.website,
-                },
-            }));
+            const locationParts = user.location ? user.location.split(',').map(part => part.trim()) : ['', ''];
+            const [city, country] = locationParts.length === 2 ? locationParts : [locationParts[0], ''];
+            
+            setFormData({
+                first_name: user.first_name || '',
+                last_name: user.last_name || '',
+                email: user.email || '',
+                phone_number: user.phone_number || '',
+                date_of_birth: user.date_of_birth || '',
+                country: country || '',
+                city: city || '',
+                tagline: user.tagline || '',
+                website: user.website || '',
+                email_vis: user.email_vis || false,
+                phone_vis: user.phone_vis || false,
+                website_vis: user.website_vis || false,
+            });
+
+            setCities((prevCities) => [
+                ...prevCities,
+                { label: city, value: city }
+            ]);
         }
     }, [user]);
-    
 
+    // Fetch countries on component mount
     useEffect(() => {
         fetch('https://restcountries.com/v3.1/all')
             .then((response) => response.json())
@@ -84,70 +94,50 @@ const EditIntroModal = ({ isOpen, onClose, user, token, onSave }) => {
         setFormData({ ...formData, city: selectedOption.value });
     };
 
-    if (cities.length === 0 && formData.country) {
-        console.warn('No cities available for the selected country.');
-    }
-
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
 
-        if (name.includes('.')) {
-            const [parent, child] = name.split('.');
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                [parent]: {
-                    ...prevFormData[parent],
-                    [child]: value,
-                },
-            }));
-        } else {
-            setFormData((prevFormData) => ({
-                ...prevFormData,
-                [name]: value,
-            }));
-        }
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
     };
 
+    const handleSave = async () => {
+        const updatedData = {
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            email: formData.email,
+            phone_number: formData.phone_number,
+            date_of_birth: formData.date_of_birth,
+            location: `${formData.city}, ${formData.country}`, // Combine city and country
+            tagline: formData.tagline,
+            website: formData.website,
+            email_vis: formData.email_vis,
+            phone_vis: formData.phone_vis,
+            website_vis: formData.website_vis,
+        };
 
-
-    const saveUserData = async (data) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}`, {
+            const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(updatedData),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Failed to save user data.');
             }
-    
-            const result = await response.json();
-            console.log('User data saved:', result);
-            return result;
-        } catch (error) {
-            console.error('Error saving user data:', error);
-            throw error;
-        }
-    };
 
-    const handleSave = async () => {
-        const updatedData = {
-            id: user.id,
-            email: formData.contact.email,
-            phone_number: formData.contact.phone,
-            location: `${formData.city}, ${formData.country}`,
-            tagline: formData.headline,
-        };
-    
-        try {
-            const savedData = await saveUserData(updatedData);
-            console.log('Saved data:', savedData);
+            const updatedUser = await response.json();
+            setUserAndToken(updatedUser, token);
+            onSave(updatedUser);
             onClose();
         } catch (error) {
+            console.error(error);
             alert('Failed to save user details. Please try again.');
         }
     };
@@ -161,7 +151,6 @@ const EditIntroModal = ({ isOpen, onClose, user, token, onSave }) => {
                 content: styles.modal,
             }}
         >
-            {/* Header */}
             <div style={styles.header}>
                 <span style={styles.modalHeading}>Edit Intro</span>
                 <button style={styles.closeButton} onClick={onClose}>
@@ -169,161 +158,137 @@ const EditIntroModal = ({ isOpen, onClose, user, token, onSave }) => {
                 </button>
             </div>
 
-            {/* Body */}
             <div style={styles.body}>
-                <div style={styles.introInfo}>
+                <div style={styles.scrollableContent}>
                     <div style={styles.field}>
-                        <label style={styles.label}>Headline</label>
+                        <label style={styles.label}>First Name</label>
                         <input
                             style={styles.input}
                             type="text"
-                            name="headline"
-                            value={formData.headline}
+                            name="first_name"
+                            value={formData.first_name}
                             onChange={handleInputChange}
                         />
                     </div>
-                </div>
-                {/* Location Fields */}
-                <div style={styles.mainWrap}>
-                    <h3 style={styles.sectionHeading}>Location</h3>
-                    <div style={styles.introInfo}>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Country/Region</label>
-                            <Select
-                                options={countries}
-                                value={countries.find((c) => c.value === formData.country)}
-                                onChange={handleCountryChange}
-                                placeholder="Type to search country"
-                                styles={customStyles}
-                            />
-                        </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>City</label>
-                            {formData.country ? (
-                                cities.length > 0 ? (
-                                    // If cities are available, show the dropdown
-                                    <Select
-                                        options={cities}
-                                        value={cities.find((c) => c.value === formData.city)}
-                                        onChange={(selectedOption) => setFormData({ ...formData, city: selectedOption.value })}
-                                        placeholder="Type to search city"
-                                        styles={customStyles}
-                                    />
-                                ) : (
-                                    // If no cities are available, show a manual input
-                                    <input
-                                        type="text"
-                                        value={formData.city}
-                                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                                        placeholder="Enter city manually"
-                                        style={styles.input}
-                                    />
-                                )
-                            ) : (
-                                <Select
-                                    options={[]}
-                                    placeholder="Select country first"
-                                    isDisabled={true}
-                                    styles={customStyles}
-                                />
-                            )}
 
-                        </div>
+                    <div style={styles.field}>
+                        <label style={styles.label}>Last Name</label>
+                        <input
+                            style={styles.input}
+                            type="text"
+                            name="last_name"
+                            value={formData.last_name}
+                            onChange={handleInputChange}
+                        />
                     </div>
-                </div>
+                    
+                    <div style={styles.field}>
+                        <label style={styles.label}>Tagline</label>
+                        <input
+                            style={styles.input}
+                            type="text"
+                            name="tagline"
+                            value={formData.tagline}
+                            onChange={handleInputChange}
+                        />
+                    </div>
 
-
-                {/* Contact Info Fields */}
-                <div style={styles.mainWrap}>
-                    <h3 style={styles.sectionHeading}>Contact Info</h3>
-                    <div style={styles.introInfo}>
-
-                        <div style={styles.field}>
-                        <p style={styles.label}>Email</p>
-                            {formData.contact.email ? (
-                                <>
-                                    <p style={styles.dynamicEmail}>
-                                        {formData.contact.email}
-                                    </p>
-                                    <label style={styles.checklabel}>
-                                        <input
-                                            type="checkbox"
-                                            name="contact.showEmail"
-                                            checked={formData.contact.showEmail}
-                                            onChange={(e) => {
-                                                const { name, checked } = e.target;
-                                                const [parent, child] = name.split('.');
-                                                setFormData((prevFormData) => ({
-                                                    ...prevFormData,
-                                                    [parent]: {
-                                                        ...prevFormData[parent],
-                                                        [child]: checked,
-                                                    },
-                                                }));
-                                            }}
-                                        />
-                                        Show Email
-                                    </label>
-                                </>
-                            ) : (
-                                <p style={{ fontSize: '14px', color: '#777' }}>No email found.</p>
-                            )}
-                        </div>
-
-                        <div style={styles.field}>
-                            <label style={styles.label}>Phone</label>
+                    <div style={styles.field}>
+                        <label style={styles.label}>Email</label>
+                        <input
+                            style={styles.input}
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            disabled
+                        />
+                        <label>
                             <input
-                                style={styles.input}
-                                type="text"
-                                name="contact.phone"
-                                value={formData.contact.phone}
+                                type="checkbox"
+                                name="email_vis"
+                                checked={formData.email_vis}
                                 onChange={handleInputChange}
                             />
-                            <label style={styles.checklabel}>
-                                <input
-                                    type="checkbox"
-                                    name="showPhone"
-                                    checked={formData.contact.showPhone}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            contact: { ...formData.contact, showPhone: e.target.checked },
-                                        })
-                                    }
-                                />
-                                Show phone number
-                            </label>
-                        </div>
+                            Show Email
+                        </label>
+                    </div>
 
-                        <div style={styles.field}>
-                            <label style={styles.label}>Website</label>
+                    <div style={styles.field}>
+                        <label style={styles.label}>Phone Number</label>
+                        <input
+                            style={styles.input}
+                            type="text"
+                            name="phone_number"
+                            value={formData.phone_number}
+                            onChange={handleInputChange}
+                        />
+                        <label>
                             <input
-                                style={styles.input}
-                                type="url"
-                                name="contact.website"
-                                value={formData.contact.website}
+                                type="checkbox"
+                                name="phone_vis"
+                                checked={formData.phone_vis}
                                 onChange={handleInputChange}
                             />
-                            <label style={styles.checklabel}>
-                                <input
-                                    type="checkbox"
-                                    name="showWebsite"
-                                    checked={formData.contact.showWebsite}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            contact: { ...formData.contact, showWebsite: e.target.checked },
-                                        })
-                                    }
-                                />
-                                Show website link
-                            </label>
-                        </div>
+                            Show Phone Number
+                        </label>
+                    </div>
+
+                    <div style={styles.field}>
+                        <label style={styles.label}>Date of Birth</label>
+                        <input
+                            style={styles.input}
+                            type="date"
+                            name="date_of_birth"
+                            value={formData.date_of_birth}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+
+                    <div style={styles.field}>
+                        <label style={styles.label}>Country</label>
+                        <Select
+                            options={countries}
+                            value={countries.find((c) => c.value === formData.country)}
+                            onChange={handleCountryChange}
+                            placeholder="Select a country"
+                            styles={customStyles}
+                        />
+                    </div>
+
+                    <div style={styles.field}>
+                        <label style={styles.label}>City</label>
+                        <Select
+                            options={cities}
+                            value={cities.find((c) => c.value === formData.city)}
+                            onChange={handleCityChange}
+                            placeholder="Select a city"
+                            styles={customStyles}
+                        />
+                    </div>
+
+
+                    <div style={styles.field}>
+                        <label style={styles.label}>Website</label>
+                        <input
+                            style={styles.input}
+                            type="url"
+                            name="website"
+                            value={formData.website}
+                            onChange={handleInputChange}
+                        />
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="website_vis"
+                                checked={formData.website_vis}
+                                onChange={handleInputChange}
+                            />
+                            Show Website
+                        </label>
                     </div>
                 </div>
             </div>
 
-            {/* Footer */}
             <div style={styles.footer}>
                 <button style={styles.saveButton} onClick={handleSave}>
                     Save
@@ -350,12 +315,6 @@ const styles = {
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
-    },
-    modalHeading: {
-        fontSize: '20px',
-        color: '#313131',
-        fontWeight: '700',
     },
     header: {
         display: 'flex',
@@ -364,95 +323,53 @@ const styles = {
         padding: '14px 20px',
         borderBottom: '1px solid #e5e5e5',
         backgroundColor: '#fff',
-        fontWeight: 'bold',
-        fontSize: '18px',
-        color: '#333',
+    },
+    modalHeading: {
+        fontSize: '20px',
+        color: '#313131',
+        fontWeight: '700',
     },
     closeButton: {
         background: 'none',
         border: 'none',
         fontSize: '30px',
-        lineHeight: '22px',
         cursor: 'pointer',
-        color: '#000',
     },
     body: {
         flex: 1,
         overflowY: 'auto',
-        padding: '26px 24px',
-        backgroundColor: '#fff',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '32px',
+        padding: '20px',
+        maxHeight: 'calc(100vh - 200px)',
+
     },
-    introInfo: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-    },
-    mainWrap: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-    },
+   
     field: {
-        width: '100%',
+        marginBottom: '20px',
     },
     label: {
         display: 'block',
         marginBottom: '8px',
         fontWeight: '500',
-        fontSize: '14px',
-        color: '#000000bf',
     },
     input: {
         width: '100%',
-        height: '48px',
-        borderRadius: '200px',
-        border: '0.5px solid #ccc',
-        backgroundColor: '#f2f2f2',
-        padding: '10px 24px',
-        fontSize: '14px',
-        fontWeight: '400',
-        lineHeight: '13.2px',
-        letterSpacing: '2%',
-        color: '#313131',
-    },
-    dynamicEmail: {
-        color: '#70D4FC',
-        margin: '20px 0 16px',
-        fontWeight: '500',
-    },
-    checklabel: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        fontSize: '12px',
-        color: '#777',
-        marginTop: '10px',
-        cursor: 'pointer',
-    },
-    sectionHeading: {
-        fontWeight: 'bold',
-        fontSize: '20px',
-        color: '#313131',
+        padding: '10px',
+        borderRadius: '4px',
+        border: '1px solid #ccc',
     },
     footer: {
         padding: '12px 20px',
         borderTop: '1px solid #e5e5e5',
         backgroundColor: '#fff',
-        display: 'flex',
-        justifyContent: 'flex-end',
+        textAlign: 'right',
     },
     saveButton: {
         backgroundColor: '#70d4fc',
-        borderRadius: '200px',
-        padding: '16px 40px',
+        padding: '10px 20px',
         fontSize: '16px',
-        lineHeight: '18px',
-        fontWeight: '500',
-        border: 'none',
         color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
         cursor: 'pointer',
     },
 };
@@ -461,26 +378,7 @@ const customStyles = {
     control: (provided) => ({
         ...provided,
         width: '100%',
-        height: '48px',
-        borderRadius: '200px',
-        border: '0.5px solid #ccc',
-        backgroundColor: '#f2f2f2',
-        padding: '0 24px',
-        fontSize: '14px',
-        fontWeight: '400',
-        lineHeight: '13.2px',
-        letterSpacing: '2%',
-        color: '#313131',
-        boxShadow: 'none',
-        '&:hover': { borderColor: '#aaa' }, // Hover effect
-    }),
-    singleValue: (provided) => ({
-        ...provided,
-        color: '#313131',
-    }),
-    placeholder: (provided) => ({
-        ...provided,
-        color: '#aaa',
+        padding: '10px',
     }),
 };
 

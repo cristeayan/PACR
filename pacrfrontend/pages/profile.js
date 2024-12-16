@@ -447,6 +447,7 @@ const Profile = () => {
             onClose={closeEditIntroModal}
             user={user}
             token={token}
+            setUserAndToken={setUserAndToken}
             onSave={handleSave}
           />
 
@@ -455,15 +456,16 @@ const Profile = () => {
             <p style={userLocationStyle}>{user?.location || 'Add your location here'}</p>
             <div style={dotWrapperStyle}></div>
             <div style={userContactWrapStyle}>
-              {!(formData.contact.showPhone || formData.contact.showEmail || formData.contact.showWebsite) ? (
+              {!(user?.phone_vis || user?.email_vis || user?.website_vis) ? (
                 <p style={{ fontSize: '14px', color: '#939393' }}>
                   Your contact details will be shown here.
                 </p>
               ) : (
                 <>
-                  {formData.contact.showPhone && (
+                  {/* Phone Number */}
+                  {user?.phone_vis && (
                     <a
-                      href={`tel:${formData.contact.phone}`}
+                      href={`tel:${user?.phone_number}`}
                       style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
                     >
                       <img
@@ -473,13 +475,15 @@ const Profile = () => {
                         onMouseLeave={() => setTooltip({ type: '', visible: false })}
                       />
                       {tooltip.visible && tooltip.type === 'phone' && (
-                        <div style={tooltipStyles}>{formData.contact.phone}</div>
+                        <div style={tooltipStyles}>{user?.phone_number}</div>
                       )}
                     </a>
                   )}
-                  {formData.contact.showEmail && (
+
+                  {/* Email */}
+                  {user?.email_vis && (
                     <a
-                      href={`mailto:${formData.contact.email}`}
+                      href={`mailto:${user?.email}`}
                       style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
                     >
                       <img
@@ -489,13 +493,15 @@ const Profile = () => {
                         onMouseLeave={() => setTooltip({ type: '', visible: false })}
                       />
                       {tooltip.visible && tooltip.type === 'email' && (
-                        <div style={tooltipStyles}>{formData.contact.email}</div>
+                        <div style={tooltipStyles}>{user?.email}</div>
                       )}
                     </a>
                   )}
-                  {formData.contact.showWebsite && (
+
+                  {/* Website */}
+                  {user?.website_vis && (
                     <a
-                      href={formData.contact.website.startsWith('http') ? formData.contact.website : `https://${formData.contact.website}`}
+                      href={user?.website.startsWith('http') ? user?.website : `https://${user?.website}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ position: 'relative', cursor: 'pointer', textDecoration: 'none' }}
@@ -507,7 +513,7 @@ const Profile = () => {
                         onMouseLeave={() => setTooltip({ type: '', visible: false })}
                       />
                       {tooltip.visible && tooltip.type === 'website' && (
-                        <div style={tooltipStyles}>{formData.contact.website}</div>
+                        <div style={tooltipStyles}>{user?.website}</div>
                       )}
                     </a>
                   )}
