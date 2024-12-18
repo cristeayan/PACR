@@ -369,7 +369,7 @@ const styles = {
         fontSize: '16px',
         color: '#fff',
         border: 'none',
-        borderRadius: '4px',
+        borderRadius: '40px',
         cursor: 'pointer',
     },
 };

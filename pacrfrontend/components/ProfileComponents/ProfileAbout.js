@@ -229,6 +229,7 @@ const styles = {
     aboutEditIcon: {
         width: '26px',
     },
+    
     placeholderText: {
         fontSize: '14px',
         color: '#adadad',

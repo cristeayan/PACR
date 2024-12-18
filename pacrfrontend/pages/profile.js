@@ -130,43 +130,6 @@ const Profile = () => {
   };
 
 
-
-  // const handleSave = async () => {
-  //   try {
-  //     const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
-  //       method: 'PATCH',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify(formData),
-  //     });
-
-  //     if (response.ok) {
-  //       const updatedData = await response.json();
-  //       console.log("Updated data:", updatedData);
-
-  //       setUserAndToken(updatedData, token);
-
-  //       closeIntroModal();
-  //     } else {
-  //       console.error("Failed to save:", response.statusText);
-  //       alert("Failed to save changes. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error saving data:", error);
-  //     alert("An error occurred. Please try again.");
-  //   }
-  // };
-
-  //    const handleSave = () => {
-  //   // Implement save logic here
-  //   console.log('Saved data:', formData);
-  //   closeIntroModal();
-  // };
-
-
-
   // Save Uploaded Image
   const saveImage = async () => {
     if (previewImage) {
