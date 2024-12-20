@@ -59,20 +59,22 @@ const ProfileEducation = () => {
 
     const renderEducationItem = (education, index) => (
         <div style={styles.educationItem} key={index}>
-            <img
-                src={education.logo || "postdoctoral_icon.png"} // Default icon if no logo
-                alt={`${education.school} Logo`}
-                style={styles.educationIcon}
-            />
-            <div style={styles.educationDetailWrap}>
-                <div style={styles.educationTitleWrap}>
-                    <p style={styles.educationTitle}>{education.school}</p>
-                    <p style={styles.roleTitle}>{education.degree}</p>
-                </div>
-                <div>
-                    <p style={styles.educationLocation}>
-                        {education.startMonth} {education.startYear} - {education.endMonth} {education.endYear}
-                    </p>
+            <div style={styles.educationLeftWrap}>
+                <img
+                    src={education.logo || "postdoctoral_icon.png"} // Default icon if no logo
+                    alt={`${education.school} Logo`}
+                    style={styles.educationIcon}
+                />
+                <div style={styles.educationDetailWrap}>
+                    <div style={styles.educationTitleWrap}>
+                        <p style={styles.educationTitle}>{education.school}</p>
+                        <p style={styles.roleTitle}>{education.degree}</p>
+                    </div>
+                    <div>
+                        <p style={styles.educationLocation}>
+                            {education.startMonth} {education.startYear} - {education.endMonth} {education.endYear}
+                        </p>
+                    </div>
                 </div>
             </div>
             {/* Edit Icon for each education */}
@@ -213,6 +215,13 @@ const styles = {
     educationItem: {
         display: 'flex',
         alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: '16px',
+        width: '100%',
+    },
+    educationLeftWrap: {
+        display: 'flex',
+        alignItems: 'flex-start',
         gap: '16px',
     },
     educationIcon: {
@@ -255,7 +264,6 @@ const styles = {
         alignItems: 'center',
         gap: '16px',
         width: 'auto',
-        // height: '26px',
         cursor: 'pointer',
     },
     addButton: {
