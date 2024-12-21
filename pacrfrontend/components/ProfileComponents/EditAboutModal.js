@@ -75,7 +75,6 @@ const EditAboutModal = ({ isOpen, onClose, aboutText, onSave, user, token,setUse
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            height: '100vh',
         },
         modalHeading: {
             fontSize: '20px',
@@ -122,7 +121,8 @@ const EditAboutModal = ({ isOpen, onClose, aboutText, onSave, user, token,setUse
         },
         textarea: {
             width: '100%',
-            height: '150px',
+            height: '164px',
+            minHeight: '42px',
             borderRadius: '12px',
             border: '1px solid #ccc',
             padding: '10px',
