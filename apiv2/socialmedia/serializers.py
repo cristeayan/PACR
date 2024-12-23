@@ -158,33 +158,40 @@ class EducationSerializer(serializers.ModelSerializer):
         return education
 
 
+
 class JobExperienceMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobExperienceMedia
-        fields = ['id', 'job_experience', 'file', 'description', 'uploaded_at']
+        fields = ['id', 'file', 'description', 'uploaded_at']
 
 
 class JobExperienceSerializer(serializers.ModelSerializer):
-    company = CompanySerializer()
-    media = JobExperienceMediaSerializer(many=True, read_only=True)
+    media = JobExperienceMediaSerializer(many=True, required=False)
 
     class Meta:
         model = JobExperience
         fields = [
             'id',
-            'user',
             'company',
             'position',
-            'department',
+            'start_month',  # Added start_month
             'start_year',
+            'end_month',    # Added end_month
             'end_year',
             'is_current',
             'description',
+            'employment_type',
+            'job_type',      # Added job_type
             'media',
         ]
 
     def create(self, validated_data):
-        company_data = validated_data.pop('company')
-        company, _ = Company.objects.get_or_create(name=company_data['name'], defaults=company_data)
-        job_experience = JobExperience.objects.create(company=company, **validated_data)
+        # Handle media data if provided
+        media_data = validated_data.pop('media', [])
+        job_experience = JobExperience.objects.create(**validated_data)
+
+        # Save media files
+        for media in media_data:
+            JobExperienceMedia.objects.create(job_experience=job_experience, **media)
+
         return job_experience
