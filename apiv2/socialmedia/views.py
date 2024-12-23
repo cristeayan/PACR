@@ -243,6 +243,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
 
 class EducationViewSet(viewsets.ModelViewSet):
+    queryset = Education.objects.all()
     serializer_class = EducationSerializer
     permission_classes = [IsAuthenticated]
 
@@ -254,6 +255,7 @@ class EducationViewSet(viewsets.ModelViewSet):
 
 
 class JobExperienceViewSet(viewsets.ModelViewSet):
+    queryset = JobExperience.objects.all()
     serializer_class = JobExperienceSerializer
     permission_classes = [IsAuthenticated]
 
@@ -263,14 +265,19 @@ class JobExperienceViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        """Handles creation of Job Experience with Media"""
+        media_files = request.FILES.getlist('media')  # Get multiple media files
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        job_experience = serializer.save(user=request.user)
 
-class JobExperienceMediaViewSet(viewsets.ModelViewSet):
-    serializer_class = JobExperienceMediaSerializer
-    permission_classes = [IsAuthenticated]
+        # Save associated media files
+        for media_file in media_files:
+            JobExperienceMedia.objects.create(
+                job_experience=job_experience,
+                file=media_file,
+                description=request.data.get('description', '')
+            )
 
-    def get_queryset(self):
-        return JobExperienceMedia.objects.filter(job_experience__user=self.request.user)
-
-    def perform_create(self, serializer):
-        job_experience = JobExperience.objects.get(id=self.request.data['job_experience'])
-        serializer.save(job_experience=job_experience)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
