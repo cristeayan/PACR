@@ -3,24 +3,25 @@ import ReactModal from "react-modal";
 
 const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) => {
     const initialFormData = {
-        title: "",
+        position: "",
         company: "",
-        employmentType: "",
+        employee_type: "",
         location: "",
-        locationType: "",
-        startMonth: "",
-        startYear: "",
-        endMonth: "",
-        endYear: "",
+        department:"",
+        job_type: "",
+        start_month: "",
+        start_year: "",
+        end_month: "",
+        end_year: "",
         description: "",
-        currentlyWorking: false,
+        is_current: false,
     };
 
     const [formData, setFormData] = useState(initialFormData);
     const [locationOptions, setLocationOptions] = useState([]);
     const [showLocationDropdown, setShowLocationDropdown] = useState(false);
 
-    const employmentTypes = [
+    const employee_types = [
         "Please select",
         "Full-time",
         "Part-time",
@@ -32,7 +33,7 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
         "Seasonal",
     ];
 
-    const locationTypes = ["On-site", "Hybrid", "Remote"];
+    const job_types = ["On-site", "Hybrid", "Remote"];
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December",
@@ -63,9 +64,9 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
     const handleCheckboxChange = () => {
         setFormData((prev) => ({
             ...prev,
-            currentlyWorking: !prev.currentlyWorking,
-            endMonth: "",
-            endYear: "",
+            is_current: !prev.is_current,
+            end_month: "",
+            end_year: "",
         }));
     };
 
@@ -96,12 +97,12 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
     };
 
     const calculateDuration = () => {
-        if (formData.startMonth && formData.startYear) {
-            const startDate = new Date(formData.startYear, months.indexOf(formData.startMonth));
-            const endDate = formData.currentlyWorking
+        if (formData.start_month && formData.start_year) {
+            const startDate = new Date(formData.start_year, months.indexOf(formData.start_month));
+            const endDate = formData.is_current
                 ? new Date()
-                : formData.endYear && formData.endMonth
-                    ? new Date(formData.endYear, months.indexOf(formData.endMonth))
+                : formData.end_year && formData.end_month
+                    ? new Date(formData.end_year, months.indexOf(formData.end_month))
                     : null;
 
             if (endDate && endDate > startDate) {
@@ -133,14 +134,14 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
             </div>
             <div style={styles.body}>
                 <div style={styles.field}>
-                    <label style={styles.label}>Title</label>
+                    <label style={styles.label}>position</label>
                     <input
                         type="text"
-                        name="title"
-                        value={formData.title}
+                        name="position"
+                        value={formData.position}
                         onChange={handleInputChange}
                         style={styles.input}
-                        placeholder="Enter your role title"
+                        placeholder="Enter your role position"
                     />
                 </div>
                 <div style={styles.field}>
@@ -157,12 +158,12 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
                 <div style={styles.field}>
                     <label style={styles.label}>Employment Type</label>
                     <select
-                        name="employmentType"
-                        value={formData.employmentType}
+                        name="employee_type"
+                        value={formData.employee_type}
                         onChange={handleInputChange}
                         style={styles.input}
                     >
-                        {employmentTypes.map((type) => (
+                        {employee_types.map((type) => (
                             <option key={type} value={type}>
                                 {type}
                             </option>
@@ -194,14 +195,25 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
                     )}
                 </div>
                 <div style={styles.field}>
+                    <label style={styles.label}>Department</label>
+                    <input
+                        type="text"
+                        name="department"
+                        value={formData.department}
+                        onChange={handleInputChange}
+                        style={styles.input}
+                        placeholder="Enter department name"
+                    />
+                </div>
+                <div style={styles.field}>
                     <label style={styles.label}>Location Type</label>
                     <select
-                        name="locationType"
-                        value={formData.locationType}
+                        name="job_type"
+                        value={formData.job_type}
                         onChange={handleInputChange}
                         style={styles.input}
                     >
-                        {locationTypes.map((type) => (
+                        {job_types.map((type) => (
                             <option key={type} value={type}>
                                 {type}
                             </option>
@@ -212,8 +224,8 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
                     <label style={styles.label}>Start Date</label>
                     <div style={{ display: "flex", gap: "10px" }}>
                         <select
-                            name="startMonth"
-                            value={formData.startMonth}
+                            name="start_month"
+                            value={formData.start_month}
                             onChange={handleInputChange}
                             style={styles.input}
                         >
@@ -225,8 +237,8 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
                             ))}
                         </select>
                         <select
-                            name="startYear"
-                            value={formData.startYear}
+                            name="start_year"
+                            value={formData.start_year}
                             onChange={handleInputChange}
                             style={styles.input}
                         >
@@ -243,19 +255,19 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
                     <label style={styles.workingCheckboxLabel}>
                         <input
                             type="checkbox"
-                            checked={formData.currentlyWorking}
+                            checked={formData.is_current}
                             onChange={handleCheckboxChange}
                         />
                         I am currently working in this role
                     </label>
                 </div>
-                {!formData.currentlyWorking && (
+                {!formData.is_current && (
                     <div style={styles.field}>
                         <label style={styles.label}>End Date</label>
                         <div style={{ display: "flex", gap: "10px" }}>
                             <select
-                                name="endMonth"
-                                value={formData.endMonth}
+                                name="end_month"
+                                value={formData.end_month}
                                 onChange={handleInputChange}
                                 style={styles.input}
                             >
@@ -267,8 +279,8 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
                                 ))}
                             </select>
                             <select
-                                name="endYear"
-                                value={formData.endYear}
+                                name="end_year"
+                                value={formData.end_year}
                                 onChange={handleInputChange}
                                 style={styles.input}
                             >

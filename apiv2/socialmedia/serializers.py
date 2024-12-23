@@ -174,20 +174,23 @@ class JobExperienceSerializer(serializers.ModelSerializer):
             'id',
             'company',
             'position',
-            'department',
+            'start_month',  # Added start_month
             'start_year',
+            'end_month',    # Added end_month
             'end_year',
             'is_current',
             'description',
-            'media'
+            'employment_type',
+            'job_type',      # Added job_type
+            'media',
         ]
 
     def create(self, validated_data):
-        # Extract media data
+        # Handle media data if provided
         media_data = validated_data.pop('media', [])
         job_experience = JobExperience.objects.create(**validated_data)
 
-        # Save media related to job experience
+        # Save media files
         for media in media_data:
             JobExperienceMedia.objects.create(job_experience=job_experience, **media)
 

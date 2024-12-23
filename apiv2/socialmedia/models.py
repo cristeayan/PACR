@@ -181,17 +181,71 @@ class Education(models.Model):
         return f"{self.degree} at {self.school.name} ({self.start_year} - {self.end_year})"
 
 class JobExperience(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='job_experiences')
+    # Employment Type Choices
+    EMPLOYMENT_TYPE_CHOICES = [
+        ('full_time', 'Full-time'),
+        ('part_time', 'Part-time'),
+        ('self_employed', 'Self-employed'),
+        ('freelance', 'Freelance'),
+        ('contract', 'Contract'),
+        ('internship', 'Internship'),
+        ('apprenticeship', 'Apprenticeship'),
+        ('seasonal', 'Seasonal'),
+    ]
+
+    # Job Type Choices
+    JOB_TYPE_CHOICES = [
+        ("on_site", "On-site"),
+        ("hybrid", "Hybrid"),
+        ("remote", "Remote")
+    ]
+
+    # Month Choices
+    MONTH_CHOICES = [
+        ("January", "January"),
+        ("February", "February"),
+        ("March", "March"),
+        ("April", "April"),
+        ("May", "May"),
+        ("June", "June"),
+        ("July", "July"),
+        ("August", "August"),
+        ("September", "September"),
+        ("October", "October"),
+        ("November", "November"),
+        ("December", "December"),
+    ]
+
+    # Fields
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='job_experiences'
+    )
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees')
     position = models.CharField(max_length=255)
-    department = models.CharField(max_length=255, blank=True, null=True)
+    start_month = models.CharField(max_length=10, choices=MONTH_CHOICES, blank=True, null=True)
     start_year = models.PositiveIntegerField()
+    end_month = models.CharField(max_length=10, choices=MONTH_CHOICES, blank=True, null=True)
     end_year = models.PositiveIntegerField(blank=True, null=True)
     is_current = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
+    employment_type = models.CharField(
+        max_length=20,
+        choices=EMPLOYMENT_TYPE_CHOICES,
+        default='full_time'
+    )
+    job_type = models.CharField(
+        max_length=20,
+        choices=JOB_TYPE_CHOICES,
+        default='on_site'
+    )
 
     def __str__(self):
-        return f"{self.position} at {self.company.name} ({self.start_year} - {self.end_year if self.end_year else 'Present'})"
+        end_date = f"{self.end_month} {self.end_year}" if self.end_year else "Present"
+        return f"{self.position} at {self.company.name} ({self.start_month} {self.start_year} - {end_date})"
+
+
 
 class JobExperienceMedia(models.Model):
     job_experience = models.ForeignKey(JobExperience, on_delete=models.CASCADE, related_name='media')

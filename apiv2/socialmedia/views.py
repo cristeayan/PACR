@@ -258,26 +258,56 @@ class JobExperienceViewSet(viewsets.ModelViewSet):
     queryset = JobExperience.objects.all()
     serializer_class = JobExperienceSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # For handling media uploads
 
     def get_queryset(self):
+        # Filter job experiences for the logged-in user
         return JobExperience.objects.filter(user=self.request.user)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     def create(self, request, *args, **kwargs):
-        """Handles creation of Job Experience with Media"""
-        media_files = request.FILES.getlist('media')  # Get multiple media files
-        serializer = self.get_serializer(data=request.data)
+        """Handles creation of Job Experience with Media, creates company if not exists"""
+        # Create a mutable copy of request data
+        data = request.data.copy()  # Make data mutable
+
+        # Get media files if any
+        media_files = request.FILES.getlist('media')
+
+        # Check if company already exists, or create a new one
+        company_name = data.get('company')
+        location = data.get('location')  # New field for Company
+        department = data.get('department')  # New field for Company
+
+        if not company_name:
+            return Response({"error": "Company name is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Find or create company, and update location and department if needed
+        company, created = Company.objects.get_or_create(name=company_name, defaults={
+            'location': location,
+            'industry': department  # Save department as 'industry'
+        })
+
+        # If company already exists, update location and department if provided
+        if not created:
+            if location:
+                company.location = location
+            if department:
+                company.industry = department
+            company.save()
+
+        # Add the company ID to the request data
+        data['company'] = company.id
+
+        # Serialize and validate job experience data
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         job_experience = serializer.save(user=request.user)
 
-        # Save associated media files
+        # Handle media uploads
         for media_file in media_files:
             JobExperienceMedia.objects.create(
                 job_experience=job_experience,
                 file=media_file,
-                description=request.data.get('description', '')
+                description=data.get('media_description', '')  # Optional description
             )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
