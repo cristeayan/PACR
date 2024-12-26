@@ -218,14 +218,101 @@ const styles = {
         borderRadius: '40px',
         cursor: 'pointer',
     },
-    placeholderWrap: {
-        textAlign: 'start',
-        // padding: '20px',
+
+    aboutEditIcon: {
+        width: '26px',
+        cursor: 'pointer',
     },
-    placeholderText: {
-        fontSize: '16px',
-        color: '#adadad',
-    }
+
+    placeholderInnerWrap: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: '16px',
+    },
+
+    placeholderIcon: {
+        width: '28px',
+    },
+
+    modalOverlay: {
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: '9999',
+    },
+    modalDeleteContent: {
+        position: 'relative',
+        background: '#fff',
+        border: 'none',
+        borderRadius: '10px',
+        width: '100%',
+        maxWidth: '336px',
+        padding: '0',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '14px 20px',
+        borderBottom: '1px solid #e5e5e5',
+        backgroundColor: '#fff',
+    },
+    modalHeading: {
+        fontSize: '18px',
+        lineHeight: '22px',
+        color: '#313131',
+        fontWeight: '700',
+    },
+    closeButton: {
+        background: 'none',
+        border: 'none',
+        fontSize: '30px',
+        lineHeight: '28px',
+        cursor: 'pointer',
+    },
+    body: {
+        padding: '20px',
+    },
+    cancelButton: {
+        fontSize: '14px',
+        lineHeight: '16px',
+        fontWeight: '500',
+        backgroundColor: '#fff',
+        color: '#4FCFF5',
+        textDecoration: 'none',
+        padding: '12px 20px',
+        borderRadius: '200px',
+        textAlign: 'center',
+        border: '1px solid #4FCFF5',
+        cursor: 'pointer',
+    },
+    deleteModalButton: {
+        backgroundColor: '#70d4fc',
+        borderRadius: '200px',
+        padding: '12px 20px',
+        fontSize: '14px',
+        lineHeight: '16px',
+        fontWeight: '500',
+        border: 'none',
+        color: '#fff',
+        border: '1px solid #4FCFF5',
+        cursor: 'pointer',
+    },
+    footer: {
+        padding: '12px 20px',
+        borderTop: '1px solid #e5e5e5',
+        backgroundColor: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '12px',
+    },
 };
 
 export default ProfileExperience;
