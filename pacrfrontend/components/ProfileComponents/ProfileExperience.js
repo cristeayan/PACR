@@ -219,8 +219,8 @@ const styles = {
         cursor: 'pointer',
     },
     placeholderWrap: {
-        textAlign: 'center',
-        padding: '20px',
+        textAlign: 'start',
+        // padding: '20px',
     },
     placeholderText: {
         fontSize: '16px',
