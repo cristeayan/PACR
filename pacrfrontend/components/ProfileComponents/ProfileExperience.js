@@ -175,7 +175,7 @@ const ProfileExperience = () => {
 
 const styles = {
     experienceContainer: {
-        padding: '24px 28px',
+        padding: '32px 28px',
         backgroundColor: '#ffffff',
         borderRadius: '8px',
         boxShadow: '5px 4px 16px 0px #0000001C',
