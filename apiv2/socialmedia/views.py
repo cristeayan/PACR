@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser , JSONParser
 from django.contrib.auth import authenticate
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -246,68 +246,58 @@ class EducationViewSet(viewsets.ModelViewSet):
     queryset = Education.objects.all()
     serializer_class = EducationSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser]  # Use JSON parser explicitly
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Education.objects.none()
         return Education.objects.filter(user=self.request.user)
 
-    def perform_create(self, serializer):
+    @swagger_auto_schema(
+        request_body=EducationSerializer  # Use JSON body schema for Swagger
+    )
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         serializer.save(user=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class JobExperienceViewSet(viewsets.ModelViewSet):
     queryset = JobExperience.objects.all()
     serializer_class = JobExperienceSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]  # For handling media uploads
+    parser_classes = [MultiPartParser, JSONParser]  # Explicit parsers for file uploads
 
     def get_queryset(self):
-        # Filter job experiences for the logged-in user
+        # Handle Swagger schema generation for non-authenticated users
+        if not self.request.user.is_authenticated:
+            return JobExperience.objects.none()
         return JobExperience.objects.filter(user=self.request.user)
 
+    @swagger_auto_schema(
+        request_body=JobExperienceSerializer  # Use the serializer for schema generation
+    )
     def create(self, request, *args, **kwargs):
-        """Handles creation of Job Experience with Media, creates company if not exists"""
-        # Create a mutable copy of request data
-        data = request.data.copy()  # Make data mutable
-
-        # Get media files if any
+        """Handles creation of Job Experience with Media, and creates company if not exists."""
+        data = request.data.copy()
         media_files = request.FILES.getlist('media')
 
-        # Check if company already exists, or create a new one
+        # Handle company creation or lookup
         company_name = data.get('company')
-        location = data.get('location')  # New field for Company
-        department = data.get('department')  # New field for Company
+        company, _ = Company.objects.get_or_create(name=company_name)
+        data['company'] = company.id    
 
-        if not company_name:
-            return Response({"error": "Company name is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Find or create company, and update location and department if needed
-        company, created = Company.objects.get_or_create(name=company_name, defaults={
-            'location': location,
-            'industry': department  # Save department as 'industry'
-        })
-
-        # If company already exists, update location and department if provided
-        if not created:
-            if location:
-                company.location = location
-            if department:
-                company.industry = department
-            company.save()
-
-        # Add the company ID to the request data
-        data['company'] = company.id
-
-        # Serialize and validate job experience data
+        # Validate and save job experience
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         job_experience = serializer.save(user=request.user)
 
-        # Handle media uploads
+        # Save media files
         for media_file in media_files:
             JobExperienceMedia.objects.create(
                 job_experience=job_experience,
-                file=media_file,
-                description=data.get('media_description', '')  # Optional description
+                file=media_file
             )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
