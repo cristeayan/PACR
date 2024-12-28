@@ -286,7 +286,31 @@ class JobExperienceViewSet(viewsets.ModelViewSet):
         # Handle company creation or lookup
         company_name = data.get('company')
         company, _ = Company.objects.get_or_create(name=company_name)
-        data['company'] = company.id    
+        data['company'] = company.id
+        location = data.get('location')  # New field for Company
+        department = data.get('department')  # New field for Company
+
+        if not company_name:
+            return Response({"error": "Company name is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Find or create company, and update location and department if needed
+        company, created = Company.objects.get_or_create(name=company_name, defaults={
+            'location': location,
+            'industry': department  # Save department as 'industry'
+        })
+
+        # If company already exists, update location and department if provided
+        if not created:
+            if location:
+                company.location = location
+            if department:
+                company.industry = department
+            company.save()
+
+        # Add the company ID to the request data
+        data['company'] = company.id
+
+
 
         # Validate and save job experience
         serializer = self.get_serializer(data=data)
