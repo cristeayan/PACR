@@ -167,7 +167,7 @@ class JobExperienceMediaSerializer(serializers.ModelSerializer):
 
 class JobExperienceSerializer(serializers.ModelSerializer):
     media = JobExperienceMediaSerializer(many=True, required=False)
-
+    
     class Meta:
         model = JobExperience
         fields = [
