@@ -6,7 +6,9 @@ import { useUser } from '../../context/UserContext';
 const ProfileExperience = () => {
     const [experienceData, setExperienceData] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [currentExperience, setCurrentExperience] = useState(null);
+    const [experienceToDelete, setExperienceToDelete] = useState(null);
     const [modalKey, setModalKey] = useState(0);
     const { token } = useUser();
 
@@ -100,6 +102,16 @@ const ProfileExperience = () => {
         }
     };
 
+    const handleDeleteExperience = (id) => {
+        setExperienceData((prev) => prev.filter((item) => item.id !== id));
+        setIsDeleteModalOpen(false);
+    };
+
+    const handleOpenDeleteModal = (experience) => {
+        setExperienceToDelete(experience);
+        setIsDeleteModalOpen(true);
+    };
+
     const calculateDuration = (startYear, endYear) => {
         const totalYears = endYear ? endYear - startYear : new Date().getFullYear() - startYear;
         return `${totalYears} year${totalYears > 1 ? 's' : ''}`;
@@ -108,7 +120,7 @@ const ProfileExperience = () => {
     const renderExperienceItem = (experience) => (
         <div style={styles.experienceItem} key={experience.id}>
             <img
-                src={experience.company_logo || "placeholder_icon.png"}
+                src={experience.company_logo || "postdoctoral_icon.png"}
                 alt="Experience Logo"
                 style={styles.experienceIcon}
             />
@@ -146,12 +158,14 @@ const ProfileExperience = () => {
         <div style={styles.experienceContainer}>
             <div style={styles.experienceHeadingMainWrap}>
                 <h2 style={styles.experienceHeading}>Experience</h2>
+                <div style={styles.aboutEditIconWrap}>
                 <img
                     src="Add_Icon.svg"
                     alt="Add Icon"
                     style={styles.addEditIcon}
                     onClick={handleAddExperience}
                 />
+                </div>
             </div>
 
             <div style={styles.experienceInnerWrap}>
@@ -167,15 +181,54 @@ const ProfileExperience = () => {
                 onClose={() => setIsModalOpen(false)}
                 onSave={handleSaveExperience}
                 experienceData={currentExperience}
+                onDelete={handleOpenDeleteModal}
                 key={modalKey}
             />
+
+            {isDeleteModalOpen && (
+                <ReactModal
+                    isOpen={isDeleteModalOpen}
+                    onRequestClose={() => setIsDeleteModalOpen(false)}
+                    style={{
+                        overlay: styles.modalOverlay,
+                        content: styles.modalDeleteContent,
+                    }}
+                >
+                    <div style={styles.header}>
+                        <h2 style={styles.modalHeading}>Delete Experience</h2>
+                        <button
+                            onClick={() => setIsDeleteModalOpen(false)}
+                            style={styles.closeButton}
+                        >
+                            &times;
+                        </button>
+                    </div>
+                    <div style={styles.body}>
+                        <p>Are you sure you want to delete this experience?</p>
+                    </div>
+                    <div style={styles.footer}>
+                        <button
+                            style={styles.cancelButton}
+                            onClick={() => setIsDeleteModalOpen(false)}
+                        >
+                            No thanks
+                        </button>
+                        <button
+                            style={styles.deleteModalButton}
+                            onClick={() => handleDeleteExperience(experienceToDelete.id)}
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </ReactModal>
+            )}
         </div>
     );
 };
 
 const styles = {
     experienceContainer: {
-        padding: '32px 28px',
+        padding: '24px 28px',
         backgroundColor: '#ffffff',
         borderRadius: '8px',
         boxShadow: '5px 4px 16px 0px #0000001C',
@@ -183,32 +236,154 @@ const styles = {
         flexDirection: 'column',
         gap: '26px',
     },
+
+    experienceHeadingMainWrap: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+
     experienceHeading: {
         fontSize: '20px',
         color: '#313131',
         fontWeight: '600',
         lineHeight: '28px',
     },
+
+    experienceInnerWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: '24px',
+    },
+
     experienceItem: {
         display: 'flex',
         alignItems: 'flex-start',
         gap: '16px',
     },
+
     experienceIcon: {
         width: 'auto',
     },
+
+    experienceDetailWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: '16px',
+    },
+
+    experienceTitleWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px',
+    },
+
     experienceTitle: {
         fontWeight: '400',
         fontSize: '16px',
         lineHeight: '18px',
         color: '#313131',
+        textTransform: 'capitalize',
     },
+
+    experienceDetails: {
+        color: '#ADADAD',
+        fontSize: '14px',
+        lineHeight: '16px',
+        fontWeight: '400',
+        textTransform: 'capitalize',
+    },
+
+    experienceLocation: {
+        color: '#ADADAD',
+        fontSize: '14px',
+        lineHeight: '18px',
+        fontWeight: '400',
+        textTransform: 'capitalize',
+    },
+
+    experienceRoles: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+    },
+
+    experienceInnerRoles: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+    },
+
+    rolesWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+    },
+
+    roleTitle: {
+        fontWeight: '400',
+        fontSize: '16px',
+        lineHeight: '18px',
+        color: '#313131',
+    },
+
+    roleDetails: {
+        color: '#ADADAD',
+        fontSize: '14px',
+        lineHeight: '16px',
+        fontWeight: '400',
+    },
+
+    rolesDescriptionWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+    },
+
     roleDescription: {
         fontSize: '16px',
         lineHeight: '18px',
         fontWeight: '400',
         color: '#313131',
     },
+
+    experienceImages: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+    },
+
+    experienceImage: {
+        width: 'auto',
+        height: 'auto',
+        borderRadius: '6px',
+        objectFit: 'cover',
+    },
+
+    seeMoreText: {
+        fontSize: '12px',
+        lineHeight: '16.8px',
+        fontWeight: '500',
+        letterSpacing: '2%',
+        color: '#4fcff5',
+        textAlign: 'end',
+    },
+
+    aboutEditIconWrap: {
+        display: 'flex',
+        flexDirection: 'row-reverse',
+        alignItems: 'center',
+        gap: '16px',
+        width: 'auto',
+        cursor: 'pointer',
+    },
+
+    addEditIcon: {
+        width: '20px',
+    },
+
     addButton: {
         backgroundColor: '#70d4fc',
         padding: '10px 20px',
@@ -307,11 +482,12 @@ const styles = {
     footer: {
         padding: '12px 20px',
         borderTop: '1px solid #e5e5e5',
-        backgroundColor: '#fff',
+    },
+    placeholderWrap: {
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '12px',
+        flexDirection: 'column',
+        alignItems: 'start',
+        gap: '16px',
     },
 };
 
