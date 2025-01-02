@@ -10,13 +10,31 @@ const EditAboutModal = ({ isOpen, onClose, aboutText, onSave, user, token,setUse
         }
     }, [aboutText]);
 
-    const handleSave = () => {
-        onSave(summary);
-        onClose();
-    };
+    const handleSave = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/users/${user.id}/`, {
+                method: 'PATCH', // Use PATCH to update only the summary field
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Pass the token for authorization
+                },
+                body: JSON.stringify({ summary }),
+            });
 
-    const handleChange = (e) => {
-        setSummary(e.target.value);
+            if (response.ok) {
+                const updatedUser = await response.json();
+                setUserAndToken(updatedUser,token);
+                onSave(updatedUser.summary); // Update the parent component's state
+            } else {
+                console.error('Failed to update summary:', response.statusText);
+                // Optionally display an error notification to the user
+            }
+        } catch (error) {
+            console.error('Error updating summary:', error);
+            // Optionally display an error notification to the user
+        } finally {
+            onClose(); // Close the modal after attempting to save
+        }
     };
 
     return (
@@ -121,8 +139,7 @@ const EditAboutModal = ({ isOpen, onClose, aboutText, onSave, user, token,setUse
         },
         textarea: {
             width: '100%',
-            height: '164px',
-            minHeight: '42px',
+            height: '150px',
             borderRadius: '12px',
             border: '1px solid #ccc',
             padding: '10px',

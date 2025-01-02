@@ -58,8 +58,6 @@ const ProfileAbout = () => {
     const handleSave = (updatedText) => {
         setCurrentAbout(updatedText);
         setIsModalOpen(false); // Close modal after savin
-
-
     };
 
 
@@ -229,7 +227,7 @@ const styles = {
     aboutEditIcon: {
         width: '26px',
     },
-    
+
     placeholderText: {
         fontSize: '14px',
         color: '#adadad',
