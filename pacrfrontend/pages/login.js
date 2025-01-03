@@ -42,6 +42,12 @@ const Login = () => {
     setFormError('');
   }
 
+  function handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      getData(); // Trigger the login function
+    }
+  }
+
   function getData() {
     let formValid = true;
     const newErrors = {};
@@ -79,64 +85,73 @@ const Login = () => {
   return (
     <>
       <div style={styles.mainContainer}>
-        <img src="research.png" width='600px' height='600px' alt='Research' />
+        <img src="research.png" width="600px" height="600px" alt="Research" />
         <div style={styles.loginContainer}>
-          <div style={styles.headingwrap}>
-            <h1 style={styles.heading}>Welcome Back!</h1>
-            <h3 style={styles.subheading}>A Community for Researchers</h3>
-            <h3 style={styles.subheading}>by Researchers</h3>
-          </div>
-          <InputField
-            change={inputChange}
-            name='email'
-            label='Email or Phone Number'
-            type='email'
-            error={errors.email}
-          />
-          <InputField
-            change={inputChange}
-            name='password'
-            label='Enter Password'
-            type='password'
-            error={errors.password}
-          />
-          <span style={styles.rememberMe}>
-            <span style={styles.rememberCheck}>
-              <input type='checkbox' style={styles.rememberCheckBox} />
-              <span style={styles.rememberText}>Remember Me</span>
-            </span>
-            <span style={styles.forgotPassword}>
-              <u><b>Forgot Password?</b></u>
-            </span>
-          </span>
-          <button onClick={getData} style={styles.button}>
-            Login
-          </button>
-
-          {formError && (
-            <div style={styles.errorBox}>
-              {formError}
+          <form 
+            style={{ display: 'flex', flexDirection: 'column' }} 
+            onSubmit={(e) => {
+              e.preventDefault(); // Prevent default form submission
+              getData();
+            }}
+          >
+            <div style={styles.headingwrap}>
+              <h1 style={styles.heading}>Welcome Back!</h1>
+              <h3 style={styles.subheading}>A Community for Researchers</h3>
+              <h3 style={styles.subheading}>by Researchers</h3>
             </div>
-          )}
-
-          <div style={styles.orContinueWith}>
-            <hr style={styles.line} />
-            <span style={styles.orContinueText}>or continue with</span>
-            <hr style={styles.line} />
-          </div>
-          <div style={styles.socialLogos}>
-            <img src="google logo.svg" alt="Google" style={styles.logo} />
-            <img src="apple logo.svg" alt="Apple" style={styles.logo} />
-            <img src="fb logo.svg" alt="Facebook" style={styles.logo} />
-          </div>
-          <h2 style={styles.registerText}>
-            Don't have an account? <Link href="/signup" style={styles.link}>Sign Up now</Link>
-          </h2>
+            <InputField
+              change={inputChange}
+              name="email"
+              label="Email or Phone Number"
+              type="email"
+              error={errors.email}
+            />
+            <InputField
+              change={inputChange}
+              name="password"
+              label="Enter Password"
+              type="password"
+              error={errors.password}
+            />
+            <span style={styles.rememberMe}>
+              <span style={styles.rememberCheck}>
+                <input type="checkbox" style={styles.rememberCheckBox} />
+                <span style={styles.rememberText}>Remember Me</span>
+              </span>
+              <span style={styles.forgotPassword}>
+                <u><b>Forgot Password?</b></u>
+              </span>
+            </span>
+            <button type="submit" style={styles.button}>
+              Login
+            </button>
+  
+            {formError && (
+              <div style={styles.errorBox}>
+                {formError}
+              </div>
+            )}
+  
+            <div style={styles.orContinueWith}>
+              <hr style={styles.line} />
+              <span style={styles.orContinueText}>or continue with</span>
+              <hr style={styles.line} />
+            </div>
+            <div style={styles.socialLogos}>
+              <img src="google logo.svg" alt="Google" style={styles.logo} />
+              <img src="apple logo.svg" alt="Apple" style={styles.logo} />
+              <img src="fb logo.svg" alt="Facebook" style={styles.logo} />
+            </div>
+            <h2 style={styles.registerText}>
+              Don't have an account? <Link href="/signup" style={styles.link}>Sign Up now</Link>
+            </h2>
+          </form>
         </div>
       </div>
     </>
   );
 }
+
 const styles = {
   
   mainContainer: {

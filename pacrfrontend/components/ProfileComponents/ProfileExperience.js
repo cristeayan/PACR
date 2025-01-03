@@ -119,6 +119,7 @@ const ProfileExperience = () => {
 
     const renderExperienceItem = (experience) => (
         <div style={styles.experienceItem} key={experience.id}>
+            <div style={styles.experienceLeftWrap}>
             <img
                 src={experience.company_logo || "postdoctoral_icon.png"}
                 alt="Experience Logo"
@@ -132,11 +133,14 @@ const ProfileExperience = () => {
                         <span style={styles.experienceDetails}>{experience.employmee_type}</span>
                     </p>
                     <p style={styles.experienceDetails}>
-                        {experience.start_year} - {experience.end_year || "Present"} ·
-                        <span>{calculateDuration(experience.start_year, experience.end_year)}</span>
+                        {experience.start_year} - {experience.end_year || "Present"} · <span>{calculateDuration(experience.start_year, experience.end_year)}</span>
                     </p>
                 </div>
+                <p style={styles.experienceLocation}>
+                    {experience.location} · <span>{experience.locationType}</span>
+                </p>
                 <p style={styles.roleDescription}>{experience.description}</p>
+            </div>
             </div>
             <img
                 src="Edit Icon.svg"
@@ -159,12 +163,14 @@ const ProfileExperience = () => {
             <div style={styles.experienceHeadingMainWrap}>
                 <h2 style={styles.experienceHeading}>Experience</h2>
                 <div style={styles.aboutEditIconWrap}>
-                <img
-                    src="Add_Icon.svg"
-                    alt="Add Icon"
-                    style={styles.addEditIcon}
-                    onClick={handleAddExperience}
-                />
+                    {experienceData.length > 0 && (
+                        <img
+                            src="Add_Icon.svg"
+                            alt="Add Icon"
+                            style={styles.addEditIcon}
+                            onClick={handleAddExperience}
+                        />
+                    )}
                 </div>
             </div>
 
@@ -258,6 +264,14 @@ const styles = {
     },
 
     experienceItem: {
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: '16px',
+        width: '100%',
+    },
+
+    experienceLeftWrap: {
         display: 'flex',
         alignItems: 'flex-start',
         gap: '16px',
@@ -482,6 +496,11 @@ const styles = {
     footer: {
         padding: '12px 20px',
         borderTop: '1px solid #e5e5e5',
+        backgroundColor: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '12px',
     },
     placeholderWrap: {
         display: 'flex',

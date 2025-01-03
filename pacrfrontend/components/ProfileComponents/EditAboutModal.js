@@ -148,6 +148,7 @@ const EditAboutModal = ({ isOpen, onClose, aboutText, onSave, user, token,setUse
             lineHeight: '1.5',
             color: '#313131',
             resize: 'vertical',
+            minHeight: '42px',
         },
         footer: {
             padding: '12px 20px',

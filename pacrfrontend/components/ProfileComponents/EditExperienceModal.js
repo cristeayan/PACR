@@ -7,7 +7,7 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
         company: "",
         employee_type: "",
         location: "",
-        department:"",
+        department: "",
         job_type: "",
         start_month: "",
         start_year: "",
@@ -33,7 +33,11 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
         "Seasonal",
     ];
 
-    const job_types = ["On-site", "Hybrid", "Remote"];
+    const job_types = [
+        { label: "On-site", value: "on_site" },
+        { label: "Hybrid", value: "hybrid" },
+        { label: "Remote", value: "remote" }
+    ];
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December",
@@ -42,11 +46,15 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
 
     useEffect(() => {
         if (experienceData) {
-            setFormData(experienceData);
+            setFormData({
+                ...experienceData,
+                job_type: experienceData.job_type || "on_site", // Default to on_site
+            });
         } else {
             setFormData(initialFormData);
         }
     }, [experienceData]);
+    
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -213,9 +221,10 @@ const ExperienceModal = ({ isOpen, onClose, onSave, experienceData, onDelete }) 
                         onChange={handleInputChange}
                         style={styles.input}
                     >
+                        <option value="">Please select</option>
                         {job_types.map((type) => (
-                            <option key={type} value={type}>
-                                {type}
+                            <option key={type.value} value={type.value}>
+                                {type.label}
                             </option>
                         ))}
                     </select>
